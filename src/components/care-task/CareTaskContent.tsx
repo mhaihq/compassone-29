@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
-  AlertTriangle, Clock, Play, Pause
+  AlertTriangle, Clock, Play, Pause, User
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { RiskAssessmentStep } from '@/components/care-task/RiskAssessmentStep';
 import { CarePlanStep } from '@/components/care-task/CarePlanStep';
 import { FollowUpStep } from '@/components/care-task/FollowUpStep';
 import { FinalizeStep } from '@/components/care-task/FinalizeStep';
+import { useNavigate } from 'react-router-dom';
 
 // Sample data - would come from an API or context in a real app
 const careTasksData = {
@@ -27,6 +29,8 @@ const careTasksData = {
     status: 'urgent',
     cptCode: '99484',
     cptDescription: 'Behavioral Health Integration',
+    patientId: 'P100592',
+    patientName: 'Sthita Pujari',
     flagReason: 'Patient reported increased feelings of depression and anxiety during the regular check-in call.',
     evidenceFromCall: [
       {
@@ -65,6 +69,8 @@ const careTasksData = {
     status: 'assigned',
     cptCode: '99490',
     cptDescription: 'Chronic Care Management',
+    patientId: 'P100592',
+    patientName: 'Sthita Pujari',
     flagReason: 'Patient missed 2 doses of Lisinopril (Apr 3-4), which is part of their hypertension management plan.',
     evidenceFromCall: [
       {
@@ -97,6 +103,7 @@ interface CareTaskContentProps {
 
 export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComplete }) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const [task, setTask] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -169,6 +176,14 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  // Handle patient name click
+  const handlePatientNameClick = () => {
+    if (task?.patientId) {
+      // Navigate to patient detail page in the population context
+      navigate(`/patient/${task.patientId}`);
+    }
   };
 
   // Step navigation functions
@@ -316,30 +331,38 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
               </Badge>
             </div>
             <p className="text-gray-600">{task.description}</p>
+            {/* Clickable Patient Name */}
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4 text-gray-400" />
+              <button 
+                onClick={handlePatientNameClick}
+                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+              >
+                {task.patientName}
+              </button>
+              <span className="text-gray-400">•</span>
+              <span className="text-sm text-gray-500">ID: {task.patientId}</span>
+            </div>
           </div>
           
-          {/* Timer Section */}
-          <div className="flex flex-col items-center lg:items-end space-y-2">
-            <div className="flex items-center gap-3">
-              <div className="text-3xl font-bold font-mono text-gray-900">
-                {formatTime(timer)}
-              </div>
-              <Button 
-                variant={isTimerRunning ? "destructive" : "default"}
-                onClick={() => setIsTimerRunning(!isTimerRunning)}
-                className={isTimerRunning ? "" : "bg-[#1E4D36] hover:bg-[#2A6349]"}
-                size="sm"
-              >
-                {isTimerRunning ? (
-                  <><Pause size={16} className="mr-2" /> Pause</>
-                ) : (
-                  <><Play size={16} className="mr-2" /> Resume</>
-                )}
-              </Button>
+          {/* Compact Timer Section */}
+          <div className="flex items-center gap-3 bg-gray-50 px-3 py-2 rounded-lg border">
+            <Clock className="h-4 w-4 text-gray-500" />
+            <div className="text-lg font-bold font-mono text-gray-900">
+              {formatTime(timer)}
             </div>
-            <div className="text-sm text-gray-500 text-center lg:text-right">
-              {task.cptCode}: {Math.round((timer / (20 * 60)) * 100)}% complete
-            </div>
+            <Button 
+              variant={isTimerRunning ? "destructive" : "default"}
+              onClick={() => setIsTimerRunning(!isTimerRunning)}
+              className={isTimerRunning ? "" : "bg-[#1E4D36] hover:bg-[#2A6349]"}
+              size="sm"
+            >
+              {isTimerRunning ? (
+                <Pause size={14} />
+              ) : (
+                <Play size={14} />
+              )}
+            </Button>
           </div>
         </div>
 
@@ -360,22 +383,6 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
           <div>
             <dt className="text-sm font-medium text-gray-500">Current Step</dt>
             <dd className="text-sm text-gray-900 mt-1">{STEPS[currentStep - 1]}</dd>
-          </div>
-        </div>
-
-        {/* CPT Code Progress */}
-        <div className="p-4 bg-white border border-gray-200 rounded-lg">
-          <h4 className="text-sm font-medium mb-3 text-gray-900">CPT Code Progress</h4>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-700">{task.cptCode}: {task.cptDescription}</span>
-              <span className="font-medium text-gray-900">{Math.round((timer / (20 * 60)) * 100)}%</span>
-            </div>
-            <Progress value={(timer / (20 * 60)) * 100} className="h-2" />
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>{formatTime(timer)}</span>
-              <span>20:00 min</span>
-            </div>
           </div>
         </div>
       </div>
