@@ -5,13 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Eye, Search, Filter } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { patientsData } from '@/data/patientsData';
-import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-export const PatientsListContent: React.FC = () => {
-  const navigate = useNavigate();
+interface PatientsListContentProps {
+  onOpenPatient: (patientId: string) => void;
+}
+
+export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpenPatient }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   
@@ -51,7 +53,7 @@ export const PatientsListContent: React.FC = () => {
   };
 
   const handleViewProfile = (patient: typeof patientsData[0]) => {
-    navigate(`/patient/${patient.id}?openSidebar=true`);
+    onOpenPatient(patient.id);
   };
 
   return (

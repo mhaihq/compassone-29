@@ -10,13 +10,16 @@ import { CampaignsContent } from './sidebar/population/CampaignsContent';
 import { BillingContent } from './sidebar/population/BillingContent';
 import { InsightsContent } from './sidebar/population/InsightsContent';
 import { CareTaskContent } from '@/components/care-task/CareTaskContent';
+import { PatientDetailContent } from './sidebar/population/PatientDetailContent';
 import { useLocation } from 'react-router-dom';
 
 export const PopulationSidebar = () => {
   const [activeTab, setActiveTab] = useState<'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights'>('taskQueue');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   const [isViewingTask, setIsViewingTask] = useState(false);
+  const [isViewingPatient, setIsViewingPatient] = useState(false);
   const location = useLocation();
   
   // Adjust positioning based on current page
@@ -28,15 +31,27 @@ export const PopulationSidebar = () => {
     setIsViewingTask(true);
   };
 
+  const handleOpenPatient = (patientId: string) => {
+    setSelectedPatientId(patientId);
+    setIsViewingPatient(true);
+  };
+
   const handleBackToTasks = () => {
     setIsViewingTask(false);
     setSelectedTaskId(null);
+  };
+
+  const handleBackToPatients = () => {
+    setIsViewingPatient(false);
+    setSelectedPatientId(null);
   };
 
   const handleTaskComplete = () => {
     setIsViewingTask(false);
     setSelectedTaskId(null);
   };
+
+  const isViewingContent = isViewingTask || isViewingPatient;
   
   return (
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
@@ -59,11 +74,11 @@ export const PopulationSidebar = () => {
           <div className="relative bg-white shadow-sm">
             <div className="relative z-10 flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
-                {isViewingTask && (
+                {isViewingContent && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={handleBackToTasks}
+                    onClick={isViewingTask ? handleBackToTasks : handleBackToPatients}
                     className="mr-2 p-2 hover:bg-gray-100"
                   >
                     <ArrowLeft size={16} />
@@ -101,10 +116,14 @@ export const PopulationSidebar = () => {
                 taskId={selectedTaskId} 
                 onComplete={handleTaskComplete}
               />
+            ) : isViewingPatient && selectedPatientId ? (
+              <PatientDetailContent 
+                patientId={selectedPatientId}
+              />
             ) : (
               <>
                 {activeTab === 'taskQueue' && <TaskQueueContent onOpenTask={handleOpenTask} />}
-                {activeTab === 'patients' && <PatientsListContent />}
+                {activeTab === 'patients' && <PatientsListContent onOpenPatient={handleOpenPatient} />}
                 {activeTab === 'campaigns' && <CampaignsContent />}
                 {activeTab === 'billing' && <BillingContent />}
                 {activeTab === 'insights' && <InsightsContent />}
