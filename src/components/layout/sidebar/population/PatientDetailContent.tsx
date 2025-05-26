@@ -7,8 +7,9 @@ import { Calendar, User, Phone, Mail, MapPin, Activity, Clock, FileText, Brain, 
 import { patientsData } from '@/data/patientsData';
 import { patientData } from '@/data/patientData';
 import OverviewTab from '@/components/overview/OverviewTab';
-import TreatmentPlan from '@/components/TreatmentPlan';
 import { PatientCareLog } from './PatientCareLog';
+import { ProtocolsContent } from '../ProtocolsContent';
+import { BillingContent } from '../BillingContent';
 
 interface PatientDetailContentProps {
   patientId: string;
@@ -69,17 +70,17 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
               <Brain className="h-4 w-4" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
+            <TabsTrigger value="careLog" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Care Log
             </TabsTrigger>
-            <TabsTrigger value="treatment" className="flex items-center gap-2">
+            <TabsTrigger value="protocols" className="flex items-center gap-2">
               <ClipboardList className="h-4 w-4" />
-              Treatment
+              Protocols
             </TabsTrigger>
-            <TabsTrigger value="details" className="flex items-center gap-2">
-              <Activity className="h-4 w-4" />
-              Details
+            <TabsTrigger value="billing" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Billing
             </TabsTrigger>
           </TabsList>
 
@@ -87,86 +88,16 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
             <OverviewTab />
           </TabsContent>
 
-          <TabsContent value="history" className="mt-4">
+          <TabsContent value="careLog" className="mt-4">
             <PatientCareLog />
           </TabsContent>
 
-          <TabsContent value="treatment" className="mt-4">
-            <TreatmentPlan patient={patientData} />
+          <TabsContent value="protocols" className="mt-4">
+            <ProtocolsContent />
           </TabsContent>
 
-          <TabsContent value="details" className="mt-4">
-            <div className="space-y-4">
-              {/* Contact Information */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Contact Information</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm">(555) 123-4567</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm">{patient.name.toLowerCase().replace(' ', '.')}@email.com</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm">123 Main St, City, State 12345</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Visit Information */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
-                    Visit Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm font-medium text-gray-700">Last Visit</p>
-                      <p className="text-sm">{new Date(patient.lastVisit).toLocaleDateString()}</p>
-                    </div>
-                    {patient.nextAppointment && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">Next Appointment</p>
-                        <p className="text-sm text-blue-600">{new Date(patient.nextAppointment).toLocaleDateString()}</p>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Recent Activity */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Recent Activity</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="border-l-2 border-blue-200 pl-3">
-                      <p className="text-sm font-medium">Follow-up call completed</p>
-                      <p className="text-xs text-gray-500">2 days ago</p>
-                    </div>
-                    <div className="border-l-2 border-green-200 pl-3">
-                      <p className="text-sm font-medium">Medication adherence check</p>
-                      <p className="text-xs text-gray-500">1 week ago</p>
-                    </div>
-                    <div className="border-l-2 border-yellow-200 pl-3">
-                      <p className="text-sm font-medium">Care plan updated</p>
-                      <p className="text-xs text-gray-500">2 weeks ago</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+          <TabsContent value="billing" className="mt-4">
+            <BillingContent />
           </TabsContent>
         </Tabs>
       ) : (
