@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  AlertTriangle, Clock, Play, Pause, User
+  AlertTriangle, Clock, Play, Pause
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -316,38 +316,34 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
 
   return (
     <div className="max-w-6xl mx-auto">
-      {/* Combined Patient Info and Step Progress */}
+      {/* Step Progress and Timer */}
       <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
-        {/* Patient Information Row */}
+        {/* Timer Display */}
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-[#1E4D36]" />
-              <button 
-                onClick={handlePatientNameClick}
-                className="font-medium text-gray-800 hover:text-[#1E4D36] hover:underline cursor-pointer"
-              >
-                {task.patientName}
-              </button>
-            </div>
-            <Badge variant="outline" className="bg-white border-[#1E4D36] text-[#1E4D36]">
-              28 y/o • Male
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-gray-500" />
+            <span className="text-sm text-gray-600">Session Time:</span>
+            <Badge className="bg-blue-50 text-blue-800 border-blue-200 font-mono">
+              {formatTime(timer)}
             </Badge>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Clock className="w-3 h-3" />
-            <span>Last contact: 15/05/2025</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">
+              {Math.round((timer / (20 * 60)) * 100)}% of 20 min
+            </span>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setIsTimerRunning(!isTimerRunning)}
+              className="h-7 px-2"
+            >
+              {isTimerRunning ? (
+                <><Pause size={12} className="mr-1" /> Pause</>
+              ) : (
+                <><Play size={12} className="mr-1" /> Resume</>
+              )}
+            </Button>
           </div>
-        </div>
-
-        {/* Medical Conditions */}
-        <div className="flex flex-wrap gap-1 mb-4">
-          <Badge variant="outline" className="text-xs py-0 bg-white text-[#1E4D36] border-[#1E4D36]">
-            Generalized Anxiety Disorder
-          </Badge>
-          <Badge variant="outline" className="text-xs py-0 bg-white text-[#1E4D36] border-[#1E4D36]">
-            Hypothyroidism
-          </Badge>
         </div>
 
         {/* Step Progress */}
