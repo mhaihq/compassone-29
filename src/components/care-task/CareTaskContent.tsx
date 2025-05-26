@@ -302,16 +302,81 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
 
   return (
     <div className="space-y-6">
-      {/* Header Section */}
-      <div className="flex justify-between items-start">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold text-gray-900">{task.title}</h1>
-            <Badge className={`bg-${task.categoryColor}-50 text-${task.categoryColor}-700 border-${task.categoryColor}-200`}>
-              {task.category}
-            </Badge>
+      {/* Header Section with Timer and Task Info */}
+      <div className="space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl font-semibold text-gray-900">{task.title}</h1>
+              <Badge className={`bg-${task.categoryColor}-50 text-${task.categoryColor}-700 border-${task.categoryColor}-200`}>
+                {task.category}
+              </Badge>
+              <Badge className={`bg-${task.status === 'urgent' ? 'red' : 'amber'}-50 text-${task.status === 'urgent' ? 'red' : 'amber'}-700 border-${task.status === 'urgent' ? 'red' : 'amber'}-200`}>
+                {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+              </Badge>
+            </div>
+            <p className="text-gray-600">{task.description}</p>
           </div>
-          <p className="text-gray-600">{task.description}</p>
+          
+          {/* Timer Section */}
+          <div className="flex flex-col items-center lg:items-end space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="text-3xl font-bold font-mono text-gray-900">
+                {formatTime(timer)}
+              </div>
+              <Button 
+                variant={isTimerRunning ? "destructive" : "default"}
+                onClick={() => setIsTimerRunning(!isTimerRunning)}
+                className={isTimerRunning ? "" : "bg-[#1E4D36] hover:bg-[#2A6349]"}
+                size="sm"
+              >
+                {isTimerRunning ? (
+                  <><Pause size={16} className="mr-2" /> Pause</>
+                ) : (
+                  <><Play size={16} className="mr-2" /> Resume</>
+                )}
+              </Button>
+            </div>
+            <div className="text-sm text-gray-500 text-center lg:text-right">
+              {task.cptCode}: {Math.round((timer / (20 * 60)) * 100)}% complete
+            </div>
+          </div>
+        </div>
+
+        {/* Task Information Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Task ID</dt>
+            <dd className="font-mono text-sm text-gray-900 mt-1">{task.id}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">CPT Code</dt>
+            <dd className="text-sm text-gray-900 mt-1">{task.cptCode}</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Expected Time</dt>
+            <dd className="text-sm text-gray-900 mt-1">{task.minutes} minutes</dd>
+          </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Current Step</dt>
+            <dd className="text-sm text-gray-900 mt-1">{STEPS[currentStep - 1]}</dd>
+          </div>
+        </div>
+
+        {/* CPT Code Progress */}
+        <div className="p-4 bg-white border border-gray-200 rounded-lg">
+          <h4 className="text-sm font-medium mb-3 text-gray-900">CPT Code Progress</h4>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-700">{task.cptCode}: {task.cptDescription}</span>
+              <span className="font-medium text-gray-900">{Math.round((timer / (20 * 60)) * 100)}%</span>
+            </div>
+            <Progress value={(timer / (20 * 60)) * 100} className="h-2" />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>{formatTime(timer)}</span>
+              <span>20:00 min</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -322,167 +387,80 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
         steps={STEPS}
       />
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main content - 2/3 width on large screens */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Step Content */}
-          {currentStep === 1 && (
-            <div className="space-y-4">
-              <RiskAssessmentStep
-                task={task}
-                riskApproved={riskApproved}
-                onRiskDecision={handleRiskApproval}
-                onShowAudio={() => setShowAudioDialog(true)}
-                evidenceStatuses={evidenceStatuses}
-                onEvidenceAction={handleEvidenceAction}
-              />
-              {riskApproved === false && (
-                <div className="text-center py-8">
-                  <p className="text-gray-600 mb-4">Risk assessment denied. Task workflow ended.</p>
-                </div>
-              )}
-            </div>
-          )}
+      {/* Main Content - Full Width */}
+      <div className="space-y-6">
+        {/* Step Content */}
+        {currentStep === 1 && (
+          <div className="space-y-4">
+            <RiskAssessmentStep
+              task={task}
+              riskApproved={riskApproved}
+              onRiskDecision={handleRiskApproval}
+              onShowAudio={() => setShowAudioDialog(true)}
+              evidenceStatuses={evidenceStatuses}
+              onEvidenceAction={handleEvidenceAction}
+            />
+            {riskApproved === false && (
+              <div className="text-center py-8">
+                <p className="text-gray-600 mb-4">Risk assessment denied. Task workflow ended.</p>
+              </div>
+            )}
+          </div>
+        )}
 
-          {currentStep === 2 && riskApproved && (
-            <div className="space-y-4">
-              <CarePlanStep
-                task={task}
-                selectedActions={selectedActions}
-                manualAction={manualAction}
-                summary={summary}
-                onActionToggle={handleActionToggle}
-                onManualActionChange={setManualAction}
-                onAddManualAction={handleAddManualAction}
-                onSummaryChange={setSummary}
-                soapNote={soapNote}
-                onSoapNoteChange={handleSoapNoteChange}
-              />
-              <div className="flex justify-end">
-                <Button onClick={nextStep} className="bg-[#1E4D36] hover:bg-[#2A6349]">
-                  Next: Follow-up Plan
-                </Button>
-              </div>
+        {currentStep === 2 && riskApproved && (
+          <div className="space-y-4">
+            <CarePlanStep
+              task={task}
+              selectedActions={selectedActions}
+              manualAction={manualAction}
+              summary={summary}
+              onActionToggle={handleActionToggle}
+              onManualActionChange={setManualAction}
+              onAddManualAction={handleAddManualAction}
+              onSummaryChange={setSummary}
+              soapNote={soapNote}
+              onSoapNoteChange={handleSoapNoteChange}
+            />
+            <div className="flex justify-end">
+              <Button onClick={nextStep} className="bg-[#1E4D36] hover:bg-[#2A6349]">
+                Next: Follow-up Plan
+              </Button>
             </div>
-          )}
+          </div>
+        )}
 
-          {currentStep === 3 && riskApproved && (
-            <div className="space-y-4">
-              <FollowUpStep />
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={() => goToStep(2)}>
-                  Back: Care Plan
-                </Button>
-                <Button onClick={nextStep} className="bg-[#1E4D36] hover:bg-[#2A6349]">
-                  Next: Finalize
-                </Button>
-              </div>
+        {currentStep === 3 && riskApproved && (
+          <div className="space-y-4">
+            <FollowUpStep />
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={() => goToStep(2)}>
+                Back: Care Plan
+              </Button>
+              <Button onClick={nextStep} className="bg-[#1E4D36] hover:bg-[#2A6349]">
+                Next: Finalize
+              </Button>
             </div>
-          )}
+          </div>
+        )}
 
-          {currentStep === 4 && riskApproved && (
-            <div className="space-y-4">
-              <FinalizeStep
-                task={task}
-                timer={timer}
-                isTimerRunning={isTimerRunning}
-                onToggleTimer={() => setIsTimerRunning(!isTimerRunning)}
-                onFinalize={handleFinalize}
-                formatTime={formatTime}
-              />
-              <div className="flex justify-start">
-                <Button variant="outline" onClick={() => goToStep(3)}>
-                  Back: Follow-up Plan
-                </Button>
-              </div>
+        {currentStep === 4 && riskApproved && (
+          <div className="space-y-4">
+            <FinalizeStep
+              task={task}
+              timer={timer}
+              isTimerRunning={isTimerRunning}
+              onToggleTimer={() => setIsTimerRunning(!isTimerRunning)}
+              onFinalize={handleFinalize}
+              formatTime={formatTime}
+            />
+            <div className="flex justify-start">
+              <Button variant="outline" onClick={() => goToStep(3)}>
+                Back: Follow-up Plan
+              </Button>
             </div>
-          )}
-        </div>
-        
-        {/* Sidebar - 1/3 width on large screens */}
-        <div className="space-y-6">
-          <Card className="bg-white border border-gray-200 shadow-sm">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-900">Time Tracking</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-col items-center">
-                <div className="text-4xl font-bold mb-4 font-mono text-gray-900">
-                  {formatTime(timer)}
-                </div>
-                <div className="flex gap-2">
-                  <Button 
-                    variant={isTimerRunning ? "destructive" : "default"}
-                    onClick={() => setIsTimerRunning(!isTimerRunning)}
-                    className={isTimerRunning ? "" : "bg-[#1E4D36] hover:bg-[#2A6349]"}
-                  >
-                    {isTimerRunning ? (
-                      <><Pause size={16} className="mr-2" /> Pause</>
-                    ) : (
-                      <><Play size={16} className="mr-2" /> Resume</>
-                    )}
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="pt-4 border-t border-gray-100">
-                <h4 className="text-sm font-medium mb-3 text-gray-900">CPT Code Progress</h4>
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-700">{task.cptCode}: {task.cptDescription}</span>
-                      <span className="font-medium text-gray-900">{Math.round((timer / (20 * 60)) * 100)}%</span>
-                    </div>
-                    <Progress value={(timer / (20 * 60)) * 100} className="h-2" />
-                    <div className="flex justify-between text-xs text-gray-500 mt-1">
-                      <span>{formatTime(timer)}</span>
-                      <span>20:00 min</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white border border-gray-200 shadow-sm">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-900">Task Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <dl className="space-y-3">
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Task ID</dt>
-                  <dd className="font-mono text-sm text-gray-900 mt-1">{task.id}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Status</dt>
-                  <dd className="mt-1">
-                    <Badge className={`bg-${task.status === 'urgent' ? 'red' : 'amber'}-50 text-${task.status === 'urgent' ? 'red' : 'amber'}-700 border-${task.status === 'urgent' ? 'red' : 'amber'}-200`}>
-                      {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                    </Badge>
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Category</dt>
-                  <dd className="mt-1">
-                    <Badge className={`bg-${task.categoryColor}-50 text-${task.categoryColor}-700 border-${task.categoryColor}-200`}>
-                      {task.category}
-                    </Badge>
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Expected Time</dt>
-                  <dd className="text-sm text-gray-900 mt-1">{task.minutes} minutes</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Current Step</dt>
-                  <dd className="text-sm text-gray-900 mt-1">{STEPS[currentStep - 1]}</dd>
-                </div>
-              </dl>
-            </CardContent>
-          </Card>
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Audio & Transcript Dialog */}
