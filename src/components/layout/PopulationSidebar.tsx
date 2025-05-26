@@ -70,10 +70,16 @@ export const PopulationSidebar = () => {
   };
 
   const patientAge = calculateAge(patientData.dateOfBirth);
-  const lastContactedFormatted = new Date(patientData.lastContacted).toLocaleDateString();
-  const medicalConditions = patientData.medicalHistory
-    .filter(item => item.type === 'condition')
-    .map(item => item.condition || item.description);
+  
+  // Use the most recent session note date as last contacted
+  const lastContactedFormatted = patientData.sessionNotes.length > 0 
+    ? new Date(patientData.sessionNotes[0].date).toLocaleDateString()
+    : 'No recent contact';
+  
+  // Extract medical conditions from the pastConditions array
+  const medicalConditions = patientData.medicalHistory.pastConditions
+    .filter(condition => condition.status === 'Active')
+    .map(condition => condition.condition);
   
   return (
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
