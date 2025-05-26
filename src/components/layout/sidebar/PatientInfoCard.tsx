@@ -28,7 +28,7 @@ export const PatientInfoCard: React.FC<PatientInfoCardProps> = ({
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-gray-900 truncate">
-                {patientData.personalInfo.name}
+                {patientData.name}
               </h3>
               <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
