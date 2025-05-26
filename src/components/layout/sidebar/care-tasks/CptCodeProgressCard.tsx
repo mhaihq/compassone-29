@@ -9,7 +9,7 @@ interface CptCodeProgressCardProps {
   cptCodeInfo: CptCodeInfo;
   completedMinutes: number;
   totalRequiredMinutes: number;
-  className?: string; // Added className as an optional prop
+  className?: string;
 }
 
 export const CptCodeProgressCard: React.FC<CptCodeProgressCardProps> = ({ 
@@ -17,38 +17,41 @@ export const CptCodeProgressCard: React.FC<CptCodeProgressCardProps> = ({
   cptCodeInfo, 
   completedMinutes, 
   totalRequiredMinutes,
-  className = '' // Default to empty string if not provided
+  className = ''
 }) => {
   // Check if cptCodeInfo is defined before accessing properties
   if (!cptCodeInfo) {
-    return null; // Don't render anything if data is missing
+    return null;
   }
   
   const progressPercentage = (completedMinutes / totalRequiredMinutes) * 100;
   const remainingMinutes = totalRequiredMinutes - completedMinutes;
   
   return (
-    <div className={`p-3 bg-gray-50 rounded-lg ${className}`}>
-      <div className="flex items-center justify-between">
+    <div className={`p-3 bg-gray-50 rounded-lg border border-gray-100 ${className}`}>
+      <div className="flex items-center justify-between mb-2">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Badge className={cptCode === '99490' ? "bg-blue-50 text-blue-600 border-blue-100 font-mono" : "bg-purple-50 text-purple-600 border-purple-100 font-mono"}>
+            <Badge className={cptCode === '99490' ? "bg-blue-50 text-blue-700 border-blue-100 font-mono text-xs px-1.5 py-0.5" : "bg-purple-50 text-purple-700 border-purple-100 font-mono text-xs px-1.5 py-0.5"}>
               {cptCode}
             </Badge>
-            <h5 className="font-medium">{cptCodeInfo.description}</h5>
+            <h5 className="font-medium text-sm">{cptCodeInfo.description}</h5>
           </div>
-          <p className="text-xs text-gray-600">Required: {totalRequiredMinutes} min/month</p>
+          <p className="text-xs text-gray-500">Required: {totalRequiredMinutes} min/month</p>
         </div>
-        <p className="font-medium">
-          {completedMinutes}/{totalRequiredMinutes} min
-        </p>
+        <div className="text-right">
+          <p className="font-medium text-sm">
+            {completedMinutes}/{totalRequiredMinutes}
+          </p>
+          <p className="text-xs text-gray-500">minutes</p>
+        </div>
       </div>
       
-      <div className="mt-2">
-        <Progress value={progressPercentage} className="h-2" />
+      <div className="mb-2">
+        <Progress value={progressPercentage} className="h-1.5" />
       </div>
       
-      <div className="mt-2 flex justify-between items-center text-xs text-gray-500">
+      <div className="flex justify-between items-center text-xs text-gray-500">
         <span>{cptCodeInfo.rateInfo}</span>
         <span>{remainingMinutes} min remaining</span>
       </div>
