@@ -60,28 +60,10 @@ export const PopulationSidebar = () => {
             </div>
           </div>
           
-          {/* Population Summary Card */}
-          <div className="bg-white m-4 rounded-lg shadow-sm border border-gray-200">
-            <div className="p-4">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-[#1E4D36]">5</p>
-                  <p className="text-xs text-gray-600">Total Patients</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-orange-600">7</p>
-                  <p className="text-xs text-gray-600">Active Tasks</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-green-600">1</p>
-                  <p className="text-xs text-gray-600">High Priority</p>
-                </div>
-              </div>
-            </div>
+          {/* Navigation Tabs - Made sticky */}
+          <div className="sticky top-0 z-10">
+            <PopulationSidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           </div>
-          
-          {/* Navigation Tabs */}
-          <PopulationSidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           
           {/* Tab Content */}
           <div className="flex-grow overflow-y-auto p-4">
