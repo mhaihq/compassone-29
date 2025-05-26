@@ -24,18 +24,18 @@ export const FinalizeStep: React.FC<FinalizeStepProps> = ({
   formatTime
 }) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center">
+    <Card className="bg-white border border-gray-200 shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
           <Check className="mr-2 text-green-500" size={20} />
           Finalize and Bill
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="bg-gray-50 p-4 rounded-lg mb-4">
-          <h3 className="font-medium mb-2">Time Spent:</h3>
+        <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg mb-4">
+          <h3 className="font-medium mb-3 text-gray-900">Time Spent:</h3>
           <div className="flex items-center gap-2 mb-4">
-            <Badge className="bg-blue-100 text-blue-800 font-mono text-lg py-1 px-3">
+            <Badge className="bg-blue-50 text-blue-800 border-blue-200 font-mono text-lg py-1 px-3">
               {formatTime(timer)}
             </Badge>
             <span className="text-gray-600">minutes</span>
@@ -43,7 +43,7 @@ export const FinalizeStep: React.FC<FinalizeStepProps> = ({
             <Button 
               variant="outline" 
               size="sm" 
-              className="ml-2"
+              className="ml-2 border-gray-200 text-gray-700 hover:bg-gray-50"
               onClick={onToggleTimer}
             >
               {isTimerRunning ? (
@@ -57,12 +57,12 @@ export const FinalizeStep: React.FC<FinalizeStepProps> = ({
           <div className="space-y-2 mb-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <Badge className="bg-purple-100 text-purple-800 border-purple-200 font-mono">
+                <Badge className="bg-purple-50 text-purple-800 border-purple-200 font-mono">
                   {task.cptCode}
                 </Badge>
                 <span className="text-sm text-gray-600">{task.cptDescription}</span>
               </div>
-              <span className="font-medium">{formatTime(timer)}/20 min</span>
+              <span className="font-medium text-gray-900">{formatTime(timer)}/20 min</span>
             </div>
             <Progress value={(timer / (20 * 60)) * 100} className="h-2" />
           </div>

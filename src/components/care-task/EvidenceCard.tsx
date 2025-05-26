@@ -46,18 +46,18 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({
 
   return (
     <>
-      <Card className={`${getStatusColor()} transition-colors h-full`}>
+      <Card className={`${getStatusColor()} transition-colors h-full shadow-sm hover:shadow-md`}>
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="shrink-0 text-xs">
+              <Badge variant="outline" className="shrink-0 text-xs bg-gray-50 text-gray-700 border-gray-200">
                 {evidence.timestamp}
               </Badge>
               <Badge 
                 className={`text-xs ${
                   evidence.importance === 'high' 
-                    ? 'bg-red-100 text-red-800' 
-                    : 'bg-yellow-100 text-yellow-800'
+                    ? 'bg-red-50 text-red-700 border-red-200' 
+                    : 'bg-yellow-50 text-yellow-700 border-yellow-200'
                 }`}
               >
                 {evidence.importance}
@@ -80,7 +80,7 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({
               variant="outline"
               size="sm"
               onClick={() => setShowAudioDialog(true)}
-              className="w-full"
+              className="w-full border-gray-200 text-gray-700 hover:bg-gray-50"
             >
               <AudioWaveform size={14} className="mr-2" />
               View Audio & Transcript
@@ -119,12 +119,12 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({
           </DialogHeader>
           
           <div className="space-y-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
               <h4 className="font-medium mb-2 text-blue-900">Key Moment</h4>
               <p className="text-blue-800 italic">"{evidence.text}"</p>
             </div>
             
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg">
               <h4 className="font-medium mb-3 flex items-center gap-2">
                 <AudioWaveform size={16} />
                 Audio Recording
@@ -136,8 +136,8 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({
             </div>
             
             <div>
-              <h4 className="font-medium mb-2">Full Conversation Transcript</h4>
-              <div className="bg-white p-4 rounded-md border max-h-64 overflow-y-auto">
+              <h4 className="font-medium mb-2 text-gray-900">Full Conversation Transcript</h4>
+              <div className="bg-white p-4 rounded-md border border-gray-200 max-h-64 overflow-y-auto">
                 <div className="space-y-2 text-sm">
                   <div className="flex gap-4">
                     <span className="text-blue-600 font-medium min-w-16">0:15</span>
