@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, BadgeAlert } from 'lucide-react';
+import { BadgeAlert } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { patientData } from '@/data/patientData';
 import { ModifiedOverviewTab } from './sidebar/ModifiedOverviewTab';
@@ -79,7 +79,7 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
         <div className="flex flex-col h-full">
           {/* Sidebar Header with modern minimal design */}
           <div className="relative bg-white shadow-sm">
-            <div className="relative z-10 flex items-center justify-between p-6">
+            <div className="relative z-10 p-6">
               <div className="flex items-center gap-3">
                 <img 
                   src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" 
@@ -91,13 +91,6 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
                   <p className="text-sm text-[#2A6349]">Patient Care Assistant</p>
                 </div>
               </div>
-              <button 
-                className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100/50"
-                onClick={() => setIsSidebarOpen(false)}
-                aria-label="Close sidebar"
-              >
-                <X size={24} />
-              </button>
             </div>
           </div>
           
