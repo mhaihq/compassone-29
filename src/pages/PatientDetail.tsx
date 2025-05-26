@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +9,7 @@ import MedicalHistory from '@/components/MedicalHistory';
 import TreatmentPlan from '@/components/TreatmentPlan';
 import ProviderNotes from '@/components/ProviderNotes';
 import ProviderAssignment from '@/components/ProviderAssignment';
+import { PatientInfoCard } from '@/components/layout/sidebar/PatientInfoCard';
 import { 
   Brain, CalendarCheck, ClockAlert, Heart, MessageCircle
 } from 'lucide-react';
@@ -33,6 +33,32 @@ const PatientDetail = () => {
       navigate(`/patient/${patientId}`, { replace: true });
     }
   }, [searchParams, navigate, patientId]);
+
+  // Calculate patient age and other data for the patient info card
+  const calculateAge = (dateOfBirth: string) => {
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    return age;
+  };
+
+  const patientAge = calculateAge(patientData.dateOfBirth);
+  
+  // Use the most recent session note date as last contacted
+  const lastContactedFormatted = patientData.sessionNotes.length > 0 
+    ? new Date(patientData.sessionNotes[0].date).toLocaleDateString()
+    : 'No recent contact';
+  
+  // Extract medical conditions from the pastConditions array
+  const medicalConditions = patientData.medicalHistory.pastConditions
+    .filter(condition => condition.status === 'Active')
+    .map(condition => condition.condition);
 
   // For now, we only support Sthita Pujari's full data
   // Other patients would need their own data structure
@@ -96,6 +122,16 @@ const PatientDetail = () => {
         </Button>
         
         <PatientHeader patient={patientData} />
+        
+        {/* Add the compact patient info card */}
+        <div className="mb-6">
+          <PatientInfoCard 
+            patientData={patientData}
+            patientAge={patientAge}
+            lastContactedFormatted={lastContactedFormatted}
+            medicalConditions={medicalConditions}
+          />
+        </div>
         
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="w-full justify-start mb-6 bg-transparent border-b rounded-none h-auto p-0 overflow-x-auto medical-scrollbar">
