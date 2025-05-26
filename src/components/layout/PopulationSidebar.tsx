@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ArrowLeft } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 import { PopulationSidebarTabs } from './sidebar/PopulationSidebarTabs';
 import { TaskQueueContent } from './sidebar/population/TaskQueueContent';
 import { PatientsListContent } from './sidebar/population/PatientsListContent';
@@ -15,7 +16,7 @@ export const PopulationSidebar = () => {
   const [activeTab, setActiveTab] = useState<'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights'>('taskQueue');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewingTask, setIsViewingTask] = useState(false);
   const location = useLocation();
   
   // Adjust positioning based on current page
@@ -24,11 +25,16 @@ export const PopulationSidebar = () => {
 
   const handleOpenTask = (taskId: string) => {
     setSelectedTaskId(taskId);
-    setIsModalOpen(true);
+    setIsViewingTask(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleBackToTasks = () => {
+    setIsViewingTask(false);
+    setSelectedTaskId(null);
+  };
+
+  const handleTaskComplete = () => {
+    setIsViewingTask(false);
     setSelectedTaskId(null);
   };
   
@@ -53,14 +59,28 @@ export const PopulationSidebar = () => {
           <div className="relative bg-white shadow-sm">
             <div className="relative z-10 flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
+                {isViewingTask && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleBackToTasks}
+                    className="mr-2 p-2 hover:bg-gray-100"
+                  >
+                    <ArrowLeft size={16} />
+                  </Button>
+                )}
                 <img 
                   src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" 
                   alt="Hana Clinic Logo" 
                   className="h-14 w-auto"
                 />
                 <div>
-                  <h2 className="text-2xl font-bold text-[#1E4D36]">Hana Compass</h2>
-                  <p className="text-sm text-[#2A6349]">Population Health Assistant</p>
+                  <h2 className="text-2xl font-bold text-[#1E4D36]">
+                    {isViewingTask ? 'Care Task Details' : 'Hana Compass'}
+                  </h2>
+                  <p className="text-sm text-[#2A6349]">
+                    {isViewingTask ? 'Population Health Task' : 'Population Health Assistant'}
+                  </p>
                 </div>
               </div>
               <button 
@@ -73,55 +93,39 @@ export const PopulationSidebar = () => {
             </div>
           </div>
           
-          {/* Navigation Tabs - Made sticky */}
-          <div className="sticky top-0 z-10">
-            <PopulationSidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-          </div>
+          {/* Navigation Tabs - Only show when not viewing a task */}
+          {!isViewingTask && (
+            <div className="sticky top-0 z-10">
+              <PopulationSidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            </div>
+          )}
           
-          {/* Tab Content - with relative positioning for modal overlay */}
-          <div className="flex-grow overflow-y-auto p-4 relative">
-            {/* Modal overlay when open */}
-            {isModalOpen && (
-              <div className="absolute inset-0 bg-black/20 z-20">
-                <div className="absolute inset-4 bg-white rounded-lg shadow-xl border overflow-hidden">
-                  {/* Modal header */}
-                  <div className="flex items-center justify-between p-4 border-b bg-gray-50">
-                    <h3 className="text-lg font-semibold text-[#1E4D36]">Care Task Details</h3>
-                    <button 
-                      onClick={handleCloseModal}
-                      className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
-                  
-                  {/* Modal content */}
-                  <div className="p-4 overflow-y-auto h-full">
-                    {selectedTaskId && (
-                      <CareTaskContent 
-                        taskId={selectedTaskId} 
-                        onComplete={handleCloseModal}
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
+          {/* Tab Content */}
+          <div className="flex-grow overflow-y-auto p-4">
+            {isViewingTask && selectedTaskId ? (
+              <CareTaskContent 
+                taskId={selectedTaskId} 
+                onComplete={handleTaskComplete}
+              />
+            ) : (
+              <>
+                {activeTab === 'taskQueue' && <TaskQueueContent onOpenTask={handleOpenTask} />}
+                {activeTab === 'patients' && <PatientsListContent />}
+                {activeTab === 'campaigns' && <CampaignsContent />}
+                {activeTab === 'billing' && <BillingContent />}
+                {activeTab === 'insights' && <InsightsContent />}
+              </>
             )}
-            
-            {/* Regular tab content */}
-            {activeTab === 'taskQueue' && <TaskQueueContent onOpenTask={handleOpenTask} />}
-            {activeTab === 'patients' && <PatientsListContent />}
-            {activeTab === 'campaigns' && <CampaignsContent />}
-            {activeTab === 'billing' && <BillingContent />}
-            {activeTab === 'insights' && <InsightsContent />}
           </div>
           
-          {/* Footer */}
-          <div className="bg-white shadow-sm p-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500 text-center">
-              Hana Compass • Population Health • 5 Active Patients • Last updated: 2 hours ago
-            </p>
-          </div>
+          {/* Footer - Only show when not viewing a task */}
+          {!isViewingTask && (
+            <div className="bg-white shadow-sm p-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500 text-center">
+                Hana Compass • Population Health • 5 Active Patients • Last updated: 2 hours ago
+              </p>
+            </div>
+          )}
         </div>
       </SheetContent>
     </Sheet>
