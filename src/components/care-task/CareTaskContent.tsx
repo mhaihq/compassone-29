@@ -316,13 +316,92 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
 
   return (
     <div className="max-w-6xl mx-auto">
-      {/* Step Progress */}
-      <div className="mb-6">
-        <StepProgress 
-          currentStep={currentStep}
-          completedSteps={completedSteps}
-          steps={STEPS}
-        />
+      {/* Combined Patient Info and Step Progress */}
+      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+        {/* Patient Information Row */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4 text-[#1E4D36]" />
+              <button 
+                onClick={handlePatientNameClick}
+                className="font-medium text-gray-800 hover:text-[#1E4D36] hover:underline cursor-pointer"
+              >
+                {task.patientName}
+              </button>
+            </div>
+            <Badge variant="outline" className="bg-white border-[#1E4D36] text-[#1E4D36]">
+              28 y/o • Male
+            </Badge>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <Clock className="w-3 h-3" />
+            <span>Last contact: 15/05/2025</span>
+          </div>
+        </div>
+
+        {/* Medical Conditions */}
+        <div className="flex flex-wrap gap-1 mb-4">
+          <Badge variant="outline" className="text-xs py-0 bg-white text-[#1E4D36] border-[#1E4D36]">
+            Generalized Anxiety Disorder
+          </Badge>
+          <Badge variant="outline" className="text-xs py-0 bg-white text-[#1E4D36] border-[#1E4D36]">
+            Hypothyroidism
+          </Badge>
+        </div>
+
+        {/* Step Progress */}
+        <div className="flex items-center justify-between">
+          {STEPS.map((step, index) => {
+            const stepNumber = index + 1;
+            const isCompleted = completedSteps.includes(stepNumber);
+            const isCurrent = currentStep === stepNumber;
+            const isAccessible = stepNumber <= currentStep || isCompleted;
+
+            return (
+              <div key={stepNumber} className="flex items-center flex-1">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium border-2 transition-all duration-200 ${
+                      isCompleted
+                        ? "bg-green-500 border-green-500 text-white shadow-sm"
+                        : isCurrent
+                        ? "bg-blue-500 border-blue-500 text-white shadow-md"
+                        : isAccessible
+                        ? "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
+                        : "bg-gray-50 border-gray-200 text-gray-400"
+                    }`}
+                  >
+                    {stepNumber}
+                  </div>
+                  <span
+                    className={`mt-1 text-xs font-medium text-center max-w-20 ${
+                      isCurrent
+                        ? "text-blue-600"
+                        : isCompleted
+                        ? "text-green-600"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {step}
+                  </span>
+                </div>
+                
+                {index < STEPS.length - 1 && (
+                  <div
+                    className={`flex-1 h-0.5 mx-3 transition-colors duration-200 ${
+                      isCompleted || (isCurrent && index + 1 < currentStep)
+                        ? "bg-green-500"
+                        : stepNumber < currentStep
+                        ? "bg-blue-500"
+                        : "bg-gray-200"
+                    }`}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Main Content Container */}
