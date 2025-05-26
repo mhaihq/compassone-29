@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   AlertTriangle, Clock, Play, Pause, User
@@ -317,76 +316,8 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
 
   return (
     <div className="max-w-6xl mx-auto">
-      {/* Compact Header Section */}
-      <div className="mb-8">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-          <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-3 mb-2">
-              <h1 className="text-2xl font-semibold text-gray-900">{task.title}</h1>
-              <Badge className={`bg-${task.categoryColor}-50 text-${task.categoryColor}-700 border-${task.categoryColor}-200`}>
-                {task.category}
-              </Badge>
-              <Badge className={`bg-${task.status === 'urgent' ? 'red' : 'amber'}-50 text-${task.status === 'urgent' ? 'red' : 'amber'}-700 border-${task.status === 'urgent' ? 'red' : 'amber'}-200`}>
-                {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-              </Badge>
-            </div>
-            <p className="text-gray-600">{task.description}</p>
-          </div>
-          
-          {/* Compact Timer */}
-          <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border">
-            <Clock className="h-4 w-4 text-gray-500" />
-            <div className="text-lg font-bold font-mono text-gray-900">
-              {formatTime(timer)}
-            </div>
-            <Button 
-              variant={isTimerRunning ? "destructive" : "default"}
-              onClick={() => setIsTimerRunning(!isTimerRunning)}
-              className={isTimerRunning ? "" : "bg-[#1E4D36] hover:bg-[#2A6349]"}
-              size="sm"
-            >
-              {isTimerRunning ? (
-                <Pause size={14} />
-              ) : (
-                <Play size={14} />
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {/* Patient Info & Task Details */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-gray-400" />
-            <button 
-              onClick={handlePatientNameClick}
-              className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
-            >
-              {task.patientName}
-            </button>
-            <span className="text-gray-400">•</span>
-            <span className="text-sm text-gray-500">ID: {task.patientId}</span>
-          </div>
-          
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-            <div>
-              <span className="font-medium">Task:</span> {task.id}
-            </div>
-            <div>
-              <span className="font-medium">CPT:</span> {task.cptCode}
-            </div>
-            <div>
-              <span className="font-medium">Expected:</span> {task.minutes} min
-            </div>
-            <div>
-              <span className="font-medium">Step:</span> {STEPS[currentStep - 1]}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Integrated Progress Bar */}
-      <div className="mb-8">
+      {/* Step Progress */}
+      <div className="mb-6">
         <StepProgress 
           currentStep={currentStep}
           completedSteps={completedSteps}

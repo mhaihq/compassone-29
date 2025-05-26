@@ -15,7 +15,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
   steps
 }) => {
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-lg p-6">
+    <div className="w-full bg-white border border-gray-200 rounded-lg p-4">
       <div className="flex items-center justify-between">
         {steps.map((step, index) => {
           const stepNumber = index + 1;
@@ -28,7 +28,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all duration-200",
+                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium border-2 transition-all duration-200",
                     isCompleted
                       ? "bg-green-500 border-green-500 text-white shadow-sm"
                       : isCurrent
@@ -39,14 +39,14 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                   )}
                 >
                   {isCompleted ? (
-                    <Check size={16} />
+                    <Check size={14} />
                   ) : (
                     stepNumber
                   )}
                 </div>
                 <span
                   className={cn(
-                    "mt-3 text-sm font-medium text-center max-w-24",
+                    "mt-2 text-xs font-medium text-center max-w-20",
                     isCurrent
                       ? "text-blue-600"
                       : isCompleted
@@ -61,7 +61,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
               {index < steps.length - 1 && (
                 <div
                   className={cn(
-                    "flex-1 h-0.5 mx-6 transition-colors duration-200",
+                    "flex-1 h-0.5 mx-4 transition-colors duration-200",
                     isCompleted || (isCurrent && index + 1 < currentStep)
                       ? "bg-green-500"
                       : stepNumber < currentStep
