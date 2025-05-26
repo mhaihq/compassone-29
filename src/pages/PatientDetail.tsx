@@ -121,87 +121,12 @@ const PatientDetail = () => {
           Back to Patients
         </Button>
         
-        <PatientHeader patient={patientData} />
-        
-        {/* Add the compact patient info card */}
-        <div className="mb-6">
-          <PatientInfoCard 
-            patientData={patientData}
-            patientAge={patientAge}
-            lastContactedFormatted={lastContactedFormatted}
-            medicalConditions={medicalConditions}
-          />
+        <div className="text-center py-12">
+          <h2 className="text-3xl font-bold mb-4">Patient Details</h2>
+          <p className="text-muted-foreground text-lg">
+            Use the Hana Compass sidebar to access detailed patient information and care tasks.
+          </p>
         </div>
-        
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="w-full justify-start mb-6 bg-transparent border-b rounded-none h-auto p-0 overflow-x-auto medical-scrollbar">
-            <TabsTrigger 
-              value="overview" 
-              className="flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-6 py-3"
-            >
-              <Brain className="h-4 w-4" />
-              <span>Overview</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="sessions" 
-              className="flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-6 py-3"
-            >
-              <MessageCircle className="h-4 w-4" />
-              <span>Session Notes</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="plan" 
-              className="flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-6 py-3"
-            >
-              <CalendarCheck className="h-4 w-4" />
-              <span>Treatment Plan</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="history" 
-              className="flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-6 py-3"
-            >
-              <Heart className="h-4 w-4" />
-              <span>Medical History</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="providers" 
-              className="flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-6 py-3"
-            >
-              <ClockAlert className="h-4 w-4" />
-              <span>Care Team</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="overview" className="fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <MedicalHistory patient={patientData} />
-              </div>
-              <div>
-                <TreatmentPlan patient={patientData} />
-              </div>
-            </div>
-            <div className="mt-6">
-              <ProviderNotes patient={patientData} />
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="sessions" className="fade-in">
-            <ProviderNotes patient={patientData} />
-          </TabsContent>
-          
-          <TabsContent value="plan" className="fade-in">
-            <TreatmentPlan patient={patientData} />
-          </TabsContent>
-          
-          <TabsContent value="history" className="fade-in">
-            <MedicalHistory patient={patientData} />
-          </TabsContent>
-          
-          <TabsContent value="providers" className="fade-in">
-            <ProviderAssignment />
-          </TabsContent>
-        </Tabs>
       </main>
 
       <HanaSidebar autoOpen={shouldOpenSidebar} />
@@ -222,34 +147,6 @@ const PatientDetail = () => {
         
         .pulse-animation {
           animation: pulse 2s infinite;
-        }
-        
-        .medical-scrollbar::-webkit-scrollbar {
-          height: 4px;
-        }
-        
-        .medical-scrollbar::-webkit-scrollbar-track {
-          background: #f1f1f1;
-        }
-        
-        .medical-scrollbar::-webkit-scrollbar-thumb {
-          background: #888;
-          border-radius: 2px;
-        }
-
-        .fade-in {
-          animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
         }
         `}
       </style>

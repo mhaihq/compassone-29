@@ -1,17 +1,8 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { patientsData } from '@/data/patientsData';
-import PatientListView from '@/components/PatientListView';
 import PopulationSidebar from '@/components/layout/PopulationSidebar';
 
 const Index = () => {
-  const navigate = useNavigate();
-
-  const handlePatientClick = (patientId: string) => {
-    navigate(`/patient/${patientId}`);
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card backdrop-blur-md bg-white/80">
@@ -25,10 +16,12 @@ const Index = () => {
       </header>
       
       <main className="container py-6">
-        <PatientListView 
-          patients={patientsData} 
-          onPatientClick={handlePatientClick}
-        />
+        <div className="text-center py-12">
+          <h2 className="text-3xl font-bold mb-4">Welcome to CareHealth EHR</h2>
+          <p className="text-muted-foreground text-lg">
+            Use the Hana Compass sidebar to access patient information and care tasks.
+          </p>
+        </div>
       </main>
 
       <PopulationSidebar />

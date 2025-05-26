@@ -4,8 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, User, Phone, Mail, MapPin, Activity, Clock, FileText } from 'lucide-react';
 import { patientsData } from '@/data/patientsData';
-import { patientData } from '@/data/patientData';
-import { PatientInfoCard } from '../PatientInfoCard';
 
 interface PatientDetailContentProps {
   patientId: string;
@@ -22,19 +20,6 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
     );
   }
 
-  const calculateAge = (dateOfBirth: string) => {
-    const birthDate = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    
-    return age;
-  };
-
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'Severe': return 'bg-red-100 text-red-800 border-red-200';
@@ -44,33 +29,8 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
     }
   };
 
-  // Only show PatientInfoCard for the patient with full data (P100592)
-  const showPatientInfoCard = patientId === 'P100592';
-  
-  let patientAge, lastContactedFormatted, medicalConditions;
-  
-  if (showPatientInfoCard) {
-    patientAge = calculateAge(patientData.dateOfBirth);
-    lastContactedFormatted = patientData.sessionNotes.length > 0 
-      ? new Date(patientData.sessionNotes[0].date).toLocaleDateString()
-      : 'No recent contact';
-    medicalConditions = patientData.medicalHistory.pastConditions
-      .filter(condition => condition.status === 'Active')
-      .map(condition => condition.condition);
-  }
-
   return (
     <div className="space-y-4">
-      {/* Add PatientInfoCard only for patient with full data */}
-      {showPatientInfoCard && (
-        <PatientInfoCard 
-          patientData={patientData}
-          patientAge={patientAge!}
-          lastContactedFormatted={lastContactedFormatted!}
-          medicalConditions={medicalConditions!}
-        />
-      )}
-
       {/* Primary Diagnosis */}
       <Card>
         <CardHeader className="pb-3">
