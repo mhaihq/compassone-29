@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,11 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Clock, User, ArrowRight, Search, Filter, ChevronDown, ChevronRight } from 'lucide-react';
 import { populationTasksData, PopulationTask } from '@/data/populationTasksData';
-import { useNavigate } from 'react-router-dom';
+import { CareTaskModal } from '@/components/care-task/CareTaskModal';
 
-const TaskRow: React.FC<{ task: PopulationTask }> = ({ task }) => {
-  const navigate = useNavigate();
-  
+const TaskRow: React.FC<{ task: PopulationTask; onOpenTask: (taskId: string) => void }> = ({ task, onOpenTask }) => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'High': return 'bg-red-50 text-red-700 border-red-200';
@@ -22,7 +21,7 @@ const TaskRow: React.FC<{ task: PopulationTask }> = ({ task }) => {
   };
 
   const handleTakeAction = () => {
-    navigate(`/care-task/${task.id}`);
+    onOpenTask(task.id);
   };
 
   return (
@@ -61,7 +60,7 @@ const TaskRow: React.FC<{ task: PopulationTask }> = ({ task }) => {
   );
 };
 
-const TaskBin: React.FC<{ title: string; tasks: PopulationTask[]; count: number }> = ({ title, tasks, count }) => {
+const TaskBin: React.FC<{ title: string; tasks: PopulationTask[]; count: number; onOpenTask: (taskId: string) => void }> = ({ title, tasks, count, onOpenTask }) => {
   const [isOpen, setIsOpen] = useState(true);
   
   const getBinColor = (title: string) => {
@@ -92,7 +91,7 @@ const TaskBin: React.FC<{ title: string; tasks: PopulationTask[]; count: number 
           <div className="bg-white">
             {tasks.length > 0 ? (
               tasks.map(task => (
-                <TaskRow key={task.id} task={task} />
+                <TaskRow key={task.id} task={task} onOpenTask={onOpenTask} />
               ))
             ) : (
               <div className="p-6 text-center text-gray-500 text-sm">
@@ -110,6 +109,18 @@ export const TaskQueueContent: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenTask = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTaskId(null);
+  };
 
   const filteredTasks = populationTasksData.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -190,6 +201,7 @@ export const TaskQueueContent: React.FC = () => {
             title={binTitle} 
             tasks={tasks} 
             count={tasks.length}
+            onOpenTask={handleOpenTask}
           />
         ))}
       </div>
@@ -200,6 +212,13 @@ export const TaskQueueContent: React.FC = () => {
           <p>No tasks match your current filters</p>
         </div>
       )}
+
+      {/* Care Task Modal */}
+      <CareTaskModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        taskId={selectedTaskId}
+      />
     </div>
   );
 };
