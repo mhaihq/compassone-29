@@ -22,9 +22,7 @@ const TaskRow: React.FC<{ task: PopulationTask }> = ({ task }) => {
   };
 
   const handleTakeAction = () => {
-    if (task.patientId === 'P100592') {
-      navigate(`/patient/${task.patientId}?openSidebar=true`);
-    }
+    navigate(`/care-task/${task.id}`);
   };
 
   return (
