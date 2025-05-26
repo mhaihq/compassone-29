@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, User, Phone, Mail, MapPin, Activity, Clock, FileText } from 'lucide-react';
 import { patientsData } from '@/data/patientsData';
+import { PatientInfoCard } from '../PatientInfoCard';
 
 interface PatientDetailContentProps {
   patientId: string;
@@ -42,39 +43,34 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
     }
   };
 
+  // Prepare data for PatientInfoCard
+  const patientAge = calculateAge(patient.dateOfBirth);
+  const lastContactedFormatted = new Date(patient.lastVisit).toLocaleDateString();
+  
+  // Create a simplified patient data object that matches PatientData interface
+  const patientDataForCard = {
+    name: patient.name,
+    gender: patient.gender,
+    dateOfBirth: patient.dateOfBirth,
+    sessionNotes: [{ date: patient.lastVisit }], // Mock session notes for last contact
+    medicalHistory: {
+      pastConditions: [
+        { condition: patient.primaryDiagnosis, status: 'Active' as const }
+      ]
+    }
+  };
+
+  const medicalConditions = [patient.primaryDiagnosis];
+
   return (
     <div className="space-y-4">
-      {/* Patient Header */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#1E4D36]/10 rounded-full">
-                <User className="h-5 w-5 text-[#1E4D36]" />
-              </div>
-              <div>
-                <CardTitle className="text-[#1E4D36]">{patient.name}</CardTitle>
-                <p className="text-sm text-gray-600">ID: {patient.id}</p>
-              </div>
-            </div>
-            <Badge className={`${getSeverityColor(patient.severity)}`}>
-              {patient.severity}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-400" />
-              <span>{calculateAge(patient.dateOfBirth)} years old • {patient.gender}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4 text-gray-400" />
-              <span>Status: {patient.status}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Add PatientInfoCard at the top */}
+      <PatientInfoCard 
+        patientData={patientDataForCard}
+        patientAge={patientAge}
+        lastContactedFormatted={lastContactedFormatted}
+        medicalConditions={medicalConditions}
+      />
 
       {/* Primary Diagnosis */}
       <Card>
