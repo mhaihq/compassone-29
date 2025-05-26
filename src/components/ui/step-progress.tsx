@@ -15,8 +15,8 @@ export const StepProgress: React.FC<StepProgressProps> = ({
   steps
 }) => {
   return (
-    <div className="w-full bg-white border-b pb-4 mb-6">
-      <div className="flex items-center justify-between max-w-4xl mx-auto px-4">
+    <div className="w-full bg-white border border-gray-200 rounded-lg p-6">
+      <div className="flex items-center justify-between">
         {steps.map((step, index) => {
           const stepNumber = index + 1;
           const isCompleted = completedSteps.includes(stepNumber);
@@ -24,17 +24,17 @@ export const StepProgress: React.FC<StepProgressProps> = ({
           const isAccessible = stepNumber <= currentStep || isCompleted;
 
           return (
-            <div key={stepNumber} className="flex items-center w-full">
+            <div key={stepNumber} className="flex items-center flex-1">
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-colors",
+                    "w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all duration-200",
                     isCompleted
-                      ? "bg-green-500 border-green-500 text-white"
+                      ? "bg-green-500 border-green-500 text-white shadow-sm"
                       : isCurrent
-                      ? "bg-blue-500 border-blue-500 text-white"
+                      ? "bg-blue-500 border-blue-500 text-white shadow-md"
                       : isAccessible
-                      ? "bg-gray-100 border-gray-300 text-gray-600"
+                      ? "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
                       : "bg-gray-50 border-gray-200 text-gray-400"
                   )}
                 >
@@ -46,7 +46,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                 </div>
                 <span
                   className={cn(
-                    "mt-2 text-xs font-medium text-center max-w-20",
+                    "mt-3 text-sm font-medium text-center max-w-24",
                     isCurrent
                       ? "text-blue-600"
                       : isCompleted
@@ -61,9 +61,11 @@ export const StepProgress: React.FC<StepProgressProps> = ({
               {index < steps.length - 1 && (
                 <div
                   className={cn(
-                    "flex-1 h-0.5 mx-4 transition-colors",
+                    "flex-1 h-0.5 mx-6 transition-colors duration-200",
                     isCompleted || (isCurrent && index + 1 < currentStep)
                       ? "bg-green-500"
+                      : stepNumber < currentStep
+                      ? "bg-blue-500"
                       : "bg-gray-200"
                   )}
                 />

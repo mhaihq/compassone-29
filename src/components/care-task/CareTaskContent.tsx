@@ -316,12 +316,12 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header Section with Timer and Task Info */}
-      <div className="space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-3">
+    <div className="max-w-6xl mx-auto">
+      {/* Compact Header Section */}
+      <div className="mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-3 mb-2">
               <h1 className="text-2xl font-semibold text-gray-900">{task.title}</h1>
               <Badge className={`bg-${task.categoryColor}-50 text-${task.categoryColor}-700 border-${task.categoryColor}-200`}>
                 {task.category}
@@ -331,22 +331,10 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
               </Badge>
             </div>
             <p className="text-gray-600">{task.description}</p>
-            {/* Clickable Patient Name */}
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-gray-400" />
-              <button 
-                onClick={handlePatientNameClick}
-                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
-              >
-                {task.patientName}
-              </button>
-              <span className="text-gray-400">•</span>
-              <span className="text-sm text-gray-500">ID: {task.patientId}</span>
-            </div>
           </div>
           
-          {/* Compact Timer Section */}
-          <div className="flex items-center gap-3 bg-gray-50 px-3 py-2 rounded-lg border">
+          {/* Compact Timer */}
+          <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border">
             <Clock className="h-4 w-4 text-gray-500" />
             <div className="text-lg font-bold font-mono text-gray-900">
               {formatTime(timer)}
@@ -366,39 +354,51 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
           </div>
         </div>
 
-        {/* Task Information Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
-          <div>
-            <dt className="text-sm font-medium text-gray-500">Task ID</dt>
-            <dd className="font-mono text-sm text-gray-900 mt-1">{task.id}</dd>
+        {/* Patient Info & Task Details */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <User className="h-4 w-4 text-gray-400" />
+            <button 
+              onClick={handlePatientNameClick}
+              className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+            >
+              {task.patientName}
+            </button>
+            <span className="text-gray-400">•</span>
+            <span className="text-sm text-gray-500">ID: {task.patientId}</span>
           </div>
-          <div>
-            <dt className="text-sm font-medium text-gray-500">CPT Code</dt>
-            <dd className="text-sm text-gray-900 mt-1">{task.cptCode}</dd>
-          </div>
-          <div>
-            <dt className="text-sm font-medium text-gray-500">Expected Time</dt>
-            <dd className="text-sm text-gray-900 mt-1">{task.minutes} minutes</dd>
-          </div>
-          <div>
-            <dt className="text-sm font-medium text-gray-500">Current Step</dt>
-            <dd className="text-sm text-gray-900 mt-1">{STEPS[currentStep - 1]}</dd>
+          
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+            <div>
+              <span className="font-medium">Task:</span> {task.id}
+            </div>
+            <div>
+              <span className="font-medium">CPT:</span> {task.cptCode}
+            </div>
+            <div>
+              <span className="font-medium">Expected:</span> {task.minutes} min
+            </div>
+            <div>
+              <span className="font-medium">Step:</span> {STEPS[currentStep - 1]}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <StepProgress 
-        currentStep={currentStep}
-        completedSteps={completedSteps}
-        steps={STEPS}
-      />
+      {/* Integrated Progress Bar */}
+      <div className="mb-8">
+        <StepProgress 
+          currentStep={currentStep}
+          completedSteps={completedSteps}
+          steps={STEPS}
+        />
+      </div>
 
-      {/* Main Content - Full Width */}
-      <div className="space-y-6">
+      {/* Main Content Container */}
+      <div className="space-y-8">
         {/* Step Content */}
         {currentStep === 1 && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <RiskAssessmentStep
               task={task}
               riskApproved={riskApproved}
@@ -416,7 +416,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
         )}
 
         {currentStep === 2 && riskApproved && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <CarePlanStep
               task={task}
               selectedActions={selectedActions}
@@ -438,7 +438,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
         )}
 
         {currentStep === 3 && riskApproved && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <FollowUpStep />
             <div className="flex justify-between">
               <Button variant="outline" onClick={() => goToStep(2)}>
@@ -452,7 +452,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
         )}
 
         {currentStep === 4 && riskApproved && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <FinalizeStep
               task={task}
               timer={timer}
