@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { Brain, ClipboardList, Calendar, FileText } from 'lucide-react';
+import { Brain, Calendar, FileText, ClipboardList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SidebarTabsProps {
-  activeTab: 'overview' | 'tasks' | 'careLog' | 'billing';
-  setActiveTab: (tab: 'overview' | 'tasks' | 'careLog' | 'billing') => void;
+  activeTab: 'overview' | 'careLog' | 'protocols' | 'billing';
+  setActiveTab: (tab: 'overview' | 'careLog' | 'protocols' | 'billing') => void;
 }
 
 export const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTab }) => {
@@ -22,15 +22,6 @@ export const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTa
           <span>Overview</span>
         </Button>
         <Button 
-          variant={activeTab === 'tasks' ? 'default' : 'outline'} 
-          size="sm"
-          className={`px-4 py-2 ${activeTab === 'tasks' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
-          onClick={() => setActiveTab('tasks')}
-        >
-          <ClipboardList size={18} className="mr-2" />
-          <span>Care Tasks</span>
-        </Button>
-        <Button 
           variant={activeTab === 'careLog' ? 'default' : 'outline'} 
           size="sm"
           className={`px-4 py-2 ${activeTab === 'careLog' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
@@ -38,6 +29,15 @@ export const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTa
         >
           <Calendar size={18} className="mr-2" />
           <span>Care Log</span>
+        </Button>
+        <Button 
+          variant={activeTab === 'protocols' ? 'default' : 'outline'} 
+          size="sm"
+          className={`px-4 py-2 ${activeTab === 'protocols' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          onClick={() => setActiveTab('protocols')}
+        >
+          <ClipboardList size={18} className="mr-2" />
+          <span>Protocols</span>
         </Button>
         <Button 
           variant={activeTab === 'billing' ? 'default' : 'outline'} 

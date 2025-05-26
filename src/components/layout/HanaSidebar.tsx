@@ -5,8 +5,8 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { patientData } from '@/data/patientData';
 import { ModifiedOverviewTab } from './sidebar/ModifiedOverviewTab';
 import { SidebarTabs } from './sidebar/SidebarTabs';
-import { CareTasksContent } from './sidebar/CareTasksContent';
 import { AgentsCareLogContents } from './sidebar/AgentsCareLogContents';
+import { ProtocolsContent } from './sidebar/ProtocolsContent';
 import { BillingContent } from './sidebar/BillingContent';
 import { PatientInfoCard } from './sidebar/PatientInfoCard';
 
@@ -29,7 +29,7 @@ interface HanaSidebarProps {
 }
 
 export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'careLog' | 'billing'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'careLog' | 'protocols' | 'billing'>('overview');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Auto-open sidebar when autoOpen prop is true
@@ -55,9 +55,9 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
     day: 'numeric' 
   });
 
-  // Handler to switch to tasks tab when priority task is clicked
-  const handleTaskClick = () => {
-    setActiveTab('tasks');
+  // Handler to switch to protocols tab when needed
+  const handleProtocolClick = () => {
+    setActiveTab('protocols');
   };
   
   return (
@@ -114,9 +114,9 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
           
           {/* Tab Content */}
           <div className="flex-grow overflow-y-auto p-4">
-            {activeTab === 'overview' && <ModifiedOverviewTab onTaskClick={handleTaskClick} />}
-            {activeTab === 'tasks' && <CareTasksContent />}
+            {activeTab === 'overview' && <ModifiedOverviewTab onTaskClick={handleProtocolClick} />}
             {activeTab === 'careLog' && <AgentsCareLogContents type="careLog" />}
+            {activeTab === 'protocols' && <ProtocolsContent />}
             {activeTab === 'billing' && <BillingContent />}
           </div>
           
