@@ -8,7 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Clock, User, ArrowRight, Search, Filter, ChevronDown, ChevronRight } from 'lucide-react';
 import { populationTasksData, PopulationTask } from '@/data/populationTasksData';
-import { CareTaskModal } from '@/components/care-task/CareTaskModal';
+
+interface TaskQueueContentProps {
+  onOpenTask: (taskId: string) => void;
+}
 
 const TaskRow: React.FC<{ task: PopulationTask; onOpenTask: (taskId: string) => void }> = ({ task, onOpenTask }) => {
   const getPriorityColor = (priority: string) => {
@@ -105,22 +108,10 @@ const TaskBin: React.FC<{ title: string; tasks: PopulationTask[]; count: number;
   );
 };
 
-export const TaskQueueContent: React.FC = () => {
+export const TaskQueueContent: React.FC<TaskQueueContentProps> = ({ onOpenTask }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleOpenTask = (taskId: string) => {
-    setSelectedTaskId(taskId);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedTaskId(null);
-  };
 
   const filteredTasks = populationTasksData.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -201,7 +192,7 @@ export const TaskQueueContent: React.FC = () => {
             title={binTitle} 
             tasks={tasks} 
             count={tasks.length}
-            onOpenTask={handleOpenTask}
+            onOpenTask={onOpenTask}
           />
         ))}
       </div>
@@ -212,13 +203,6 @@ export const TaskQueueContent: React.FC = () => {
           <p>No tasks match your current filters</p>
         </div>
       )}
-
-      {/* Care Task Modal */}
-      <CareTaskModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        taskId={selectedTaskId}
-      />
     </div>
   );
 };

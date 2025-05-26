@@ -8,16 +8,29 @@ import { PatientsListContent } from './sidebar/population/PatientsListContent';
 import { CampaignsContent } from './sidebar/population/CampaignsContent';
 import { BillingContent } from './sidebar/population/BillingContent';
 import { InsightsContent } from './sidebar/population/InsightsContent';
+import { CareTaskContent } from '@/components/care-task/CareTaskContent';
 import { useLocation } from 'react-router-dom';
 
 export const PopulationSidebar = () => {
   const [activeTab, setActiveTab] = useState<'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights'>('taskQueue');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
   
   // Adjust positioning based on current page
   const isPatientDetailPage = location.pathname.startsWith('/patient/');
   const iconPosition = isPatientDetailPage ? 'right-4 top-36' : 'right-4 top-20';
+
+  const handleOpenTask = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTaskId(null);
+  };
   
   return (
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
@@ -65,9 +78,38 @@ export const PopulationSidebar = () => {
             <PopulationSidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           </div>
           
-          {/* Tab Content */}
-          <div className="flex-grow overflow-y-auto p-4">
-            {activeTab === 'taskQueue' && <TaskQueueContent />}
+          {/* Tab Content - with relative positioning for modal overlay */}
+          <div className="flex-grow overflow-y-auto p-4 relative">
+            {/* Modal overlay when open */}
+            {isModalOpen && (
+              <div className="absolute inset-0 bg-black/20 z-20">
+                <div className="absolute inset-4 bg-white rounded-lg shadow-xl border overflow-hidden">
+                  {/* Modal header */}
+                  <div className="flex items-center justify-between p-4 border-b bg-gray-50">
+                    <h3 className="text-lg font-semibold text-[#1E4D36]">Care Task Details</h3>
+                    <button 
+                      onClick={handleCloseModal}
+                      className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                  
+                  {/* Modal content */}
+                  <div className="p-4 overflow-y-auto h-full">
+                    {selectedTaskId && (
+                      <CareTaskContent 
+                        taskId={selectedTaskId} 
+                        onComplete={handleCloseModal}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Regular tab content */}
+            {activeTab === 'taskQueue' && <TaskQueueContent onOpenTask={handleOpenTask} />}
             {activeTab === 'patients' && <PatientsListContent />}
             {activeTab === 'campaigns' && <CampaignsContent />}
             {activeTab === 'billing' && <BillingContent />}
