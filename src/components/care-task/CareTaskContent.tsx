@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   AlertTriangle, Clock, Play, Pause
@@ -319,7 +320,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
       {/* Step Progress and Timer */}
       <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
         {/* Timer Display */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-gray-500" />
             <span className="text-sm text-gray-600">Session Time:</span>
@@ -346,57 +347,59 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
           </div>
         </div>
 
-        {/* Step Progress */}
-        <div className="flex items-center justify-between">
-          {STEPS.map((step, index) => {
-            const stepNumber = index + 1;
-            const isCompleted = completedSteps.includes(stepNumber);
-            const isCurrent = currentStep === stepNumber;
-            const isAccessible = stepNumber <= currentStep || isCompleted;
+        {/* Step Progress - Full Width */}
+        <div className="w-full">
+          <div className="flex items-center justify-between">
+            {STEPS.map((step, index) => {
+              const stepNumber = index + 1;
+              const isCompleted = completedSteps.includes(stepNumber);
+              const isCurrent = currentStep === stepNumber;
+              const isAccessible = stepNumber <= currentStep || isCompleted;
 
-            return (
-              <div key={stepNumber} className="flex items-center flex-1">
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium border-2 transition-all duration-200 ${
-                      isCompleted
-                        ? "bg-green-500 border-green-500 text-white shadow-sm"
-                        : isCurrent
-                        ? "bg-blue-500 border-blue-500 text-white shadow-md"
-                        : isAccessible
-                        ? "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
-                        : "bg-gray-50 border-gray-200 text-gray-400"
-                    }`}
-                  >
-                    {stepNumber}
+              return (
+                <div key={stepNumber} className="flex items-center" style={{ width: `${100 / STEPS.length}%` }}>
+                  <div className="flex flex-col items-center w-full">
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium border-2 transition-all duration-200 ${
+                        isCompleted
+                          ? "bg-green-500 border-green-500 text-white shadow-sm"
+                          : isCurrent
+                          ? "bg-blue-500 border-blue-500 text-white shadow-md"
+                          : isAccessible
+                          ? "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
+                          : "bg-gray-50 border-gray-200 text-gray-400"
+                      }`}
+                    >
+                      {stepNumber}
+                    </div>
+                    <span
+                      className={`mt-1 text-xs font-medium text-center ${
+                        isCurrent
+                          ? "text-blue-600"
+                          : isCompleted
+                          ? "text-green-600"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {step}
+                    </span>
                   </div>
-                  <span
-                    className={`mt-1 text-xs font-medium text-center max-w-20 ${
-                      isCurrent
-                        ? "text-blue-600"
-                        : isCompleted
-                        ? "text-green-600"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    {step}
-                  </span>
+                  
+                  {index < STEPS.length - 1 && (
+                    <div
+                      className={`h-0.5 transition-colors duration-200 flex-1 mx-2 ${
+                        isCompleted || (isCurrent && index + 1 < currentStep)
+                          ? "bg-green-500"
+                          : stepNumber < currentStep
+                          ? "bg-blue-500"
+                          : "bg-gray-200"
+                      }`}
+                    />
+                  )}
                 </div>
-                
-                {index < STEPS.length - 1 && (
-                  <div
-                    className={`flex-1 h-0.5 mx-3 transition-colors duration-200 ${
-                      isCompleted || (isCurrent && index + 1 < currentStep)
-                        ? "bg-green-500"
-                        : stepNumber < currentStep
-                        ? "bg-blue-500"
-                        : "bg-gray-200"
-                    }`}
-                  />
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
