@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, User, Phone, Mail, MapPin, Activity, Clock, FileText } from 'lucide-react';
 import { patientsData } from '@/data/patientsData';
+import { patientData } from '@/data/patientData';
 import { PatientInfoCard } from '../PatientInfoCard';
 
 interface PatientDetailContentProps {
@@ -43,34 +44,32 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
     }
   };
 
-  // Prepare data for PatientInfoCard
-  const patientAge = calculateAge(patient.dateOfBirth);
-  const lastContactedFormatted = new Date(patient.lastVisit).toLocaleDateString();
+  // Only show PatientInfoCard for the patient with full data (P100592)
+  const showPatientInfoCard = patientId === 'P100592';
   
-  // Create a simplified patient data object that matches PatientData interface
-  const patientDataForCard = {
-    name: patient.name,
-    gender: patient.gender,
-    dateOfBirth: patient.dateOfBirth,
-    sessionNotes: [{ date: patient.lastVisit }], // Mock session notes for last contact
-    medicalHistory: {
-      pastConditions: [
-        { condition: patient.primaryDiagnosis, status: 'Active' as const }
-      ]
-    }
-  };
-
-  const medicalConditions = [patient.primaryDiagnosis];
+  let patientAge, lastContactedFormatted, medicalConditions;
+  
+  if (showPatientInfoCard) {
+    patientAge = calculateAge(patientData.dateOfBirth);
+    lastContactedFormatted = patientData.sessionNotes.length > 0 
+      ? new Date(patientData.sessionNotes[0].date).toLocaleDateString()
+      : 'No recent contact';
+    medicalConditions = patientData.medicalHistory.pastConditions
+      .filter(condition => condition.status === 'Active')
+      .map(condition => condition.condition);
+  }
 
   return (
     <div className="space-y-4">
-      {/* Add PatientInfoCard at the top */}
-      <PatientInfoCard 
-        patientData={patientDataForCard}
-        patientAge={patientAge}
-        lastContactedFormatted={lastContactedFormatted}
-        medicalConditions={medicalConditions}
-      />
+      {/* Add PatientInfoCard only for patient with full data */}
+      {showPatientInfoCard && (
+        <PatientInfoCard 
+          patientData={patientData}
+          patientAge={patientAge!}
+          lastContactedFormatted={lastContactedFormatted!}
+          medicalConditions={medicalConditions!}
+        />
+      )}
 
       {/* Primary Diagnosis */}
       <Card>
