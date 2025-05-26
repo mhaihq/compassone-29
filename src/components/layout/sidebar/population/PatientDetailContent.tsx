@@ -7,8 +7,8 @@ import { Calendar, User, Phone, Mail, MapPin, Activity, Clock, FileText, Brain, 
 import { patientsData } from '@/data/patientsData';
 import { patientData } from '@/data/patientData';
 import OverviewTab from '@/components/overview/OverviewTab';
-import MedicalHistory from '@/components/MedicalHistory';
 import TreatmentPlan from '@/components/TreatmentPlan';
+import { PatientCareLog } from './PatientCareLog';
 
 interface PatientDetailContentProps {
   patientId: string;
@@ -70,8 +70,8 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
               Overview
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              History
+              <Calendar className="h-4 w-4" />
+              Care Log
             </TabsTrigger>
             <TabsTrigger value="treatment" className="flex items-center gap-2">
               <ClipboardList className="h-4 w-4" />
@@ -88,7 +88,7 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
           </TabsContent>
 
           <TabsContent value="history" className="mt-4">
-            <MedicalHistory patient={patientData} />
+            <PatientCareLog />
           </TabsContent>
 
           <TabsContent value="treatment" className="mt-4">
