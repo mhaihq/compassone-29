@@ -53,6 +53,20 @@ export const PopulationSidebar = () => {
     setSelectedTaskId(null);
   };
 
+  // Enhanced tab change handler that exits patient/task view when switching tabs
+  const handleTabChange = (tab: 'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights') => {
+    setActiveTab(tab);
+    // Exit patient or task view when switching tabs
+    if (isViewingPatient) {
+      setIsViewingPatient(false);
+      setSelectedPatientId(null);
+    }
+    if (isViewingTask) {
+      setIsViewingTask(false);
+      setSelectedTaskId(null);
+    }
+  };
+
   const isViewingContent = isViewingTask || isViewingPatient;
 
   // Calculate patient age and other data for the patient info card
@@ -148,7 +162,7 @@ export const PopulationSidebar = () => {
           
           {/* Navigation Tabs - Always visible */}
           <div className="sticky top-0 z-10">
-            <PopulationSidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            <PopulationSidebarTabs activeTab={activeTab} setActiveTab={handleTabChange} />
           </div>
 
           {/* Patient Info Card for Task View */}
