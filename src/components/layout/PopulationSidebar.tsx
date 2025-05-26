@@ -75,12 +75,8 @@ export const PopulationSidebar = () => {
                   className="h-14 w-auto"
                 />
                 <div>
-                  <h2 className="text-2xl font-bold text-[#1E4D36]">
-                    {isViewingTask ? 'Care Task Details' : 'Hana Compass'}
-                  </h2>
-                  <p className="text-sm text-[#2A6349]">
-                    {isViewingTask ? 'Population Health Task' : 'Population Health Assistant'}
-                  </p>
+                  <h2 className="text-2xl font-bold text-[#1E4D36]">Hana Compass</h2>
+                  <p className="text-sm text-[#2A6349]">Population Health Assistant</p>
                 </div>
               </div>
               <button 
@@ -93,12 +89,10 @@ export const PopulationSidebar = () => {
             </div>
           </div>
           
-          {/* Navigation Tabs - Only show when not viewing a task */}
-          {!isViewingTask && (
-            <div className="sticky top-0 z-10">
-              <PopulationSidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-            </div>
-          )}
+          {/* Navigation Tabs - Always visible */}
+          <div className="sticky top-0 z-10">
+            <PopulationSidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+          </div>
           
           {/* Tab Content */}
           <div className="flex-grow overflow-y-auto p-4">
@@ -118,14 +112,12 @@ export const PopulationSidebar = () => {
             )}
           </div>
           
-          {/* Footer - Only show when not viewing a task */}
-          {!isViewingTask && (
-            <div className="bg-white shadow-sm p-4 border-t border-gray-200">
-              <p className="text-xs text-gray-500 text-center">
-                Hana Compass • Population Health • 5 Active Patients • Last updated: 2 hours ago
-              </p>
-            </div>
-          )}
+          {/* Footer - Always visible */}
+          <div className="bg-white shadow-sm p-4 border-t border-gray-200">
+            <p className="text-xs text-gray-500 text-center">
+              Hana Compass • Population Health • 5 Active Patients • Last updated: 2 hours ago
+            </p>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
