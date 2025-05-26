@@ -11,7 +11,9 @@ import { BillingContent } from './sidebar/population/BillingContent';
 import { InsightsContent } from './sidebar/population/InsightsContent';
 import { CareTaskContent } from '@/components/care-task/CareTaskContent';
 import { PatientDetailContent } from './sidebar/population/PatientDetailContent';
+import { PatientInfoCard } from './sidebar/PatientInfoCard';
 import { useLocation } from 'react-router-dom';
+import { patientData } from '@/data/patientData';
 
 export const PopulationSidebar = () => {
   const [activeTab, setActiveTab] = useState<'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights'>('taskQueue');
@@ -52,6 +54,26 @@ export const PopulationSidebar = () => {
   };
 
   const isViewingContent = isViewingTask || isViewingPatient;
+
+  // Calculate patient age and other data for the patient info card
+  const calculateAge = (dateOfBirth: string) => {
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    return age;
+  };
+
+  const patientAge = calculateAge(patientData.dateOfBirth);
+  const lastContactedFormatted = new Date(patientData.lastContacted).toLocaleDateString();
+  const medicalConditions = patientData.medicalHistory
+    .filter(item => item.type === 'condition')
+    .map(item => item.condition || item.description);
   
   return (
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
@@ -70,7 +92,7 @@ export const PopulationSidebar = () => {
       
       <SheetContent className="p-0 max-w-2/3 w-2/3 border-l border-gray-200 overflow-y-auto bg-[#F1F1F1]">
         <div className="flex flex-col h-full">
-          {/* Sidebar Header with Hana Compass branding */}
+          {/* Simplified Header for Task/Patient Views */}
           <div className="relative bg-white shadow-sm">
             <div className="relative z-10 flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
@@ -84,15 +106,29 @@ export const PopulationSidebar = () => {
                     <ArrowLeft size={16} />
                   </Button>
                 )}
-                <img 
-                  src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" 
-                  alt="Hana Clinic Logo" 
-                  className="h-14 w-auto"
-                />
-                <div>
-                  <h2 className="text-2xl font-bold text-[#1E4D36]">Hana Compass</h2>
-                  <p className="text-sm text-[#2A6349]">Population Health Assistant</p>
-                </div>
+                {!isViewingContent && (
+                  <>
+                    <img 
+                      src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" 
+                      alt="Hana Clinic Logo" 
+                      className="h-14 w-auto"
+                    />
+                    <div>
+                      <h2 className="text-2xl font-bold text-[#1E4D36]">Hana Compass</h2>
+                      <p className="text-sm text-[#2A6349]">Population Health Assistant</p>
+                    </div>
+                  </>
+                )}
+                {isViewingTask && (
+                  <div>
+                    <h2 className="text-xl font-bold text-[#1E4D36]">Care Task Details</h2>
+                  </div>
+                )}
+                {isViewingPatient && (
+                  <div>
+                    <h2 className="text-xl font-bold text-[#1E4D36]">Patient Details</h2>
+                  </div>
+                )}
               </div>
               <button 
                 className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100/50"
@@ -108,6 +144,16 @@ export const PopulationSidebar = () => {
           <div className="sticky top-0 z-10">
             <PopulationSidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           </div>
+
+          {/* Patient Info Card for Task View */}
+          {isViewingTask && (
+            <PatientInfoCard 
+              patientData={patientData}
+              patientAge={patientAge}
+              lastContactedFormatted={lastContactedFormatted}
+              medicalConditions={medicalConditions}
+            />
+          )}
           
           {/* Tab Content */}
           <div className="flex-grow overflow-y-auto p-4">

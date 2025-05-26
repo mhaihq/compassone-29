@@ -24,7 +24,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
           const isAccessible = stepNumber <= currentStep || isCompleted;
 
           return (
-            <React.Fragment key={stepNumber}>
+            <div key={stepNumber} className="flex items-center w-full">
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
@@ -68,7 +68,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                   )}
                 />
               )}
-            </React.Fragment>
+            </div>
           );
         })}
       </div>
