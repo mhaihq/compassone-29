@@ -88,9 +88,6 @@ export const InsightsContent: React.FC = () => {
         </p>
       </div>
 
-      {/* Smart Summary - Always visible at top */}
-      <SmartSummary />
-
       {/* Tabbed Interface for Detailed Insights */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
@@ -284,6 +281,11 @@ export const InsightsContent: React.FC = () => {
           <ActivityGuidance />
         </TabsContent>
       </Tabs>
+
+      {/* Smart Summary - Now positioned at the bottom */}
+      <div className="mt-8">
+        <SmartSummary />
+      </div>
     </div>
   );
 };
