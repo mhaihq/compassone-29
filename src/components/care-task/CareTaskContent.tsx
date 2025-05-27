@@ -271,7 +271,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
       setSelectedActions(prev => prev.filter(id => id !== actionId));
     }
 
-    if (task) {
+    if (task && task.suggestedActions) {
       const actionTexts = task.suggestedActions
         .filter(action => {
           if (action.id === actionId) {
@@ -284,7 +284,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
       setSummary(
         task.id === 'T-1001'
           ? `CRITICAL ALERT: Addressed escalating depression symptoms requiring immediate intervention. Implemented: ${actionTexts.join(", ")}. ${manualAction ? `Added custom plan: ${manualAction}. ` : ''}Patient expressing suicidal ideation and medication non-compliance. Emergency protocols activated.`
-          : `Addressed ${task.title} by implementing: ${actionTexts.join(", ")}. ${manualAction ? `Added custom plan: ${manualAction}. ` : ''}Patient reported ${task.evidenceFromCall[0].text.toLowerCase()} Will follow-up to monitor progress.`
+          : `Addressed ${task.title} by implementing: ${actionTexts.join(", ")}. ${manualAction ? `Added custom plan: ${manualAction}. ` : ''}Patient reported ${task.evidenceFromCall?.[0]?.text.toLowerCase() || ''} Will follow-up to monitor progress.`
       );
     }
   };
