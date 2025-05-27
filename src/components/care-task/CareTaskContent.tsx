@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   AlertTriangle, Clock, Play, Pause
@@ -20,42 +19,43 @@ import { useNavigate } from 'react-router-dom';
 const careTasksData = {
   'T-1001': {
     id: 'T-1001',
-    title: 'PHQ-9 Score Plateau',
-    description: 'Score stable at 11 for past 3 weeks',
+    title: 'Mental Health Monitoring',
+    description: 'High Alert: Depression symptoms requiring immediate clinical review and intervention',
     category: 'Mental-health',
     categoryColor: 'pink',
-    minutes: 7,
-    insight: 'Flagged by Hana AI Coach during May 22 call - therapy frequency adjustment needed',
+    minutes: 12,
+    insight: 'High Alert triggered by Hana AI Coach - immediate clinical review required for depression management',
     status: 'urgent',
     cptCode: '99484',
     cptDescription: 'Behavioral Health Integration',
     patientId: 'P100592',
     patientName: 'Matteo Grassi',
-    flagReason: 'Patient showing plateau in depression improvement despite consistent therapy attendance.',
+    flagReason: 'Critical escalation in depression symptoms detected during routine monitoring, requiring immediate clinical intervention and care plan adjustment.',
     evidenceFromCall: [
       {
-        text: "I feel like I'm stuck at the same level. Not getting worse, but not really getting better either.",
-        timestamp: "3:12",
+        text: "My depression has gotten significantly worse over the past week. I'm having trouble getting out of bed and I've been having some really dark thoughts.",
+        timestamp: "2:45",
         importance: "high"
       },
       {
-        text: "The techniques we've been working on help in the moment, but I still have the same underlying feelings.",
-        timestamp: "5:45",
+        text: "I haven't been taking my antidepressant regularly because I don't think it's working anymore. What's the point?",
+        timestamp: "4:15",
         importance: "high"
       },
       {
-        text: "Work stress is still pretty overwhelming, especially with the new project deadlines.",
-        timestamp: "7:22",
-        importance: "medium"
+        text: "I cancelled my therapy appointment this week because I just couldn't face it. Everything feels overwhelming.",
+        timestamp: "6:30",
+        importance: "high"
       }
     ],
     audioUrl: "#",
-    transcript: "AI: How have you been feeling since our last check-in?\nPatient: I feel like I'm stuck at the same level. Not getting worse, but not really getting better either.\nAI: Can you tell me more about what that feels like?\nPatient: The techniques we've been working on help in the moment, but I still have the same underlying feelings. Work stress is still pretty overwhelming, especially with the new project deadlines.",
+    transcript: "AI: How have you been feeling since our last check-in?\nPatient: My depression has gotten significantly worse over the past week. I'm having trouble getting out of bed and I've been having some really dark thoughts.\nAI: I'm concerned about what you're telling me. Can you tell me more about your medication?\nPatient: I haven't been taking my antidepressant regularly because I don't think it's working anymore. What's the point?\nAI: It's important that we address this. How have you been managing your therapy sessions?\nPatient: I cancelled my therapy appointment this week because I just couldn't face it. Everything feels overwhelming.",
     suggestedActions: [
-      { id: 'action-1', text: 'Schedule additional therapy session this week', default: true },
-      { id: 'action-2', text: 'Consider medication adjustment consultation', default: true },
-      { id: 'action-3', text: 'Implement workplace stress management plan', default: true },
-      { id: 'action-4', text: 'Explore different therapy modalities (EMDR, DBT)', default: false }
+      { id: 'action-1', text: 'Immediate mental health crisis assessment and safety planning', default: true },
+      { id: 'action-2', text: 'Emergency consultation with psychiatrist for medication review', default: true },
+      { id: 'action-3', text: 'Coordinate urgent therapy session within 24-48 hours', default: true },
+      { id: 'action-4', text: 'Implement enhanced monitoring protocol with daily check-ins', default: true },
+      { id: 'action-5', text: 'Assess need for higher level of care (IOP/PHP)', default: false }
     ]
   },
   'T-1002': {
@@ -144,7 +144,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
         objective: `${taskData.title} noted during Hana call on ${new Date().toLocaleDateString()}. Patient accessed via telehealth monitoring.`,
         assessment: `${taskData.title} - ${taskData.description}. ${taskData.flagReason}`,
         plan: taskData.id === 'T-1001' 
-          ? 'Schedule additional therapy session. Consider medication consultation. Implement workplace stress management. Monitor depression symptoms closely.'
+          ? 'URGENT: Immediate mental health crisis assessment and safety planning. Emergency psychiatrist consultation for medication review. Coordinate urgent therapy session within 24-48 hours. Implement enhanced monitoring with daily check-ins. Patient requires immediate clinical intervention for escalating depression symptoms.'
           : 'Review medication timing and adherence. Schedule BP recheck in 1 week. Reinforce importance of consistent dosing.'
       });
       
@@ -154,9 +154,9 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
         .map(action => action.text);
         
       setSummary(
-        `Addressed ${taskData.title} by implementing: ${actionTexts.join(", ")}. ` +
-        `Patient reported ${taskData.evidenceFromCall[0].text.toLowerCase()} ` +
-        `Will follow-up to monitor progress.`
+        taskData.id === 'T-1001'
+          ? `CRITICAL ALERT: Addressed escalating depression symptoms requiring immediate intervention. Implemented: ${actionTexts.join(", ")}. Patient expressing suicidal ideation and medication non-compliance. Emergency protocols activated for immediate psychiatric evaluation and safety planning.`
+          : `Addressed ${taskData.title} by implementing: ${actionTexts.join(", ")}. Patient reported ${taskData.evidenceFromCall[0].text.toLowerCase()} Will follow-up to monitor progress.`
       );
     }
     setIsLoading(false);
@@ -252,7 +252,6 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
       setSelectedActions(prev => prev.filter(id => id !== actionId));
     }
 
-    // Update summary based on selected actions
     if (task) {
       const actionTexts = task.suggestedActions
         .filter(action => {
@@ -264,10 +263,9 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
         .map(action => action.text);
 
       setSummary(
-        `Addressed ${task.title} by implementing: ${actionTexts.join(", ")}. ` +
-        (manualAction ? `Added custom plan: ${manualAction}. ` : '') +
-        `Patient reported ${task.evidenceFromCall[0].text.toLowerCase()} ` +
-        `Will follow-up to monitor progress.`
+        task.id === 'T-1001'
+          ? `CRITICAL ALERT: Addressed escalating depression symptoms requiring immediate intervention. Implemented: ${actionTexts.join(", ")}. ${manualAction ? `Added custom plan: ${manualAction}. ` : ''}Patient expressing suicidal ideation and medication non-compliance. Emergency protocols activated.`
+          : `Addressed ${task.title} by implementing: ${actionTexts.join(", ")}. ${manualAction ? `Added custom plan: ${manualAction}. ` : ''}Patient reported ${task.evidenceFromCall[0].text.toLowerCase()} Will follow-up to monitor progress.`
       );
     }
   };

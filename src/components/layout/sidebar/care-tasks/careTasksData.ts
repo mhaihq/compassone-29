@@ -52,12 +52,12 @@ export const careTasksData: CptCodeData = {
   '99484': [
     {
       id: 'T-1001',
-      title: 'PHQ-9 Score Plateau',
-      description: 'Score stable at 11 for past 3 weeks',
+      title: 'Mental Health Monitoring',
+      description: 'High Alert: Depression symptoms requiring immediate clinical review and intervention',
       category: 'Mental-health',
       categoryColor: 'pink',
-      minutes: 7,
-      insight: 'Flagged by Hana AI Coach during May 22 call - may need therapy frequency adjustment',
+      minutes: 12,
+      insight: 'High Alert triggered by Hana AI Coach - immediate clinical review required for depression management',
       status: 'urgent'
     }
   ]

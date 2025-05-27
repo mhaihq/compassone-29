@@ -1,4 +1,3 @@
-
 export interface PopulationTask {
   id: string;
   title: string;
@@ -19,12 +18,12 @@ export const populationTasksData: PopulationTask[] = [
   // Matteo Grassi - High Priority Hana-triggered insights matching his hypertension and depression
   {
     id: 'T-1001',
-    title: 'PHQ-9 Score Plateau',
+    title: 'Mental Health Monitoring',
     patientName: 'Matteo Grassi',
     patientId: 'P100592',
-    description: 'Score stable at 11 for past 3 weeks',
+    description: 'High Alert: Depression symptoms requiring immediate clinical review and intervention',
     priority: 'High',
-    estimatedTime: '7 min',
+    estimatedTime: '12 min',
     status: 'needs-review',
     dueDate: '2025-05-27',
     taskType: 'Mental Health Alert',

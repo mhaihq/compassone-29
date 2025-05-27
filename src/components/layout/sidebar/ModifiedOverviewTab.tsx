@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MessageCircle, FileText, CalendarDays } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -13,8 +12,8 @@ import { ArrowUpRight, FileText as FileTextIcon } from '@/components/SidebarIcon
 const priorityTasks = [
   {
     id: 'T-1001',
-    title: 'PHQ-9 Score Plateau',
-    description: 'Score stable at 11 for past 3 weeks during Hana calls',
+    title: 'Mental Health Monitoring',
+    description: 'High Alert: Depression symptoms requiring immediate clinical review and intervention',
     dueDate: '2025-05-27',
     status: 'Needs Review',
     statusColor: 'red',
@@ -115,7 +114,7 @@ export const ModifiedOverviewTab: React.FC<ModifiedOverviewTabProps> = ({ onTask
             <div className="mb-4">
               <h5 className="text-sm font-medium text-gray-700 mb-2">Recent Call Topics</h5>
               <div className="flex flex-wrap gap-2">
-                <Badge className="bg-red-50 text-red-700 border-red-100">PHQ-9 Plateau</Badge>
+                <Badge className="bg-red-50 text-red-700 border-red-100">Mental Health Alert</Badge>
                 <Badge className="bg-blue-50 text-blue-700 border-blue-100">Blood Pressure</Badge>
                 <Badge className="bg-yellow-50 text-yellow-700 border-yellow-100">Medication Adherence</Badge>
                 <Badge className="bg-green-50 text-green-700 border-green-100">Exercise Goals</Badge>
@@ -127,11 +126,11 @@ export const ModifiedOverviewTab: React.FC<ModifiedOverviewTabProps> = ({ onTask
               <ul className="text-sm text-gray-600 space-y-1">
                 <li className="flex items-start">
                   <span className="text-[#1E4D36] mr-2">•</span>
-                  Blood pressure trending up due to medication non-adherence
+                  High Alert: Depression symptoms requiring immediate clinical intervention
                 </li>
                 <li className="flex items-start">
                   <span className="text-[#1E4D36] mr-2">•</span>
-                  Mood improvements plateauing, may need therapy adjustment
+                  Blood pressure trending up due to medication non-adherence
                 </li>
                 <li className="flex items-start">
                   <span className="text-[#1E4D36] mr-2">•</span>
@@ -142,10 +141,10 @@ export const ModifiedOverviewTab: React.FC<ModifiedOverviewTabProps> = ({ onTask
             
             <div>
               <h5 className="text-sm font-medium text-gray-700 mb-2">Risk Flags</h5>
-              <Alert className="bg-amber-50 border-amber-200 py-2">
-                <AlertTitle className="text-amber-800 text-sm font-medium">Attention Needed</AlertTitle>
-                <AlertDescription className="text-amber-700 text-xs mt-1">
-                  BP elevation + therapy plateau - review treatment plan
+              <Alert className="bg-red-50 border-red-200 py-2">
+                <AlertTitle className="text-red-800 text-sm font-medium">Critical Alert</AlertTitle>
+                <AlertDescription className="text-red-700 text-xs mt-1">
+                  Mental health symptoms require immediate clinical review and intervention
                 </AlertDescription>
               </Alert>
             </div>
