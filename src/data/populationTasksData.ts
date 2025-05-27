@@ -1,3 +1,4 @@
+
 export interface PopulationTask {
   id: string;
   title: string;
@@ -12,6 +13,8 @@ export interface PopulationTask {
   taskType: string;
   triggeredBy?: string;
   callDate?: string;
+  lastReviewDate?: string;
+  reviewFrequency?: string;
 }
 
 export const populationTasksData: PopulationTask[] = [
@@ -71,6 +74,54 @@ export const populationTasksData: PopulationTask[] = [
     taskType: 'Lifestyle Management',
     triggeredBy: 'Hana AI Coach',
     callDate: '2025-05-20'
+  },
+
+  // Monthly Stability Reviews - New Task Type
+  {
+    id: 'T-1005',
+    title: 'Monthly Stability Review',
+    patientName: 'Matteo Grassi',
+    patientId: 'P100592',
+    description: 'Routine monthly check-in for mental health stability assessment and care plan updates',
+    priority: 'Low',
+    estimatedTime: '15 min',
+    status: 'needs-review',
+    dueDate: '2025-05-30',
+    taskType: 'Monthly Stability Review',
+    triggeredBy: 'System',
+    lastReviewDate: '2025-04-25',
+    reviewFrequency: 'Monthly'
+  },
+  {
+    id: 'T-6001',
+    title: 'Monthly Stability Review',
+    patientName: 'David Wilson',
+    patientId: 'P100597',
+    description: 'Routine assessment for anxiety management and medication adherence review',
+    priority: 'Low',
+    estimatedTime: '15 min',
+    status: 'needs-review',
+    dueDate: '2025-05-28',
+    taskType: 'Monthly Stability Review',
+    triggeredBy: 'System',
+    lastReviewDate: '2025-04-20',
+    reviewFrequency: 'Monthly'
+  },
+  {
+    id: 'T-7001',
+    title: 'Monthly Stability Review',
+    patientName: 'Lisa Anderson',
+    patientId: 'P100598',
+    description: 'Scheduled check for bipolar disorder stability and medication compliance',
+    priority: 'Low',
+    estimatedTime: '15 min',
+    status: 'in-progress',
+    assignedTo: 'Dr. Sarah Wilson',
+    dueDate: '2025-05-29',
+    taskType: 'Monthly Stability Review',
+    triggeredBy: 'System',
+    lastReviewDate: '2025-04-22',
+    reviewFrequency: 'Monthly'
   },
 
   // Other patients - Hana-triggered insights
