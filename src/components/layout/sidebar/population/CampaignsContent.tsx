@@ -9,23 +9,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Megaphone, Plus, Users, Calendar, CheckCircle, ChevronDown, Eye, Edit, Pause, MessageSquare, Phone, ChevronUp } from 'lucide-react';
+import { CampaignDetailsView } from './CampaignDetailsView';
+import { ccmCampaignData, EnhancedCampaign } from '@/data/campaignData';
 
 export const CampaignsContent: React.FC = () => {
-  const [activeCampaigns, setActiveCampaigns] = useState([
-    {
-      id: 5,
-      title: 'CCM Enrollment Outreach',
-      category: 'Care Management',
-      status: 'In Progress',
-      statusColor: 'bg-green-100 text-green-800',
-      priority: 'High priority',
-      priorityColor: 'bg-red-100 text-red-800',
-      description: 'Voice with SMS fallback',
-      reached: '45 of 156 reached',
-      startDate: '5/20/2025',
-      completion: 29
-    }
-  ]);
+  const [activeCampaigns, setActiveCampaigns] = useState<EnhancedCampaign[]>([ccmCampaignData]);
 
   const [recommendedCampaigns, setRecommendedCampaigns] = useState([
     {
@@ -73,7 +61,7 @@ export const CampaignsContent: React.FC = () => {
   const stats = [
     {
       title: 'Total Campaigns',
-      value: '6',
+      value: '4',
       subtitle: 'this month',
       icon: Megaphone,
       color: 'text-[#1E4D36]'
@@ -120,11 +108,17 @@ export const CampaignsContent: React.FC = () => {
     const campaign = recommendedCampaigns.find(c => c.id === campaignId);
     if (campaign) {
       const newActiveCampaign = {
-        ...campaign,
+        ...ccmCampaignData, // Use the enhanced structure
+        id: campaignId,
+        title: campaign.title,
+        category: campaign.category,
+        priority: campaign.priority,
+        priorityColor: campaign.priorityColor,
         status: 'In Progress',
         statusColor: 'bg-green-100 text-green-800',
         reached: `0 of ${campaign.patients.split(' ')[0]} reached`,
-        completion: 0
+        completion: 0,
+        startDate: campaign.startDate
       };
       setActiveCampaigns([...activeCampaigns, newActiveCampaign]);
       setRecommendedCampaigns(recommendedCampaigns.filter(c => c.id !== campaignId));
@@ -145,6 +139,7 @@ export const CampaignsContent: React.FC = () => {
                                newCampaignForm.contactMethod === 'call' ? 'Voice only' : 'SMS only';
       
       const newCampaign = {
+        ...ccmCampaignData, // Use the enhanced structure
         id: Date.now(),
         title: newCampaignForm.name,
         category: 'Custom',
@@ -161,6 +156,14 @@ export const CampaignsContent: React.FC = () => {
       setNewCampaignForm({ name: '', message: '', contactMethod: 'both', patientGroup: 'all' });
       setIsSheetOpen(false);
     }
+  };
+
+  const updateCampaign = (updatedCampaign: EnhancedCampaign) => {
+    setActiveCampaigns(campaigns =>
+      campaigns.map(campaign =>
+        campaign.id === updatedCampaign.id ? updatedCampaign : campaign
+      )
+    );
   };
 
   return (
@@ -476,68 +479,14 @@ export const CampaignsContent: React.FC = () => {
                 </CardContent>
               </Card>
               
-              {/* CCM Campaign Details - Displayed inline when expanded */}
+              {/* CCM Campaign Details - Enhanced inline view */}
               {campaign.id === 5 && (
                 <Collapsible open={showCCMDetails} onOpenChange={setShowCCMDetails}>
                   <CollapsibleContent>
-                    <Card className="mt-2 bg-gray-50 border-l-4 border-l-[#1E4D36]">
-                      <CardContent className="p-4">
-                        <h4 className="font-semibold text-[#1E4D36] mb-4">CCM Enrollment Outreach - Campaign Details</h4>
-                        <div className="space-y-4">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <h4 className="font-medium text-sm text-gray-700 mb-1">Status</h4>
-                              <Badge className="bg-green-100 text-green-800">In Progress</Badge>
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-sm text-gray-700 mb-1">Priority</h4>
-                              <Badge className="bg-red-100 text-red-800">High Priority</Badge>
-                            </div>
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-sm text-gray-700 mb-2">Campaign Progress</h4>
-                            <div className="space-y-2">
-                              <div className="flex justify-between text-sm">
-                                <span>Patients Contacted:</span>
-                                <span>45 of 156 (29%)</span>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-3">
-                                <div className="bg-[#1E4D36] h-3 rounded-full" style={{ width: '29%' }}></div>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-sm text-gray-700 mb-2">Campaign Details</h4>
-                            <div className="space-y-2 text-sm">
-                              <div className="flex justify-between">
-                                <span>Category:</span>
-                                <span>Care Management</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Contact Method:</span>
-                                <span>Voice with SMS fallback</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Start Date:</span>
-                                <span>5/20/2025</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Target Patients:</span>
-                                <span>156 patients eligible for CCM</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-sm text-gray-700 mb-2">Recent Activity</h4>
-                            <div className="space-y-2 text-sm text-gray-600">
-                              <p>• 12 patients successfully enrolled today</p>
-                              <p>• 8 patients scheduled for follow-up calls</p>
-                              <p>• 25 patients pending response</p>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <CampaignDetailsView 
+                      campaign={campaign} 
+                      onUpdateCampaign={updateCampaign}
+                    />
                   </CollapsibleContent>
                 </Collapsible>
               )}
