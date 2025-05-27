@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,12 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Clock, User, ArrowRight, Search, Filter, ChevronDown, ChevronRight } from 'lucide-react';
 import { populationTasksData, PopulationTask } from '@/data/populationTasksData';
+import { useNavigate } from 'react-router-dom';
 
 interface TaskQueueContentProps {
   onOpenTask: (taskId: string) => void;
 }
 
-const TaskRow: React.FC<{ task: PopulationTask; onOpenTask: (taskId: string) => void }> = ({ task, onOpenTask }) => {
+const TaskRow: React.FC<{ task: PopulationTask; onOpenTask: (taskId: string) => void; onNavigateToPatient: (patientId: string) => void }> = ({ task, onOpenTask, onNavigateToPatient }) => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'High': return 'bg-red-50 text-red-700 border-red-200';
@@ -27,6 +27,10 @@ const TaskRow: React.FC<{ task: PopulationTask; onOpenTask: (taskId: string) => 
     onOpenTask(task.id);
   };
 
+  const handlePatientClick = () => {
+    onNavigateToPatient(task.patientId);
+  };
+
   return (
     <div className="p-3 border-b last:border-b-0 hover:bg-gray-50/50 transition-colors">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -36,7 +40,12 @@ const TaskRow: React.FC<{ task: PopulationTask; onOpenTask: (taskId: string) => 
               <div className="font-medium text-sm text-[#1E4D36] mb-1">{task.title}</div>
               <div className="text-xs text-gray-600 mb-2">{task.description}</div>
               <div className="flex flex-wrap items-center gap-2">
-                <div className="text-sm text-gray-700">{task.patientName}</div>
+                <button
+                  onClick={handlePatientClick}
+                  className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium transition-colors"
+                >
+                  {task.patientName}
+                </button>
                 <div className="text-xs text-gray-500">ID: {task.patientId}</div>
                 <Badge className={`text-xs ${getPriorityColor(task.priority)}`}>
                   {task.priority}
@@ -63,7 +72,7 @@ const TaskRow: React.FC<{ task: PopulationTask; onOpenTask: (taskId: string) => 
   );
 };
 
-const TaskBin: React.FC<{ title: string; tasks: PopulationTask[]; count: number; onOpenTask: (taskId: string) => void }> = ({ title, tasks, count, onOpenTask }) => {
+const TaskBin: React.FC<{ title: string; tasks: PopulationTask[]; count: number; onOpenTask: (taskId: string) => void; onNavigateToPatient: (patientId: string) => void }> = ({ title, tasks, count, onOpenTask, onNavigateToPatient }) => {
   const [isOpen, setIsOpen] = useState(true);
   
   const getBinColor = (title: string) => {
@@ -94,7 +103,7 @@ const TaskBin: React.FC<{ title: string; tasks: PopulationTask[]; count: number;
           <div className="bg-white">
             {tasks.length > 0 ? (
               tasks.map(task => (
-                <TaskRow key={task.id} task={task} onOpenTask={onOpenTask} />
+                <TaskRow key={task.id} task={task} onOpenTask={onOpenTask} onNavigateToPatient={onNavigateToPatient} />
               ))
             ) : (
               <div className="p-6 text-center text-gray-500 text-sm">
@@ -112,6 +121,11 @@ export const TaskQueueContent: React.FC<TaskQueueContentProps> = ({ onOpenTask }
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNavigateToPatient = (patientId: string) => {
+    navigate(`/patient/${patientId}`);
+  };
 
   const filteredTasks = populationTasksData.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -193,6 +207,7 @@ export const TaskQueueContent: React.FC<TaskQueueContentProps> = ({ onOpenTask }
             tasks={tasks} 
             count={tasks.length}
             onOpenTask={onOpenTask}
+            onNavigateToPatient={handleNavigateToPatient}
           />
         ))}
       </div>
