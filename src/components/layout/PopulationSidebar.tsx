@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -13,6 +14,7 @@ import { PatientDetailContent } from './sidebar/population/PatientDetailContent'
 import { PatientInfoCard } from './sidebar/PatientInfoCard';
 import { useLocation } from 'react-router-dom';
 import { patientData } from '@/data/patientData';
+
 export const PopulationSidebar = () => {
   const [activeTab, setActiveTab] = useState<'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights'>('taskQueue');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -25,22 +27,27 @@ export const PopulationSidebar = () => {
   // Adjust positioning based on current page
   const isPatientDetailPage = location.pathname.startsWith('/patient/');
   const iconPosition = isPatientDetailPage ? 'right-4 top-36' : 'right-4 top-20';
+  
   const handleOpenTask = (taskId: string) => {
     setSelectedTaskId(taskId);
     setIsViewingTask(true);
   };
+  
   const handleOpenPatient = (patientId: string) => {
     setSelectedPatientId(patientId);
     setIsViewingPatient(true);
   };
+  
   const handleBackToTasks = () => {
     setIsViewingTask(false);
     setSelectedTaskId(null);
   };
+  
   const handleBackToPatients = () => {
     setIsViewingPatient(false);
     setSelectedPatientId(null);
   };
+  
   const handleTaskComplete = () => {
     setIsViewingTask(false);
     setSelectedTaskId(null);
@@ -59,6 +66,7 @@ export const PopulationSidebar = () => {
       setSelectedTaskId(null);
     }
   };
+  
   const isViewingContent = isViewingTask || isViewingPatient;
 
   // Calculate patient age and other data for the patient info card
@@ -79,37 +87,59 @@ export const PopulationSidebar = () => {
 
   // Extract medical conditions from the pastConditions array
   const medicalConditions = patientData.medicalHistory.pastConditions.filter(condition => condition.status === 'Active').map(condition => condition.condition);
-  return <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+
+  // Determine sheet width based on view state
+  const sheetWidth = isViewingTask ? "w-full" : "max-w-2/3 w-2/3";
+  
+  return (
+    <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
       <SheetTrigger asChild>
         <button className={`flex items-center justify-center w-10 h-10 bg-[#1E4D36] rounded-full shadow-lg hover:bg-[#2A6349] transition-colors pulse-animation fixed ${iconPosition} z-50`} aria-label="Open Population Health sidebar">
           <img src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" alt="Hana Clinic Logo" className="h-6 w-6 object-contain" />
         </button>
       </SheetTrigger>
       
-      <SheetContent className="p-0 max-w-2/3 w-2/3 border-l border-gray-200 overflow-y-auto bg-[#F1F1F1]">
+      <SheetContent className={`p-0 ${sheetWidth} border-l border-gray-200 overflow-y-auto bg-[#F1F1F1]`}>
         <div className="flex flex-col h-full">
           {/* Simplified Header for Task/Patient Views */}
           <div className="relative bg-white shadow-sm">
             <div className="relative z-10 flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
-                {isViewingContent && <Button variant="ghost" size="sm" onClick={isViewingTask ? handleBackToTasks : handleBackToPatients} className="mr-2 p-2 hover:bg-gray-100">
+                {isViewingContent && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={isViewingTask ? handleBackToTasks : handleBackToPatients} 
+                    className="mr-2 p-2 hover:bg-gray-100"
+                  >
                     <ArrowLeft size={16} />
-                  </Button>}
-                {!isViewingContent && <>
+                  </Button>
+                )}
+                {!isViewingContent && (
+                  <>
                     <img src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" alt="Hana Clinic Logo" className="h-14 w-auto" />
                     <div>
                       <h2 className="text-2xl font-bold text-[#1E4D36]">Hana Compass</h2>
                       <p className="text-sm text-[#2A6349]">Population Health Assistant</p>
                     </div>
-                  </>}
-                {isViewingTask && <div>
+                  </>
+                )}
+                {isViewingTask && (
+                  <div>
                     <h2 className="text-xl font-bold text-[#1E4D36]">Care Task Details</h2>
-                  </div>}
-                {isViewingPatient && <div>
+                  </div>
+                )}
+                {isViewingPatient && (
+                  <div>
                     <h2 className="text-xl font-bold text-[#1E4D36]">Patient Details</h2>
-                  </div>}
+                  </div>
+                )}
               </div>
-              <button className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100/50" onClick={() => setIsSidebarOpen(false)} aria-label="Close sidebar">
+              <button 
+                className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100/50" 
+                onClick={() => setIsSidebarOpen(false)} 
+                aria-label="Close sidebar"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -121,17 +151,30 @@ export const PopulationSidebar = () => {
           </div>
 
           {/* Patient Info Card for Task View */}
-          {isViewingTask && <PatientInfoCard patientData={patientData} patientAge={patientAge} lastContactedFormatted={lastContactedFormatted} medicalConditions={medicalConditions} />}
+          {isViewingTask && (
+            <PatientInfoCard 
+              patientData={patientData} 
+              patientAge={patientAge} 
+              lastContactedFormatted={lastContactedFormatted} 
+              medicalConditions={medicalConditions} 
+            />
+          )}
           
           {/* Tab Content */}
           <div className="flex-grow overflow-y-auto p-4">
-            {isViewingTask && selectedTaskId ? <CareTaskContent taskId={selectedTaskId} onComplete={handleTaskComplete} /> : isViewingPatient && selectedPatientId ? <PatientDetailContent patientId={selectedPatientId} /> : <>
+            {isViewingTask && selectedTaskId ? (
+              <CareTaskContent taskId={selectedTaskId} onComplete={handleTaskComplete} />
+            ) : isViewingPatient && selectedPatientId ? (
+              <PatientDetailContent patientId={selectedPatientId} />
+            ) : (
+              <>
                 {activeTab === 'taskQueue' && <TaskQueueContent onOpenTask={handleOpenTask} />}
                 {activeTab === 'patients' && <PatientsListContent onOpenPatient={handleOpenPatient} />}
                 {activeTab === 'campaigns' && <CampaignsContent />}
                 {activeTab === 'billing' && <BillingContent />}
                 {activeTab === 'insights' && <InsightsContent />}
-              </>}
+              </>
+            )}
           </div>
           
           {/* Footer - Always visible */}
@@ -142,6 +185,8 @@ export const PopulationSidebar = () => {
           </div>
         </div>
       </SheetContent>
-    </Sheet>;
+    </Sheet>
+  );
 };
+
 export default PopulationSidebar;

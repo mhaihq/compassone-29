@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   AlertTriangle, Clock, Play, Pause
@@ -316,7 +317,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="w-full">
       {/* Step Progress and Timer */}
       <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
         {/* Timer Display */}
