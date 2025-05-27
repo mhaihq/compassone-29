@@ -1,14 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { CheckCircle, Calendar, Clock, Sparkles, User, FileText, Target } from 'lucide-react';
+import React, { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { ClinicalNote } from '@/types/billingBreakdown';
 import { generateClinicalNotes } from '@/utils/billingValidation';
+import { StabilityReviewHeader } from './monthly-stability/StabilityReviewHeader';
+import { StabilityAssessmentStep } from './monthly-stability/StabilityAssessmentStep';
+import { DocumentationStep } from './monthly-stability/DocumentationStep';
+import { FinalReviewStep } from './monthly-stability/FinalReviewStep';
+import { StabilityCompletionCard } from './monthly-stability/StabilityCompletionCard';
 
 interface MonthlyStabilityReviewProps {
   task: any;
@@ -87,7 +86,6 @@ export const MonthlyStabilityReview: React.FC<MonthlyStabilityReviewProps> = ({
   const [isCompleted, setIsCompleted] = useState(false);
   const [finalConfirmation, setFinalConfirmation] = useState(false);
 
-  const timeSpentMinutes = Math.floor(timer / 60);
   const completedAssessments = stabilityChecklist.filter(item => item.completed).length;
   const totalAssessments = stabilityChecklist.length;
 
@@ -172,284 +170,47 @@ export const MonthlyStabilityReview: React.FC<MonthlyStabilityReviewProps> = ({
   };
 
   if (isCompleted) {
-    return (
-      <Card className="border-green-200 bg-green-50">
-        <CardContent className="p-6 text-center">
-          <CheckCircle className="mx-auto text-green-600 mb-4" size={48} />
-          <h3 className="text-lg font-semibold text-green-800 mb-2">
-            Monthly Review Complete!
-          </h3>
-          <p className="text-green-700">
-            Great work! The patient's stability assessment has been documented successfully.
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return <StabilityCompletionCard />;
   }
 
   return (
     <div className="space-y-6">
-      {/* Header with Progress */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Calendar className="text-blue-600" size={24} />
-              <div>
-                <CardTitle className="text-xl">Monthly Stability Review</CardTitle>
-                <p className="text-sm text-gray-600 mt-1">
-                  Simple 3-step assessment process
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-gray-500" />
-                <Badge className="bg-blue-50 text-blue-800 border-blue-200 font-mono">
-                  {formatTime(timer)}
-                </Badge>
-              </div>
-            </div>
-          </div>
-          
-          {/* Step Indicator */}
-          <div className="flex items-center gap-4 mt-4">
-            {[
-              { key: 'assessment', label: 'Stability Check', icon: User },
-              { key: 'documentation', label: 'Documentation', icon: FileText },
-              { key: 'review', label: 'Final Review', icon: Target }
-            ].map((step, index) => {
-              const isActive = currentStep === step.key;
-              const isCompleted = 
-                (step.key === 'assessment' && completedAssessments === totalAssessments) ||
-                (step.key === 'documentation' && currentStep === 'review');
-              
-              return (
-                <div key={step.key} className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    isCompleted 
-                      ? 'bg-green-100 text-green-700 border-2 border-green-300'
-                      : isActive
-                      ? 'bg-blue-100 text-blue-700 border-2 border-blue-300'
-                      : 'bg-gray-100 text-gray-500 border-2 border-gray-200'
-                  }`}>
-                    {isCompleted ? <CheckCircle size={16} /> : <step.icon size={16} />}
-                  </div>
-                  <span className={`text-sm font-medium ${
-                    isActive ? 'text-blue-700' : isCompleted ? 'text-green-700' : 'text-gray-500'
-                  }`}>
-                    {step.label}
-                  </span>
-                  {index < 2 && <div className="w-8 h-0.5 bg-gray-200 mx-2" />}
-                </div>
-              );
-            })}
-          </div>
-        </CardHeader>
-      </Card>
+      <StabilityReviewHeader
+        timer={timer}
+        formatTime={formatTime}
+        currentStep={currentStep}
+        completedAssessments={completedAssessments}
+        totalAssessments={totalAssessments}
+      />
 
-      {/* Step 1: Stability Assessment */}
       {currentStep === 'assessment' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="text-blue-600" size={20} />
-              Step 1: Quick Stability Check
-              <Badge className="ml-auto">
-                {completedAssessments}/{totalAssessments} Complete
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {stabilityChecklist.map((item) => (
-              <div key={item.id} className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <Checkbox 
-                    checked={item.completed}
-                    className="mt-1"
-                    disabled
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900">{item.label}</h4>
-                    <p className="text-sm text-gray-600 mb-3">{item.description}</p>
-                    
-                    <div className="flex gap-2">
-                      {['Improved', 'Stable', 'Concerns'].map((status) => (
-                        <Button
-                          key={status}
-                          variant={item.value === status.toLowerCase() ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => handleStabilityItemChange(item.id, status.toLowerCase())}
-                          className={
-                            item.value === status.toLowerCase()
-                              ? status === 'Improved' 
-                                ? 'bg-green-600 hover:bg-green-700'
-                                : status === 'Stable'
-                                ? 'bg-blue-600 hover:bg-blue-700'
-                                : 'bg-yellow-600 hover:bg-yellow-700'
-                              : ''
-                          }
-                        >
-                          {status}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-            
-            <div className="pt-4 border-t">
-              <Button 
-                onClick={handleNextStep}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-                disabled={completedAssessments !== totalAssessments}
-              >
-                Continue to Documentation
-                {completedAssessments !== totalAssessments && (
-                  <span className="ml-2 text-xs">
-                    ({totalAssessments - completedAssessments} remaining)
-                  </span>
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <StabilityAssessmentStep
+          stabilityChecklist={stabilityChecklist}
+          onItemChange={handleStabilityItemChange}
+          onNext={handleNextStep}
+          completedAssessments={completedAssessments}
+          totalAssessments={totalAssessments}
+        />
       )}
 
-      {/* Step 2: Documentation */}
       {currentStep === 'documentation' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="text-blue-600" size={20} />
-              Step 2: Review Documentation
-              <Badge className="ml-auto bg-green-100 text-green-800">
-                <Sparkles size={12} className="mr-1" />
-                Auto-Generated
-              </Badge>
-            </CardTitle>
-            <p className="text-sm text-gray-600">
-              Smart defaults have been generated based on your assessment. Review and customize as needed.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {[
-              { key: 'stabilityAssessment', label: 'Overall Assessment', placeholder: 'Summary of patient stability...' },
-              { key: 'functionalStatus', label: 'Functional Status', placeholder: 'Daily functioning and activities...' },
-              { key: 'followUpPlan', label: 'Follow-Up Plan', placeholder: 'Next steps and monitoring...' }
-            ].map(({ key, label, placeholder }) => (
-              <div key={key} className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">{label}</label>
-                <Textarea
-                  value={clinicalNotes[key as keyof ClinicalNote]}
-                  onChange={(e) => handleNoteChange(key as keyof ClinicalNote, e.target.value)}
-                  placeholder={placeholder}
-                  className="min-h-20"
-                />
-              </div>
-            ))}
-            
-            <div className="flex gap-3 pt-4 border-t">
-              <Button 
-                variant="outline" 
-                onClick={handleBackStep}
-                className="flex-1"
-              >
-                Back to Assessment
-              </Button>
-              <Button 
-                onClick={handleNextStep}
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
-              >
-                Review & Finalize
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <DocumentationStep
+          clinicalNotes={clinicalNotes}
+          onNoteChange={handleNoteChange}
+          onNext={handleNextStep}
+          onBack={handleBackStep}
+        />
       )}
 
-      {/* Step 3: Final Review */}
       {currentStep === 'review' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="text-blue-600" size={20} />
-              Step 3: Final Review
-            </CardTitle>
-            <p className="text-sm text-gray-600">
-              Almost done! Please review the summary and confirm submission.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Assessment Summary */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">Assessment Summary</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {stabilityChecklist.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm font-medium">{item.label.split(' ')[0]}</span>
-                    <Badge className={
-                      item.value === 'improved' 
-                        ? 'bg-green-100 text-green-800'
-                        : item.value === 'stable'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }>
-                      {item.value?.charAt(0).toUpperCase() + item.value?.slice(1)}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Time Summary */}
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-blue-900">Time Spent</span>
-                <span className="text-sm text-blue-700">{timeSpentMinutes} minutes</span>
-              </div>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-sm font-medium text-blue-900">Billing Status</span>
-                <Badge className="bg-green-100 text-green-800">Ready</Badge>
-              </div>
-            </div>
-
-            {/* Confirmation */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="final-confirmation"
-                  checked={finalConfirmation}
-                  onCheckedChange={(checked) => setFinalConfirmation(checked as boolean)}
-                />
-                <label 
-                  htmlFor="final-confirmation" 
-                  className="text-sm font-medium leading-none"
-                >
-                  I confirm this assessment is accurate and ready for submission
-                </label>
-              </div>
-              
-              <div className="flex gap-3">
-                <Button 
-                  variant="outline" 
-                  onClick={handleBackStep}
-                  className="flex-1"
-                >
-                  Back to Documentation
-                </Button>
-                <Button 
-                  onClick={handleComplete}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                  disabled={!finalConfirmation}
-                >
-                  Complete Review
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <FinalReviewStep
+          stabilityChecklist={stabilityChecklist}
+          timer={timer}
+          finalConfirmation={finalConfirmation}
+          onConfirmationChange={setFinalConfirmation}
+          onComplete={handleComplete}
+          onBack={handleBackStep}
+        />
       )}
     </div>
   );
