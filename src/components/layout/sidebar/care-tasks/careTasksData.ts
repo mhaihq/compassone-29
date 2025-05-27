@@ -59,6 +59,17 @@ export const careTasksData: CptCodeData = {
       minutes: 12,
       insight: 'High Alert triggered by Hana AI Coach - immediate clinical review required for depression management',
       status: 'urgent'
+    },
+    {
+      id: 'T-MSR-001',
+      title: 'Monthly Stability Review',
+      description: 'Comprehensive monthly assessment of mental health stability and care plan effectiveness',
+      category: 'Monthly-review',
+      categoryColor: 'purple',
+      minutes: 15,
+      insight: 'Scheduled monthly review to assess patient stability trends and adjust care plan as needed',
+      status: 'pending',
+      taskType: 'monthly-stability-review'
     }
   ]
 };

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   AlertTriangle, Clock, Play, Pause
@@ -14,6 +13,7 @@ import { RiskAssessmentStep } from '@/components/care-task/RiskAssessmentStep';
 import { CarePlanStep } from '@/components/care-task/CarePlanStep';
 import { FollowUpStep } from '@/components/care-task/FollowUpStep';
 import { FinalizeStep } from '@/components/care-task/FinalizeStep';
+import { MonthlyStabilityReview } from '@/components/care-task/MonthlyStabilityReview';
 import { useNavigate } from 'react-router-dom';
 
 // Sample data - would come from an API or context in a real app
@@ -92,6 +92,21 @@ const careTasksData = {
       { id: 'action-2', text: 'Schedule blood pressure recheck in 1 week', default: true },
       { id: 'action-3', text: 'Discuss lifestyle modifications (diet, exercise, stress)', default: false }
     ]
+  },
+  'T-MSR-001': {
+    id: 'T-MSR-001',
+    title: 'Monthly Stability Review',
+    description: 'Comprehensive monthly assessment of mental health stability and care plan effectiveness',
+    category: 'Monthly-review',
+    categoryColor: 'purple',
+    minutes: 15,
+    insight: 'Scheduled monthly review to assess patient stability trends and adjust care plan as needed',
+    status: 'pending',
+    cptCode: '99484',
+    cptDescription: 'Behavioral Health Integration',
+    patientId: 'P100592',
+    patientName: 'Matteo Grassi',
+    taskType: 'monthly-stability-review'
   }
 };
 
@@ -131,34 +146,37 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
       const taskData = careTasksData[taskId as keyof typeof careTasksData];
       setTask(taskData);
       
-      // Set initial selected actions based on default values
-      const initialSelectedActions = taskData.suggestedActions
-        .filter(action => action.default)
-        .map(action => action.id);
-      
-      setSelectedActions(initialSelectedActions);
-      
-      // Generate initial SOAP note based on evidence
-      const evidenceText = taskData.evidenceFromCall.map(e => e.text).join('. ');
-      setSoapNote({
-        subjective: `Patient reports: ${evidenceText}`,
-        objective: `${taskData.title} noted during Hana call on ${new Date().toLocaleDateString()}. Patient accessed via telehealth monitoring.`,
-        assessment: `${taskData.title} - ${taskData.description}. ${taskData.flagReason}`,
-        plan: taskData.id === 'T-1001' 
-          ? 'URGENT: Immediate mental health crisis assessment and safety planning. Emergency psychiatrist consultation for medication review. Coordinate urgent therapy session within 24-48 hours. Implement enhanced monitoring with daily check-ins. Patient requires immediate clinical intervention for escalating depression symptoms.'
-          : 'Review medication timing and adherence. Schedule BP recheck in 1 week. Reinforce importance of consistent dosing.'
-      });
-      
-      // Generate initial summary
-      const actionTexts = taskData.suggestedActions
-        .filter(action => action.default)
-        .map(action => action.text);
+      // Only set initial values for non-Monthly Stability Review tasks
+      if (taskData.taskType !== 'monthly-stability-review') {
+        // Set initial selected actions based on default values
+        const initialSelectedActions = taskData.suggestedActions
+          ?.filter(action => action.default)
+          .map(action => action.id) || [];
         
-      setSummary(
-        taskData.id === 'T-1001'
-          ? `CRITICAL ALERT: Addressed escalating depression symptoms requiring immediate intervention. Implemented: ${actionTexts.join(", ")}. Patient expressing suicidal ideation and medication non-compliance. Emergency protocols activated for immediate psychiatric evaluation and safety planning.`
-          : `Addressed ${taskData.title} by implementing: ${actionTexts.join(", ")}. Patient reported ${taskData.evidenceFromCall[0].text.toLowerCase()} Will follow-up to monitor progress.`
-      );
+        setSelectedActions(initialSelectedActions);
+        
+        // Generate initial SOAP note based on evidence
+        const evidenceText = taskData.evidenceFromCall?.map(e => e.text).join('. ') || '';
+        setSoapNote({
+          subjective: `Patient reports: ${evidenceText}`,
+          objective: `${taskData.title} noted during Hana call on ${new Date().toLocaleDateString()}. Patient accessed via telehealth monitoring.`,
+          assessment: `${taskData.title} - ${taskData.description}. ${taskData.flagReason || ''}`,
+          plan: taskData.id === 'T-1001' 
+            ? 'URGENT: Immediate mental health crisis assessment and safety planning. Emergency psychiatrist consultation for medication review. Coordinate urgent therapy session within 24-48 hours. Implement enhanced monitoring with daily check-ins. Patient requires immediate clinical intervention for escalating depression symptoms.'
+            : 'Review medication timing and adherence. Schedule BP recheck in 1 week. Reinforce importance of consistent dosing.'
+        });
+        
+        // Generate initial summary
+        const actionTexts = taskData.suggestedActions
+          ?.filter(action => action.default)
+          .map(action => action.text) || [];
+          
+        setSummary(
+          taskData.id === 'T-1001'
+            ? `CRITICAL ALERT: Addressed escalating depression symptoms requiring immediate intervention. Implemented: ${actionTexts.join(", ")}. Patient expressing suicidal ideation and medication non-compliance. Emergency protocols activated for immediate psychiatric evaluation and safety planning.`
+            : `Addressed ${taskData.title} by implementing: ${actionTexts.join(", ")}. Patient reported ${taskData.evidenceFromCall?.[0]?.text.toLowerCase() || ''} Will follow-up to monitor progress.`
+        );
+      }
     }
     setIsLoading(false);
   }, [taskId]);
@@ -313,6 +331,18 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
         <h2 className="text-xl font-semibold mt-4 text-gray-900">Task Not Found</h2>
         <p className="text-gray-600 mt-2">The care task you're looking for could not be found.</p>
       </div>
+    );
+  }
+
+  // Check if this is a Monthly Stability Review task
+  if (task.taskType === 'monthly-stability-review') {
+    return (
+      <MonthlyStabilityReview
+        task={task}
+        onComplete={handleFinalize}
+        timer={timer}
+        formatTime={formatTime}
+      />
     );
   }
 

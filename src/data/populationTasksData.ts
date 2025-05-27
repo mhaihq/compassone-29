@@ -1,3 +1,4 @@
+
 export interface PopulationTask {
   id: string;
   title: string;
@@ -71,6 +72,20 @@ export const populationTasksData: PopulationTask[] = [
     taskType: 'Lifestyle Management',
     triggeredBy: 'Hana AI Coach',
     callDate: '2025-05-20'
+  },
+  {
+    id: 'T-MSR-001',
+    title: 'Monthly Stability Review',
+    patientName: 'Matteo Grassi',
+    patientId: 'P100592',
+    description: 'Comprehensive monthly assessment of mental health stability and care plan effectiveness',
+    priority: 'Medium',
+    estimatedTime: '15 min',
+    status: 'needs-review',
+    dueDate: '2025-05-30',
+    taskType: 'Monthly Stability Review',
+    triggeredBy: 'Scheduled Review',
+    callDate: 'N/A'
   },
 
   // Other patients - Hana-triggered insights
