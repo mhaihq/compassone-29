@@ -12,17 +12,6 @@ export interface PopulationTask {
   taskType: string;
   triggeredBy?: string;
   callDate?: string;
-  lastReviewDate?: string;
-  reviewFrequency?: string;
-  // Evidence data for Mental Health Alert tasks
-  evidenceFromCall?: {
-    text: string;
-    timestamp: string;
-    importance: 'high' | 'medium';
-  }[];
-  flagReason?: string;
-  cptCode?: string;
-  cptDescription?: string;
 }
 
 export const populationTasksData: PopulationTask[] = [
@@ -39,32 +28,7 @@ export const populationTasksData: PopulationTask[] = [
     dueDate: '2025-05-27',
     taskType: 'Mental Health Alert',
     triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-22',
-    flagReason: 'Patient expressed feelings of hopelessness and mentioned thoughts of self-harm during routine check-in call. Depression screening scores indicate severe symptoms requiring immediate clinical intervention.',
-    cptCode: '99484',
-    cptDescription: 'Behavioral Health Integration - Care management services',
-    evidenceFromCall: [
-      {
-        text: "I've been feeling really hopeless lately... like nothing I do matters anymore",
-        timestamp: "0:32",
-        importance: "high"
-      },
-      {
-        text: "Sometimes I think everyone would be better off without me",
-        timestamp: "1:15",
-        importance: "high"
-      },
-      {
-        text: "I haven't been taking my medication consistently... maybe 3 times this week",
-        timestamp: "2:03",
-        importance: "medium"
-      },
-      {
-        text: "I stopped going to therapy last month, it just felt pointless",
-        timestamp: "2:45",
-        importance: "medium"
-      }
-    ]
+    callDate: '2025-05-22'
   },
   {
     id: 'T-1002',
@@ -107,54 +71,6 @@ export const populationTasksData: PopulationTask[] = [
     taskType: 'Lifestyle Management',
     triggeredBy: 'Hana AI Coach',
     callDate: '2025-05-20'
-  },
-
-  // Monthly Stability Reviews - New Task Type
-  {
-    id: 'T-1005',
-    title: 'Monthly Stability Review',
-    patientName: 'Matteo Grassi',
-    patientId: 'P100592',
-    description: 'Routine monthly check-in for mental health stability assessment and care plan updates',
-    priority: 'Low',
-    estimatedTime: '15 min',
-    status: 'needs-review',
-    dueDate: '2025-05-30',
-    taskType: 'Monthly Stability Review',
-    triggeredBy: 'System',
-    lastReviewDate: '2025-04-25',
-    reviewFrequency: 'Monthly'
-  },
-  {
-    id: 'T-6001',
-    title: 'Monthly Stability Review',
-    patientName: 'David Wilson',
-    patientId: 'P100597',
-    description: 'Routine assessment for anxiety management and medication adherence review',
-    priority: 'Low',
-    estimatedTime: '15 min',
-    status: 'needs-review',
-    dueDate: '2025-05-28',
-    taskType: 'Monthly Stability Review',
-    triggeredBy: 'System',
-    lastReviewDate: '2025-04-20',
-    reviewFrequency: 'Monthly'
-  },
-  {
-    id: 'T-7001',
-    title: 'Monthly Stability Review',
-    patientName: 'Lisa Anderson',
-    patientId: 'P100598',
-    description: 'Scheduled check for bipolar disorder stability and medication compliance',
-    priority: 'Low',
-    estimatedTime: '15 min',
-    status: 'in-progress',
-    assignedTo: 'Dr. Sarah Wilson',
-    dueDate: '2025-05-29',
-    taskType: 'Monthly Stability Review',
-    triggeredBy: 'System',
-    lastReviewDate: '2025-04-22',
-    reviewFrequency: 'Monthly'
   },
 
   // Other patients - Hana-triggered insights

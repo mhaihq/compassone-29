@@ -59,16 +59,6 @@ export const careTasksData: CptCodeData = {
       minutes: 12,
       insight: 'High Alert triggered by Hana AI Coach - immediate clinical review required for depression management',
       status: 'urgent'
-    },
-    {
-      id: 'T-1005',
-      title: 'Monthly Stability Review',
-      description: 'Routine monthly check-in for mental health stability assessment and care plan updates',
-      category: 'Monthly Review',
-      categoryColor: 'purple',
-      minutes: 15,
-      insight: 'Scheduled compliance review for BHI billing - last review 04/25, due monthly for ongoing care coordination',
-      status: 'pending'
     }
   ]
 };

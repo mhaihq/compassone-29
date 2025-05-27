@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Clock, User, ArrowRight, Search, Filter, ChevronDown, ChevronRight, Calendar } from 'lucide-react';
+import { Clock, User, ArrowRight, Search, Filter, ChevronDown, ChevronRight } from 'lucide-react';
 import { populationTasksData, PopulationTask } from '@/data/populationTasksData';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,16 +19,6 @@ const TaskRow: React.FC<{ task: PopulationTask; onOpenTask: (taskId: string) => 
       case 'High': return 'bg-red-50 text-red-700 border-red-200';
       case 'Medium': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
       case 'Low': return 'bg-green-50 text-green-700 border-green-200';
-      default: return 'bg-gray-50 text-gray-700 border-gray-200';
-    }
-  };
-
-  const getTaskTypeColor = (taskType: string) => {
-    switch (taskType) {
-      case 'Monthly Stability Review': return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'Mental Health Alert': return 'bg-pink-50 text-pink-700 border-pink-200';
-      case 'Hypertension Management': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'Medication Adherence': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
       default: return 'bg-gray-50 text-gray-700 border-gray-200';
     }
   };
@@ -61,19 +50,10 @@ const TaskRow: React.FC<{ task: PopulationTask; onOpenTask: (taskId: string) => 
                 <Badge className={`text-xs ${getPriorityColor(task.priority)}`}>
                   {task.priority}
                 </Badge>
-                <Badge className={`text-xs ${getTaskTypeColor(task.taskType)}`}>
-                  {task.taskType}
-                </Badge>
                 <div className="flex items-center gap-1 text-xs text-gray-500">
                   <Clock size={12} />
                   <span>{task.estimatedTime}</span>
                 </div>
-                {task.lastReviewDate && (
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
-                    <Calendar size={12} />
-                    <span>Last: {task.lastReviewDate}</span>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -140,7 +120,6 @@ const TaskBin: React.FC<{ title: string; tasks: PopulationTask[]; count: number;
 export const TaskQueueContent: React.FC<TaskQueueContentProps> = ({ onOpenTask }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('all');
-  const [taskTypeFilter, setTaskTypeFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const navigate = useNavigate();
 
@@ -154,13 +133,9 @@ export const TaskQueueContent: React.FC<TaskQueueContentProps> = ({ onOpenTask }
                          task.description.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesPriority = priorityFilter === 'all' || task.priority === priorityFilter;
-    const matchesTaskType = taskTypeFilter === 'all' || task.taskType === taskTypeFilter;
     
-    return matchesSearch && matchesPriority && matchesTaskType;
+    return matchesSearch && matchesPriority;
   });
-
-  // Get unique task types for filter
-  const taskTypes = Array.from(new Set(populationTasksData.map(task => task.taskType)));
 
   // Categorize tasks into bins based on status
   const taskBins = {
@@ -215,20 +190,6 @@ export const TaskQueueContent: React.FC<TaskQueueContentProps> = ({ onOpenTask }
                     <SelectItem value="High">High</SelectItem>
                     <SelectItem value="Medium">Medium</SelectItem>
                     <SelectItem value="Low">Low</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex-1">
-                <label className="text-xs font-medium text-gray-700 mb-1 block">Task Type</label>
-                <Select value={taskTypeFilter} onValueChange={setTaskTypeFilter}>
-                  <SelectTrigger className="text-xs">
-                    <SelectValue placeholder="All Types" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    {taskTypes.map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
                   </SelectContent>
                 </Select>
               </div>
