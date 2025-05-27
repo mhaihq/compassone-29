@@ -23,6 +23,19 @@ export const CampaignsContent: React.FC = () => {
       reached: '221 of 312 reached',
       startDate: '5/15/2025',
       completion: 71
+    },
+    {
+      id: 5,
+      title: 'CCM Enrollment Outreach',
+      category: 'Care Management',
+      status: 'In Progress',
+      statusColor: 'bg-green-100 text-green-800',
+      priority: 'High priority',
+      priorityColor: 'bg-red-100 text-red-800',
+      description: 'Voice with SMS fallback',
+      reached: '45 of 156 reached',
+      startDate: '5/20/2025',
+      completion: 29
     }
   ]);
 
