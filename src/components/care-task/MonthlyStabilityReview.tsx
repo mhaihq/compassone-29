@@ -267,7 +267,7 @@ export const MonthlyStabilityReview: React.FC<MonthlyStabilityReviewProps> = ({
                   <Checkbox 
                     checked={item.completed}
                     className="mt-1"
-                    readOnly
+                    disabled
                   />
                   <div className="flex-1">
                     <h4 className="font-medium text-gray-900">{item.label}</h4>
