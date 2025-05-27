@@ -1,3 +1,4 @@
+
 export interface PopulationTask {
   id: string;
   title: string;
@@ -15,62 +16,62 @@ export interface PopulationTask {
 }
 
 export const populationTasksData: PopulationTask[] = [
-  // Sthita Pujari - High Priority Hana-triggered insights
+  // Matteo Grassi - High Priority Hana-triggered insights matching his hypertension and depression
   {
     id: 'T-1001',
-    title: 'PHQ-9 Score Increased',
-    patientName: 'Sthita Pujari',
+    title: 'PHQ-9 Score Plateau',
+    patientName: 'Matteo Grassi',
     patientId: 'P100592',
-    description: 'Score increased from 8 to 13 during Hana call',
+    description: 'Score stable at 11 for past 3 weeks',
     priority: 'High',
-    estimatedTime: '5 min',
+    estimatedTime: '7 min',
     status: 'needs-review',
     dueDate: '2025-05-27',
     taskType: 'Mental Health Alert',
     triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-25'
+    callDate: '2025-05-22'
   },
   {
     id: 'T-1002',
-    title: 'Missed Medications This Week',
-    patientName: 'Sthita Pujari',
+    title: 'Blood Pressure Elevated',
+    patientName: 'Matteo Grassi',
     patientId: 'P100592',
-    description: '2 doses of Sertraline missed (May 23-24) - reported during call',
+    description: 'Recent reading 138/88 mmHg, above target range',
     priority: 'High',
-    estimatedTime: '4 min',
+    estimatedTime: '5 min',
     status: 'needs-review',
     dueDate: '2025-05-27',
-    taskType: 'Medication Adherence',
+    taskType: 'Hypertension Management',
     triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-25'
+    callDate: '2025-05-22'
   },
   {
     id: 'T-1003',
-    title: 'Sleep Pattern Disruption',
-    patientName: 'Sthita Pujari',
+    title: 'Medication Adherence Check',
+    patientName: 'Matteo Grassi',
     patientId: 'P100592',
-    description: 'Reports waking up 3-4 times per night, affecting daily function',
+    description: 'Patient reports occasional missed doses of Lisinopril',
     priority: 'Medium',
-    estimatedTime: '3 min',
+    estimatedTime: '4 min',
     status: 'needs-review',
     dueDate: '2025-05-28',
-    taskType: 'Sleep Health',
+    taskType: 'Medication Adherence',
     triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-24'
+    callDate: '2025-05-20'
   },
   {
     id: 'T-1004',
-    title: 'Work Stress Escalation',
-    patientName: 'Sthita Pujari',
+    title: 'Exercise Goals Not Met',
+    patientName: 'Matteo Grassi',
     patientId: 'P100592',
-    description: 'Mentioned feeling overwhelmed with upcoming deadline stress',
+    description: 'Only achieving 90 min/week vs target 150 min/week',
     priority: 'Medium',
     estimatedTime: '6 min',
     status: 'needs-review',
     dueDate: '2025-05-28',
-    taskType: 'Psychosocial Risk',
+    taskType: 'Lifestyle Management',
     triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-24'
+    callDate: '2025-05-20'
   },
 
   // Other patients - Hana-triggered insights
