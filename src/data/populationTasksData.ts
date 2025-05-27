@@ -1,4 +1,3 @@
-
 export interface PopulationTask {
   id: string;
   title: string;
@@ -15,6 +14,15 @@ export interface PopulationTask {
   callDate?: string;
   lastReviewDate?: string;
   reviewFrequency?: string;
+  // Evidence data for Mental Health Alert tasks
+  evidenceFromCall?: {
+    text: string;
+    timestamp: string;
+    importance: 'high' | 'medium';
+  }[];
+  flagReason?: string;
+  cptCode?: string;
+  cptDescription?: string;
 }
 
 export const populationTasksData: PopulationTask[] = [
@@ -31,7 +39,32 @@ export const populationTasksData: PopulationTask[] = [
     dueDate: '2025-05-27',
     taskType: 'Mental Health Alert',
     triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-22'
+    callDate: '2025-05-22',
+    flagReason: 'Patient expressed feelings of hopelessness and mentioned thoughts of self-harm during routine check-in call. Depression screening scores indicate severe symptoms requiring immediate clinical intervention.',
+    cptCode: '99484',
+    cptDescription: 'Behavioral Health Integration - Care management services',
+    evidenceFromCall: [
+      {
+        text: "I've been feeling really hopeless lately... like nothing I do matters anymore",
+        timestamp: "0:32",
+        importance: "high"
+      },
+      {
+        text: "Sometimes I think everyone would be better off without me",
+        timestamp: "1:15",
+        importance: "high"
+      },
+      {
+        text: "I haven't been taking my medication consistently... maybe 3 times this week",
+        timestamp: "2:03",
+        importance: "medium"
+      },
+      {
+        text: "I stopped going to therapy last month, it just felt pointless",
+        timestamp: "2:45",
+        importance: "medium"
+      }
+    ]
   },
   {
     id: 'T-1002',

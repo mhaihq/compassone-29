@@ -115,7 +115,7 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({
       <Dialog open={showAudioDialog} onOpenChange={setShowAudioDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Key Moment - {evidence.timestamp}</DialogTitle>
+            <DialogTitle>Evidence Review - {evidence.timestamp}</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">

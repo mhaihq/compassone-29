@@ -2,6 +2,7 @@
 import React from 'react';
 import { populationTasksData } from '@/data/populationTasksData';
 import { MonthlyStabilityReviewContent } from './MonthlyStabilityReviewContent';
+import { MentalHealthAlertContent } from './MentalHealthAlertContent';
 
 interface CareTaskContentProps {
   taskId: string;
@@ -24,6 +25,10 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
   // Route to specific task content based on task type
   if (task.taskType === 'Monthly Stability Review') {
     return <MonthlyStabilityReviewContent taskId={taskId} onComplete={onComplete} />;
+  }
+
+  if (task.taskType === 'Mental Health Alert') {
+    return <MentalHealthAlertContent taskId={taskId} onComplete={onComplete} />;
   }
 
   // Default task content for other task types
