@@ -16,14 +16,14 @@ export interface PatientSummary {
 export const patientsData: PatientSummary[] = [
   {
     id: "P100592",
-    name: "Sthita Pujari",
-    dateOfBirth: "1997-05-15",
+    name: "Matteo Grassi",
+    dateOfBirth: "1992-03-14",
     gender: "Male",
-    primaryDiagnosis: "Major Depressive Disorder, Recurrent",
-    diagnosisCode: "F33.2",
+    primaryDiagnosis: "Essential Hypertension with Depression",
+    diagnosisCode: "I10, F32.1",
     severity: "Moderate",
-    lastVisit: "2025-05-15",
-    nextAppointment: "2025-05-22",
+    lastVisit: "2025-05-20",
+    nextAppointment: "2025-06-17",
     status: "Active",
     isClickable: true
   },

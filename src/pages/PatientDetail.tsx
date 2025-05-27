@@ -60,7 +60,7 @@ const PatientDetail = () => {
     .filter(condition => condition.status === 'Active')
     .map(condition => condition.condition);
 
-  // For now, we only support Sthita Pujari's full data
+  // For now, we only support Matteo Grassi's full data
   // Other patients would need their own data structure
   if (patientId !== 'P100592') {
     return (

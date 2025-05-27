@@ -15,49 +15,49 @@ export const cptCodeInfo: Record<string, CptCodeInfo> = {
   }
 };
 
-// Task data grouped by CPT codes - matching population tasks for Sthita Pujari
+// Task data grouped by CPT codes - matching population tasks for Matteo Grassi
 export const careTasksData: CptCodeData = {
   '99490': [
     {
       id: 'T-1002',
-      title: 'Missed Medications This Week',
-      description: '2 doses of Sertraline missed (May 23-24)',
-      category: 'Medication',
-      categoryColor: 'yellow',
-      minutes: 4,
-      insight: 'Flagged by Hana AI Coach during May 25 call - adherence drop affecting mood stability',
+      title: 'Blood Pressure Elevated',
+      description: 'Recent reading 138/88 mmHg, above target range',
+      category: 'Vitals',
+      categoryColor: 'blue',
+      minutes: 5,
+      insight: 'Flagged by Hana AI Coach during May 22 call - need medication adjustment review',
       status: 'urgent'
     },
     {
       id: 'T-1003', 
-      title: 'Sleep Pattern Disruption',
-      description: 'Waking up 3-4 times per night, affecting daily function',
-      category: 'Vitals',
-      categoryColor: 'blue',
-      minutes: 3,
-      insight: 'Reported during Hana call on May 24 - possible medication timing issue',
+      title: 'Medication Adherence Check',
+      description: 'Patient reports occasional missed doses of Lisinopril',
+      category: 'Medication',
+      categoryColor: 'yellow',
+      minutes: 4,
+      insight: 'Reported during Hana call on May 20 - affecting BP control',
       status: 'pending'
     },
     {
       id: 'T-1004',
-      title: 'Work Stress Escalation',
-      description: 'Feeling overwhelmed with upcoming deadline stress',
+      title: 'Exercise Goals Not Met',
+      description: 'Only achieving 90 min/week vs target 150 min/week',
       category: 'Assessment',
       categoryColor: 'green',
       minutes: 6,
-      insight: 'Mentioned during Hana call - potential trigger for mood deterioration',
+      insight: 'Mentioned during Hana call - motivation and time management issues',
       status: 'pending'
     }
   ],
   '99484': [
     {
       id: 'T-1001',
-      title: 'PHQ-9 Score Increased',
-      description: 'Score increased from 8 to 13',
+      title: 'PHQ-9 Score Plateau',
+      description: 'Score stable at 11 for past 3 weeks',
       category: 'Mental-health',
       categoryColor: 'pink',
-      minutes: 5,
-      insight: 'Flagged by Hana AI Coach during May 25 call - significant mood decline detected',
+      minutes: 7,
+      insight: 'Flagged by Hana AI Coach during May 22 call - may need therapy frequency adjustment',
       status: 'urgent'
     }
   ]
@@ -69,6 +69,6 @@ export const totalRequiredMinutes = {
 };
 
 export const completedMinutes = {
-  '99490': 6,
-  '99484': 4
+  '99490': 8,
+  '99484': 5
 };

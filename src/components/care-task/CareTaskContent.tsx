@@ -20,76 +20,76 @@ import { useNavigate } from 'react-router-dom';
 const careTasksData = {
   'T-1001': {
     id: 'T-1001',
-    title: 'PHQ-9 Score Increased',
-    description: 'Score increased from 8 to 13',
+    title: 'PHQ-9 Score Plateau',
+    description: 'Score stable at 11 for past 3 weeks',
     category: 'Mental-health',
     categoryColor: 'pink',
-    minutes: 10,
-    insight: 'Flagged by AI from Apr 3 call — mentions job stress',
+    minutes: 7,
+    insight: 'Flagged by Hana AI Coach during May 22 call - therapy frequency adjustment needed',
     status: 'urgent',
     cptCode: '99484',
     cptDescription: 'Behavioral Health Integration',
     patientId: 'P100592',
-    patientName: 'Sthita Pujari',
-    flagReason: 'Patient reported increased feelings of depression and anxiety during the regular check-in call.',
+    patientName: 'Matteo Grassi',
+    flagReason: 'Patient showing plateau in depression improvement despite consistent therapy attendance.',
     evidenceFromCall: [
       {
-        text: "I'm feeling more overwhelmed than usual with work lately.",
-        timestamp: "2:34",
+        text: "I feel like I'm stuck at the same level. Not getting worse, but not really getting better either.",
+        timestamp: "3:12",
         importance: "high"
       },
       {
-        text: "Some days I just don't have the energy to get out of bed.",
-        timestamp: "4:15",
+        text: "The techniques we've been working on help in the moment, but I still have the same underlying feelings.",
+        timestamp: "5:45",
         importance: "high"
       },
       {
-        text: "I've been having trouble sleeping through the night.",
-        timestamp: "6:22",
+        text: "Work stress is still pretty overwhelming, especially with the new project deadlines.",
+        timestamp: "7:22",
         importance: "medium"
       }
     ],
     audioUrl: "#",
-    transcript: "AI: How have you been feeling lately?\nPatient: Not great, to be honest. I'm feeling more overwhelmed than usual with work lately.\nAI: I'm sorry to hear that. Can you tell me more about what's been going on?\nPatient: Work has been really stressful. Some days I just don't have the energy to get out of bed. I've been having trouble sleeping through the night too.",
+    transcript: "AI: How have you been feeling since our last check-in?\nPatient: I feel like I'm stuck at the same level. Not getting worse, but not really getting better either.\nAI: Can you tell me more about what that feels like?\nPatient: The techniques we've been working on help in the moment, but I still have the same underlying feelings. Work stress is still pretty overwhelming, especially with the new project deadlines.",
     suggestedActions: [
-      { id: 'action-1', text: 'Schedule call with behavioral health specialist', default: true },
-      { id: 'action-2', text: 'Adjust current medication dosage (consult with doctor)', default: true },
-      { id: 'action-3', text: 'Provide resources for stress management techniques', default: true },
-      { id: 'action-4', text: 'Recommend sleep hygiene practices', default: false }
+      { id: 'action-1', text: 'Schedule additional therapy session this week', default: true },
+      { id: 'action-2', text: 'Consider medication adjustment consultation', default: true },
+      { id: 'action-3', text: 'Implement workplace stress management plan', default: true },
+      { id: 'action-4', text: 'Explore different therapy modalities (EMDR, DBT)', default: false }
     ]
   },
   'T-1002': {
     id: 'T-1002',
-    title: 'Missed Medications This Week',
-    description: '2 doses of Lisinopril missed (Apr 3-4)',
-    category: 'Medication',
-    categoryColor: 'yellow',
+    title: 'Blood Pressure Elevated',
+    description: 'Recent reading 138/88 mmHg, above target range',
+    category: 'Vitals',
+    categoryColor: 'blue',
     minutes: 5,
-    insight: 'Flagged by Adherence Agent — 11% drop in last 30 days',
-    status: 'assigned',
+    insight: 'Flagged by Hana AI Coach - medication adherence affecting BP control',
+    status: 'urgent',
     cptCode: '99490',
     cptDescription: 'Chronic Care Management',
     patientId: 'P100592',
-    patientName: 'Sthita Pujari',
-    flagReason: 'Patient missed 2 doses of Lisinopril (Apr 3-4), which is part of their hypertension management plan.',
+    patientName: 'Matteo Grassi',
+    flagReason: 'Patient blood pressure reading above target range, indicating need for intervention.',
     evidenceFromCall: [
       {
-        text: "I forgot to take my blood pressure medication two days in a row.",
-        timestamp: "1:45",
+        text: "I've been forgetting to take my blood pressure medication some mornings when I'm rushing to work.",
+        timestamp: "2:15",
         importance: "high"
       },
       {
-        text: "I've been out of my normal routine because of family visiting.",
-        timestamp: "2:30",
-        importance: "medium"
+        text: "My home readings have been around 135-140 over 85-90 lately.",
+        timestamp: "4:30",
+        importance: "high"
       }
     ],
     audioUrl: "#",
-    transcript: "AI: How have you been with your medications this week?\nPatient: I forgot to take my blood pressure medication two days in a row.\nAI: I see. Was there a particular reason for that?\nPatient: I've been out of my normal routine because of family visiting. I usually take it with breakfast but we've been going out to eat.",
+    transcript: "AI: How has your blood pressure been this week?\nPatient: I've been forgetting to take my blood pressure medication some mornings when I'm rushing to work.\nAI: That's concerning. What have your home readings been?\nPatient: My home readings have been around 135-140 over 85-90 lately. I know it's higher than it should be.",
     suggestedActions: [
-      { id: 'action-1', text: 'Set up medication reminder system', default: true },
-      { id: 'action-2', text: 'Educate on importance of consistent Lisinopril use', default: true },
-      { id: 'action-3', text: 'Create backup plan for routine disruptions', default: false }
+      { id: 'action-1', text: 'Review medication timing and set up reminders', default: true },
+      { id: 'action-2', text: 'Schedule blood pressure recheck in 1 week', default: true },
+      { id: 'action-3', text: 'Discuss lifestyle modifications (diet, exercise, stress)', default: false }
     ]
   }
 };
@@ -141,9 +141,11 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
       const evidenceText = taskData.evidenceFromCall.map(e => e.text).join('. ');
       setSoapNote({
         subjective: `Patient reports: ${evidenceText}`,
-        objective: `PHQ-9 score increased from 8 to 13. Patient accessed via telehealth call on ${new Date().toLocaleDateString()}.`,
+        objective: `${taskData.title} noted during Hana call on ${new Date().toLocaleDateString()}. Patient accessed via telehealth monitoring.`,
         assessment: `${taskData.title} - ${taskData.description}. ${taskData.flagReason}`,
-        plan: 'Schedule follow-up call with behavioral health specialist. Review current medication regimen. Provide stress management resources. Monitor sleep patterns and energy levels.'
+        plan: taskData.id === 'T-1001' 
+          ? 'Schedule additional therapy session. Consider medication consultation. Implement workplace stress management. Monitor depression symptoms closely.'
+          : 'Review medication timing and adherence. Schedule BP recheck in 1 week. Reinforce importance of consistent dosing.'
       });
       
       // Generate initial summary

@@ -92,208 +92,197 @@ export interface PatientData {
 // Mock data for our patient
 export const patientData: PatientData = {
   id: "P100592",
-  name: "Sthita Pujari",
-  dateOfBirth: "1997-05-15",
+  name: "Matteo Grassi",
+  dateOfBirth: "1992-03-14",
   gender: "Male",
   contactInfo: {
-    phone: "(555) 123-4567",
-    email: "sthita.p@example.com",
-    address: "123 Wellness Ave, Serenity, CA 90210"
+    phone: "(555) 234-5678",
+    email: "matteo.grassi@example.com",
+    address: "456 Wellness Blvd, Milano Heights, CA 90211"
   },
   insurance: {
-    provider: "HealthGuard Insurance",
-    policyNumber: "HGI-2025-78901",
-    groupNumber: "MH-CARE-X42"
+    provider: "BlueCross BlueShield",
+    policyNumber: "BCBS-2025-89012",
+    groupNumber: "HTN-CARE-Y55"
   },
   emergencyContact: {
-    name: "Rajan Pujari",
-    relationship: "Father",
-    phone: "(555) 987-6543"
+    name: "Sofia Grassi",
+    relationship: "Sister",
+    phone: "(555) 876-5432"
   },
   diagnosis: {
-    primary: "Major Depressive Disorder, Recurrent",
-    code: "F33.2",
-    date: "2025-02-15",
+    primary: "Essential Hypertension with Depression",
+    code: "I10, F32.1",
+    date: "2024-11-10",
     severity: "Moderate",
-    diagnosedBy: "Dr. Elena Rodriguez"
+    diagnosedBy: "Dr. Maria Rodriguez"
   },
   medicalHistory: {
     pastConditions: [
       {
-        condition: "Generalized Anxiety Disorder",
-        diagnosedDate: "2023-06-10",
+        condition: "Essential Hypertension",
+        diagnosedDate: "2024-11-10",
         status: "Active",
-        notes: "Comorbid with depression. Exacerbated by work stress."
+        notes: "Stage 1 hypertension, well-controlled with medication and lifestyle changes."
       },
       {
-        condition: "Hypothyroidism",
-        diagnosedDate: "2022-03-22",
+        condition: "Major Depressive Disorder, Single Episode",
+        diagnosedDate: "2024-12-05",
         status: "Active",
-        notes: "Well-controlled with levothyroxine 50mcg daily."
+        notes: "Moderate depression, responding well to therapy and medication."
       }
     ],
     medications: [
       {
-        name: "Sertraline (Zoloft)",
-        dosage: "100mg",
+        name: "Lisinopril",
+        dosage: "10mg",
         frequency: "Once daily",
-        startDate: "2025-02-20",
-        prescribedBy: "Dr. Maya Patel"
+        startDate: "2024-11-15",
+        prescribedBy: "Dr. Maria Rodriguez"
       },
       {
-        name: "Levothyroxine",
-        dosage: "50mcg",
-        frequency: "Once daily, morning",
-        startDate: "2022-03-25",
-        prescribedBy: "Dr. James Wilson"
-      },
-      {
-        name: "Lorazepam (Ativan)",
-        dosage: "0.5mg",
-        frequency: "As needed for severe anxiety",
-        startDate: "2025-03-15",
-        prescribedBy: "Dr. Maya Patel"
-      },
-      {
-        name: "Trazodone",
+        name: "Sertraline (Zoloft)",
         dosage: "50mg",
-        frequency: "Once daily at bedtime",
-        startDate: "2025-04-10",
-        prescribedBy: "Dr. Maya Patel"
+        frequency: "Once daily",
+        startDate: "2024-12-10",
+        prescribedBy: "Dr. Sarah Chen"
+      },
+      {
+        name: "Hydrochlorothiazide",
+        dosage: "25mg",
+        frequency: "Once daily",
+        startDate: "2024-11-15",
+        prescribedBy: "Dr. Maria Rodriguez"
       }
     ],
     allergies: [
       {
-        allergen: "Penicillin",
-        reaction: "Hives, difficulty breathing",
-        severity: "Severe"
+        allergen: "Shellfish",
+        reaction: "Hives and swelling",
+        severity: "Moderate"
       }
     ],
     familyHistory: [
       {
-        condition: "Depression",
-        relation: "Mother",
-        notes: "Diagnosed in her 40s, treated with SSRIs"
+        condition: "Hypertension",
+        relation: "Father",
+        notes: "Diagnosed at age 45, managed with medication"
       },
       {
-        condition: "Alcohol Use Disorder",
-        relation: "Father",
-        notes: "In recovery for 10+ years"
+        condition: "Depression",
+        relation: "Mother",
+        notes: "History of postpartum depression, treated successfully"
       }
     ]
   },
   treatmentPlan: {
     goals: [
       {
-        description: "Reduce depressive symptoms by 50% as measured by PHQ-9",
+        description: "Achieve target blood pressure <130/80 mmHg consistently",
         status: "In Progress",
         targetDate: "2025-08-15"
       },
       {
-        description: "Establish healthy sleep routine with 7-8 hours of sleep per night",
+        description: "Reduce depressive symptoms by 50% as measured by PHQ-9",
         status: "In Progress",
-        targetDate: "2025-07-01"
+        targetDate: "2025-09-01"
       },
       {
-        description: "Return to full-time work with appropriate accommodations",
-        status: "Not Started",
-        targetDate: "2025-10-01"
+        description: "Establish consistent exercise routine (150 min/week)",
+        status: "In Progress",
+        targetDate: "2025-07-01"
       }
     ],
     interventions: [
       {
         type: "Cognitive Behavioral Therapy (CBT)",
-        frequency: "Weekly sessions",
-        notes: "Focusing on negative thought patterns related to work performance and self-worth"
+        frequency: "Bi-weekly sessions",
+        notes: "Focusing on stress management and healthy coping strategies"
       },
       {
         type: "Medication Management",
         frequency: "Monthly reviews",
-        notes: "Monitoring efficacy and side effects of Sertraline"
+        notes: "Monitoring blood pressure response and mood improvements"
       },
       {
-        type: "Mindfulness Practice",
-        frequency: "Daily, 10-15 minutes",
-        notes: "Using Calm app for guided meditation focused on anxiety reduction"
+        type: "Lifestyle Counseling",
+        frequency: "Ongoing",
+        notes: "Diet modification, exercise plan, stress reduction techniques"
       }
     ],
     assessments: [
       {
+        name: "Blood Pressure Monitoring",
+        date: "2025-05-20",
+        score: "128/82 mmHg (improving trend)",
+        administrator: "Dr. Maria Rodriguez",
+        notes: "Approaching target range"
+      },
+      {
         name: "PHQ-9 (Depression Screening)",
-        date: "2025-05-15",
-        score: "16 (Moderately severe depression)",
+        date: "2025-05-18",
+        score: "11 (Moderate depression)",
         administrator: "Dr. Sarah Chen",
-        notes: "Decrease from initial score of 21"
+        notes: "Decrease from initial score of 16"
       },
       {
-        name: "GAD-7 (Anxiety Screening)",
+        name: "Exercise Tolerance Assessment",
         date: "2025-05-15",
-        score: "14 (Moderate anxiety)",
-        administrator: "Dr. Sarah Chen"
-      },
-      {
-        name: "Sleep Quality Assessment",
-        date: "2025-05-10",
-        score: "Poor - averaging 5hrs/night with frequent wakings",
-        administrator: "Dr. Michael Thomas"
+        score: "Good - can walk 30 minutes without SOB",
+        administrator: "Physical Therapist Mike Johnson"
       }
     ]
   },
   sessionNotes: [
     {
-      id: "SN-2345",
-      date: "2025-05-15",
+      id: "SN-3456",
+      date: "2025-05-20",
+      provider: "Dr. Maria Rodriguez",
+      duration: "30 minutes",
+      notes: "Blood pressure check and medication review. Patient reports feeling more energetic and motivated since starting sertraline. BP reading 128/82, showing good improvement. Discussed importance of continued medication adherence and lifestyle modifications.",
+      interventionsUsed: ["Medication management", "Patient education"],
+      nextAppointment: "2025-06-17",
+      moodRating: 6
+    },
+    {
+      id: "SN-3455",
+      date: "2025-05-18",
       provider: "Dr. Sarah Chen",
-      duration: "50 minutes",
-      notes: "Patient reports continued difficulty with sleep but mild improvement in mood. Has been practicing mindfulness exercises 3-4 times per week. Discussed work stressors and developed plan for gradual return to work. Homework: Continue sleep journal and try progressive muscle relaxation before bed.",
-      interventionsUsed: ["CBT", "Mindfulness", "Sleep hygiene education"],
-      nextAppointment: "2025-05-22",
+      duration: "45 minutes",
+      notes: "Therapy session focused on stress management techniques. Patient practicing deep breathing exercises daily and reports improved sleep quality. PHQ-9 score down to 11 from 16. Discussed workplace stress and developed coping strategies.",
+      interventionsUsed: ["CBT", "Stress management", "Mindfulness"],
+      nextAppointment: "2025-06-01",
+      moodRating: 6
+    },
+    {
+      id: "SN-3454",
+      date: "2025-05-10",
+      provider: "Dr. Maria Rodriguez",
+      duration: "25 minutes",
+      notes: "Follow-up for hypertension management. Patient adherent to medications. Home BP readings averaging 132/84. Encouraged to continue current regimen and lifestyle modifications. Weight stable at 178 lbs.",
+      interventionsUsed: ["Medication management", "Lifestyle counseling"],
+      nextAppointment: "2025-05-20",
       moodRating: 5
     },
     {
-      id: "SN-2344",
-      date: "2025-05-08",
-      provider: "Dr. Maya Patel",
-      duration: "30 minutes",
-      notes: "Medication management session. Patient reports some improvement in mood since increasing Sertraline to 100mg, but continues to have sleep disruption. Adding low-dose Trazodone for sleep. No concerning side effects from current medications.",
-      interventionsUsed: ["Medication management", "Psychoeducation"],
-      medicationChanges: {
-        medication: "Trazodone",
-        change: "Added 50mg at bedtime",
-        reason: "Sleep initiation and maintenance"
-      },
-      nextAppointment: "2025-06-05",
+      id: "SN-3453",
+      date: "2025-05-03",
+      provider: "Dr. Sarah Chen",
+      duration: "50 minutes",
+      notes: "Second therapy session. Patient opening up about work-related stress and perfectionist tendencies. Introduced cognitive restructuring techniques. Homework: thought record for negative self-talk patterns. Mood improving slightly.",
+      interventionsUsed: ["CBT", "Cognitive restructuring"],
+      nextAppointment: "2025-05-18",
+      moodRating: 5
+    },
+    {
+      id: "SN-3452",
+      date: "2025-04-26",
+      provider: "Dr. Sarah Chen",
+      duration: "50 minutes",
+      notes: "Initial therapy session for depression treatment. Established therapeutic rapport and conducted comprehensive assessment. Patient motivated for treatment and shows good insight. Discussed CBT approach and set initial treatment goals.",
+      interventionsUsed: ["Assessment", "Treatment planning", "Psychoeducation"],
+      nextAppointment: "2025-05-03",
       moodRating: 4
-    },
-    {
-      id: "SN-2343",
-      date: "2025-05-01",
-      provider: "Dr. Sarah Chen",
-      duration: "50 minutes",
-      notes: "Focused on identifying and challenging negative core beliefs related to self-worth. Patient brought up childhood experiences of high parental expectations. Beginning to see connection between these experiences and current perfectionism at work. Some resistance to self-compassion exercises.",
-      interventionsUsed: ["CBT", "Schema work", "Self-compassion exercises"],
-      nextAppointment: "2025-05-08",
-      moodRating: 3
-    },
-    {
-      id: "SN-2342",
-      date: "2025-04-24",
-      provider: "Dr. Michael Thomas",
-      duration: "50 minutes",
-      notes: "Initial consultation for specialized sleep assessment. Patient reports 2+ years of sleep difficulties, worsening with depression onset. Averaging 5 hours of fragmented sleep. Discussed sleep hygiene practices and initiated sleep journal. Recommended consistent wake time even on weekends.",
-      interventionsUsed: ["Sleep assessment", "Psychoeducation", "CBT-I introduction"],
-      nextAppointment: "2025-05-22",
-      moodRating: 3
-    },
-    {
-      id: "SN-2341",
-      date: "2025-04-17",
-      provider: "Dr. Sarah Chen",
-      duration: "50 minutes",
-      notes: "Patient arrived on time but visibly distressed. Reported conflict with supervisor at work, triggering thoughts of inadequacy. Applied thought record technique in session. Some insight into catastrophic thinking patterns. Mood remained low throughout session but reported feeling 'slightly lighter' by end.",
-      interventionsUsed: ["CBT", "Crisis management", "Thought records"],
-      nextAppointment: "2025-04-24",
-      moodRating: 2
-    },
+    }
   ]
 };
