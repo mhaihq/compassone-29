@@ -44,3 +44,38 @@ export interface TimeBreakdownEntry {
   percentage: number;
   taskCount: number;
 }
+
+// New billing safeguard types
+export interface ClinicalNote {
+  stabilityAssessment: string;
+  functionalStatus: string;
+  riskFactors: string;
+  interventions: string;
+  followUpPlan: string;
+  medicationReview: string;
+  careCoordination: string;
+}
+
+export interface BillingValidation {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+  completionPercentage: number;
+  requiredFields: {
+    field: string;
+    completed: boolean;
+    description: string;
+  }[];
+}
+
+export interface BillingSafeguard {
+  taskId: string;
+  patientId: string;
+  cptCode: string;
+  timeSpent: number;
+  clinicalNotes: ClinicalNote;
+  validation: BillingValidation;
+  isReadyForBilling: boolean;
+  submittedAt?: Date;
+  submittedBy?: string;
+}

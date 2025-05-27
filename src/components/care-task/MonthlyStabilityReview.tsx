@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle, AlertTriangle, TrendingUp, Calendar, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { BillingSafeguard } from '@/components/billing/BillingSafeguard';
+import { BillingSafeguard as BillingSafeguardType } from '@/types/billingBreakdown';
 
 interface MonthlyStabilityReviewProps {
   task: any;
@@ -31,6 +32,7 @@ export const MonthlyStabilityReview: React.FC<MonthlyStabilityReviewProps> = ({
   const [careRecommendations, setCareRecommendations] = useState('');
   const [nextReviewDate, setNextReviewDate] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [showBillingSafeguard, setShowBillingSafeguard] = useState(false);
 
   const handleMetricChange = (metric: string, value: string) => {
     setStabilityMetrics(prev => ({
@@ -52,16 +54,33 @@ export const MonthlyStabilityReview: React.FC<MonthlyStabilityReviewProps> = ({
       return;
     }
 
+    // Show billing safeguard instead of completing immediately
+    setShowBillingSafeguard(true);
+    
+    toast({
+      title: "Review Complete - Ready for Billing",
+      description: "Please complete the billing documentation to finalize the task.",
+    });
+  };
+
+  const handleBillingSubmit = (safeguard: BillingSafeguardType) => {
     setIsCompleted(true);
     
     toast({
       title: "Monthly Stability Review Completed",
-      description: `Review completed in ${formatTime(timer)}. Patient stability assessed and documented.`,
+      description: `Review completed in ${formatTime(timer)} and submitted for billing.`,
     });
 
     setTimeout(() => {
       onComplete();
     }, 1500);
+  };
+
+  const handleAutoFill = () => {
+    toast({
+      title: "Clinical Notes Generated",
+      description: "Auto-generated notes based on your stability assessment. Please review and modify as needed.",
+    });
   };
 
   const getMetricColor = (value: string) => {
@@ -82,10 +101,26 @@ export const MonthlyStabilityReview: React.FC<MonthlyStabilityReviewProps> = ({
             Monthly Stability Review Completed
           </h3>
           <p className="text-green-700">
-            Patient stability assessment has been documented and care plan updated.
+            Patient stability assessment has been documented and submitted for billing.
           </p>
         </CardContent>
       </Card>
+    );
+  }
+
+  if (showBillingSafeguard) {
+    return (
+      <div className="space-y-6">
+        <BillingSafeguard
+          taskId={task?.id || 'MSR-001'}
+          patientId="P100592"
+          cptCode="99484"
+          timeSpent={Math.floor(timer / 60)}
+          stabilityMetrics={stabilityMetrics}
+          onBillingSubmit={handleBillingSubmit}
+          onAutoFill={handleAutoFill}
+        />
+      </div>
     );
   }
 

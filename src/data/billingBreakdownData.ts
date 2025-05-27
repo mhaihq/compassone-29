@@ -1,5 +1,4 @@
-
-import { PatientBillingBreakdown, PopulationBillingAnalytics, BillingAction } from '@/types/billingBreakdown';
+import { PatientBillingBreakdown, PopulationBillingAnalytics, BillingAction, BillingSafeguard } from '@/types/billingBreakdown';
 
 // Mock billing actions data
 export const mockBillingActions: BillingAction[] = [
@@ -125,4 +124,39 @@ export const mockPopulationBillingAnalytics: PopulationBillingAnalytics = {
       }
     ]
   }
+};
+
+// Mock billing safeguard data
+export const mockBillingSafeguard: BillingSafeguard = {
+  taskId: 'MSR-001',
+  patientId: 'P100592',
+  cptCode: '99484',
+  timeSpent: 25,
+  clinicalNotes: {
+    stabilityAssessment: 'Monthly stability review completed. Improvements noted in: mood, sleep. Stable functioning observed in: medication, functionality. Patient demonstrates overall engagement in treatment process.',
+    functionalStatus: 'Functional assessment reveals: mood: improved, sleep: improved, functionality: stable. Patient maintains baseline activities of daily living with ongoing support.',
+    riskFactors: 'No acute risk factors identified. Standard monitoring protocols maintained.',
+    interventions: 'Continued evidence-based interventions per treatment plan. Cognitive behavioral techniques reinforced.',
+    followUpPlan: 'Continue current treatment plan with monthly stability reviews. Next assessment scheduled in 4 weeks.',
+    medicationReview: 'Current medications reviewed for effectiveness and adherence. No changes indicated at this time.',
+    careCoordination: 'Coordinated care with primary care provider and mental health team. Communication plan maintained.'
+  },
+  validation: {
+    isValid: true,
+    errors: [],
+    warnings: [],
+    completionPercentage: 100,
+    requiredFields: [
+      { field: 'stabilityAssessment', completed: true, description: 'Detailed stability assessment (minimum 50 characters)' },
+      { field: 'functionalStatus', completed: true, description: 'Functional status evaluation (minimum 30 characters)' },
+      { field: 'riskFactors', completed: true, description: 'Risk factors identification (minimum 20 characters)' },
+      { field: 'interventions', completed: true, description: 'Interventions and recommendations (minimum 40 characters)' },
+      { field: 'followUpPlan', completed: true, description: 'Follow-up plan (minimum 30 characters)' },
+      { field: 'medicationReview', completed: true, description: 'Medication review notes (minimum 20 characters)' },
+      { field: 'careCoordination', completed: true, description: 'Care coordination activities (minimum 20 characters)' }
+    ]
+  },
+  isReadyForBilling: true,
+  submittedAt: new Date('2025-01-21T10:15:00'),
+  submittedBy: 'Dr. Sarah Chen'
 };
