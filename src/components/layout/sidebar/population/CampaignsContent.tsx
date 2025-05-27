@@ -7,8 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Megaphone, Plus, Users, Calendar, CheckCircle, ChevronDown, Eye, Edit, Pause, MessageSquare, Phone } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Megaphone, Plus, Users, Calendar, CheckCircle, ChevronDown, Eye, Edit, Pause, MessageSquare, Phone, ChevronUp } from 'lucide-react';
 
 export const CampaignsContent: React.FC = () => {
   const [activeCampaigns, setActiveCampaigns] = useState([
@@ -398,139 +398,150 @@ export const CampaignsContent: React.FC = () => {
 
         <div className="grid grid-cols-1 gap-4">
           {activeCampaigns.map((campaign) => (
-            <Card key={campaign.id} className="bg-white shadow-md hover:shadow-lg transition-shadow">
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge className="text-xs bg-[#EBF4F0] text-[#1E4D36]">{campaign.category}</Badge>
-                    <Badge className={`text-xs ${campaign.statusColor}`}>
-                      {campaign.status}
+            <div key={campaign.id}>
+              <Card className="bg-white shadow-md hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge className="text-xs bg-[#EBF4F0] text-[#1E4D36]">{campaign.category}</Badge>
+                      <Badge className={`text-xs ${campaign.statusColor}`}>
+                        {campaign.status}
+                      </Badge>
+                    </div>
+                    
+                    <h3 className="font-semibold text-gray-900">{campaign.title}</h3>
+                    
+                    <Badge className={`text-xs ${campaign.priorityColor}`}>
+                      {campaign.priority}
                     </Badge>
-                  </div>
-                  
-                  <h3 className="font-semibold text-gray-900">{campaign.title}</h3>
-                  
-                  <Badge className={`text-xs ${campaign.priorityColor}`}>
-                    {campaign.priority}
-                  </Badge>
-                  
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <Phone size={12} />
-                        <MessageSquare size={12} />
+                    
+                    <div className="space-y-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <Phone size={12} />
+                          <MessageSquare size={12} />
+                        </div>
+                        <span>{campaign.description}</span>
                       </div>
-                      <span>{campaign.description}</span>
+                      <div className="flex items-center gap-2">
+                        <Users size={14} />
+                        <span>{campaign.reached}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar size={14} />
+                        <span>Started: {campaign.startDate}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Users size={14} />
-                      <span>{campaign.reached}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar size={14} />
-                      <span>Started: {campaign.startDate}</span>
-                    </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span>Completion:</span>
-                      <span>{campaign.completion}%</span>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs">
+                        <span>Completion:</span>
+                        <span>{campaign.completion}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-[#1E4D36] h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${campaign.completion}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-[#1E4D36] h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${campaign.completion}%` }}
-                      ></div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      {campaign.id === 5 ? (
+                        <Collapsible open={showCCMDetails} onOpenChange={setShowCCMDetails}>
+                          <CollapsibleTrigger asChild>
+                            <Button variant="outline" size="sm" className="flex-1">
+                              <Eye size={14} />
+                              View Details
+                              {showCCMDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                            </Button>
+                          </CollapsibleTrigger>
+                        </Collapsible>
+                      ) : (
+                        <Button variant="outline" size="sm" className="flex-1">
+                          <Eye size={14} />
+                          View
+                        </Button>
+                      )}
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Edit size={14} />
+                        Edit
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Pause size={14} />
+                        Pause
+                      </Button>
                     </div>
                   </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    {campaign.id === 5 ? (
-                      <Dialog open={showCCMDetails} onOpenChange={setShowCCMDetails}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="flex-1">
-                            <Eye size={14} />
-                            View Details
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>CCM Enrollment Outreach - Campaign Details</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <h4 className="font-medium text-sm text-gray-700 mb-1">Status</h4>
-                                <Badge className="bg-green-100 text-green-800">In Progress</Badge>
-                              </div>
-                              <div>
-                                <h4 className="font-medium text-sm text-gray-700 mb-1">Priority</h4>
-                                <Badge className="bg-red-100 text-red-800">High Priority</Badge>
-                              </div>
+                </CardContent>
+              </Card>
+              
+              {/* CCM Campaign Details - Displayed inline when expanded */}
+              {campaign.id === 5 && (
+                <Collapsible open={showCCMDetails} onOpenChange={setShowCCMDetails}>
+                  <CollapsibleContent>
+                    <Card className="mt-2 bg-gray-50 border-l-4 border-l-[#1E4D36]">
+                      <CardContent className="p-4">
+                        <h4 className="font-semibold text-[#1E4D36] mb-4">CCM Enrollment Outreach - Campaign Details</h4>
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="font-medium text-sm text-gray-700 mb-1">Status</h4>
+                              <Badge className="bg-green-100 text-green-800">In Progress</Badge>
                             </div>
                             <div>
-                              <h4 className="font-medium text-sm text-gray-700 mb-2">Campaign Progress</h4>
-                              <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
-                                  <span>Patients Contacted:</span>
-                                  <span>45 of 156 (29%)</span>
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-3">
-                                  <div className="bg-[#1E4D36] h-3 rounded-full" style={{ width: '29%' }}></div>
-                                </div>
-                              </div>
+                              <h4 className="font-medium text-sm text-gray-700 mb-1">Priority</h4>
+                              <Badge className="bg-red-100 text-red-800">High Priority</Badge>
                             </div>
-                            <div>
-                              <h4 className="font-medium text-sm text-gray-700 mb-2">Campaign Details</h4>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                  <span>Category:</span>
-                                  <span>Care Management</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Contact Method:</span>
-                                  <span>Voice with SMS fallback</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Start Date:</span>
-                                  <span>5/20/2025</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Target Patients:</span>
-                                  <span>156 patients eligible for CCM</span>
-                                </div>
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm text-gray-700 mb-2">Campaign Progress</h4>
+                            <div className="space-y-2">
+                              <div className="flex justify-between text-sm">
+                                <span>Patients Contacted:</span>
+                                <span>45 of 156 (29%)</span>
                               </div>
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-sm text-gray-700 mb-2">Recent Activity</h4>
-                              <div className="space-y-2 text-sm text-gray-600">
-                                <p>• 12 patients successfully enrolled today</p>
-                                <p>• 8 patients scheduled for follow-up calls</p>
-                                <p>• 25 patients pending response</p>
+                              <div className="w-full bg-gray-200 rounded-full h-3">
+                                <div className="bg-[#1E4D36] h-3 rounded-full" style={{ width: '29%' }}></div>
                               </div>
                             </div>
                           </div>
-                        </DialogContent>
-                      </Dialog>
-                    ) : (
-                      <Button variant="outline" size="sm" className="flex-1">
-                        <Eye size={14} />
-                        View
-                      </Button>
-                    )}
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Edit size={14} />
-                      Edit
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Pause size={14} />
-                      Pause
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                          <div>
+                            <h4 className="font-medium text-sm text-gray-700 mb-2">Campaign Details</h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span>Category:</span>
+                                <span>Care Management</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>Contact Method:</span>
+                                <span>Voice with SMS fallback</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>Start Date:</span>
+                                <span>5/20/2025</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>Target Patients:</span>
+                                <span>156 patients eligible for CCM</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm text-gray-700 mb-2">Recent Activity</h4>
+                            <div className="space-y-2 text-sm text-gray-600">
+                              <p>• 12 patients successfully enrolled today</p>
+                              <p>• 8 patients scheduled for follow-up calls</p>
+                              <p>• 25 patients pending response</p>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
+            </div>
           ))}
         </div>
       </div>
