@@ -7,23 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Megaphone, Plus, Users, Calendar, CheckCircle, ChevronDown, Eye, Edit, Pause, MessageSquare, Phone } from 'lucide-react';
 
 export const CampaignsContent: React.FC = () => {
   const [activeCampaigns, setActiveCampaigns] = useState([
-    {
-      id: 1,
-      title: 'PHQ-9 Kickoff',
-      category: 'Behavioral Health',
-      status: 'In Progress',
-      statusColor: 'bg-green-100 text-green-800',
-      priority: 'High priority',
-      priorityColor: 'bg-red-100 text-red-800',
-      description: 'Voice with SMS fallback',
-      reached: '221 of 312 reached',
-      startDate: '5/15/2025',
-      completion: 71
-    },
     {
       id: 5,
       title: 'CCM Enrollment Outreach',
@@ -80,6 +68,7 @@ export const CampaignsContent: React.FC = () => {
   });
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [showCCMDetails, setShowCCMDetails] = useState(false);
 
   const stats = [
     {
@@ -457,10 +446,79 @@ export const CampaignsContent: React.FC = () => {
                   </div>
                   
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Eye size={14} />
-                      View
-                    </Button>
+                    {campaign.id === 5 ? (
+                      <Dialog open={showCCMDetails} onOpenChange={setShowCCMDetails}>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="flex-1">
+                            <Eye size={14} />
+                            View Details
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>CCM Enrollment Outreach - Campaign Details</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <h4 className="font-medium text-sm text-gray-700 mb-1">Status</h4>
+                                <Badge className="bg-green-100 text-green-800">In Progress</Badge>
+                              </div>
+                              <div>
+                                <h4 className="font-medium text-sm text-gray-700 mb-1">Priority</h4>
+                                <Badge className="bg-red-100 text-red-800">High Priority</Badge>
+                              </div>
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-sm text-gray-700 mb-2">Campaign Progress</h4>
+                              <div className="space-y-2">
+                                <div className="flex justify-between text-sm">
+                                  <span>Patients Contacted:</span>
+                                  <span>45 of 156 (29%)</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-3">
+                                  <div className="bg-[#1E4D36] h-3 rounded-full" style={{ width: '29%' }}></div>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-sm text-gray-700 mb-2">Campaign Details</h4>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                  <span>Category:</span>
+                                  <span>Care Management</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Contact Method:</span>
+                                  <span>Voice with SMS fallback</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Start Date:</span>
+                                  <span>5/20/2025</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Target Patients:</span>
+                                  <span>156 patients eligible for CCM</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-sm text-gray-700 mb-2">Recent Activity</h4>
+                              <div className="space-y-2 text-sm text-gray-600">
+                                <p>• 12 patients successfully enrolled today</p>
+                                <p>• 8 patients scheduled for follow-up calls</p>
+                                <p>• 25 patients pending response</p>
+                              </div>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    ) : (
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Eye size={14} />
+                        View
+                      </Button>
+                    )}
                     <Button variant="outline" size="sm" className="flex-1">
                       <Edit size={14} />
                       Edit
