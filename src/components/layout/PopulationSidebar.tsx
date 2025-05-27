@@ -87,9 +87,6 @@ export const PopulationSidebar = () => {
 
   // Extract medical conditions from the pastConditions array
   const medicalConditions = patientData.medicalHistory.pastConditions.filter(condition => condition.status === 'Active').map(condition => condition.condition);
-
-  // Determine sheet width based on view state
-  const sheetWidth = isViewingTask ? "w-full" : "max-w-2/3 w-2/3";
   
   return (
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
@@ -99,7 +96,7 @@ export const PopulationSidebar = () => {
         </button>
       </SheetTrigger>
       
-      <SheetContent className={`p-0 ${sheetWidth} border-l border-gray-200 overflow-y-auto bg-[#F1F1F1]`}>
+      <SheetContent className="p-0 max-w-2/3 w-2/3 border-l border-gray-200 overflow-y-auto bg-[#F1F1F1]">
         <div className="flex flex-col h-full">
           {/* Simplified Header for Task/Patient Views */}
           <div className="relative bg-white shadow-sm">
@@ -160,10 +157,12 @@ export const PopulationSidebar = () => {
             />
           )}
           
-          {/* Tab Content */}
-          <div className="flex-grow overflow-y-auto p-4">
+          {/* Tab Content - Full width for task view */}
+          <div className={`flex-grow overflow-y-auto ${isViewingTask ? 'p-0' : 'p-4'}`}>
             {isViewingTask && selectedTaskId ? (
-              <CareTaskContent taskId={selectedTaskId} onComplete={handleTaskComplete} />
+              <div className="h-full p-4">
+                <CareTaskContent taskId={selectedTaskId} onComplete={handleTaskComplete} />
+              </div>
             ) : isViewingPatient && selectedPatientId ? (
               <PatientDetailContent patientId={selectedPatientId} />
             ) : (
