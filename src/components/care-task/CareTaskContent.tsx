@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { 
   AlertTriangle, Clock, Play, Pause
@@ -149,7 +147,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
       setTask(taskData);
       
       // Only set initial values for non-Monthly Stability Review tasks
-      if (taskData.taskType !== 'monthly-stability-review') {
+      if (taskData?.taskType !== 'monthly-stability-review') {
         // Set initial selected actions based on default values
         const initialSelectedActions = taskData.suggestedActions
           ?.filter(action => action.default)
@@ -337,7 +335,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
   }
 
   // Check if this is a Monthly Stability Review task
-  if (task.taskType === 'monthly-stability-review') {
+  if (task?.taskType === 'monthly-stability-review') {
     return (
       <MonthlyStabilityReview
         task={task}
@@ -547,4 +545,3 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
     </div>
   );
 };
-
