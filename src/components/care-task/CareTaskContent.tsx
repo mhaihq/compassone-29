@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { 
   AlertTriangle, Clock, Play, Pause
@@ -546,3 +547,4 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
     </div>
   );
 };
+
