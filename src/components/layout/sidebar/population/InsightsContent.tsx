@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
@@ -15,13 +16,16 @@ import {
   Clock,
   Brain,
   Lightbulb,
-  BarChart3
+  BarChart3,
+  DollarSign
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { SmartRecommendations } from '../insights/SmartRecommendations';
 import { GoalGapsTracker } from '../insights/GoalGapsTracker';
 import { SmartSummary } from '../insights/SmartSummary';
 import { ActivityGuidance } from '../insights/ActivityGuidance';
+import { PopulationBillingAnalytics } from '@/components/billing/PopulationBillingAnalytics';
+import { mockPopulationBillingAnalytics } from '@/data/billingBreakdownData';
 
 const chartConfig = {
   timeSpent: {
@@ -90,7 +94,7 @@ export const InsightsContent: React.FC = () => {
 
       {/* Tabbed Interface for Detailed Insights */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="dashboard" className="text-xs">
             <BarChart3 className="w-4 h-4 mr-1" />
             Dashboard
@@ -106,6 +110,10 @@ export const InsightsContent: React.FC = () => {
           <TabsTrigger value="optimization" className="text-xs">
             <Lightbulb className="w-4 h-4 mr-1" />
             Optimization
+          </TabsTrigger>
+          <TabsTrigger value="billing" className="text-xs">
+            <DollarSign className="w-4 h-4 mr-1" />
+            Billing Analytics
           </TabsTrigger>
         </TabsList>
 
@@ -279,6 +287,10 @@ export const InsightsContent: React.FC = () => {
 
         <TabsContent value="optimization" className="space-y-6">
           <ActivityGuidance />
+        </TabsContent>
+
+        <TabsContent value="billing" className="space-y-6">
+          <PopulationBillingAnalytics analytics={mockPopulationBillingAnalytics} />
         </TabsContent>
       </Tabs>
 

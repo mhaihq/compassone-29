@@ -16,8 +16,38 @@ import { FinalizeStep } from '@/components/care-task/FinalizeStep';
 import { MonthlyStabilityReview } from '@/components/care-task/MonthlyStabilityReview';
 import { useNavigate } from 'react-router-dom';
 
+// Define consistent task interface
+interface CareTask {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  categoryColor: string;
+  minutes: number;
+  insight: string;
+  status: string;
+  cptCode: string;
+  cptDescription: string;
+  patientId: string;
+  patientName: string;
+  taskType?: string;
+  flagReason?: string;
+  evidenceFromCall?: Array<{
+    text: string;
+    timestamp: string;
+    importance: string;
+  }>;
+  audioUrl?: string;
+  transcript?: string;
+  suggestedActions?: Array<{
+    id: string;
+    text: string;
+    default: boolean;
+  }>;
+}
+
 // Sample data - would come from an API or context in a real app
-const careTasksData = {
+const careTasksData: Record<string, CareTask> = {
   'T-1001': {
     id: 'T-1001',
     title: 'Mental Health Monitoring',
@@ -106,7 +136,9 @@ const careTasksData = {
     cptDescription: 'Behavioral Health Integration',
     patientId: 'P100592',
     patientName: 'Matteo Grassi',
-    taskType: 'monthly-stability-review'
+    taskType: 'monthly-stability-review',
+    suggestedActions: [],
+    evidenceFromCall: []
   }
 };
 
@@ -121,7 +153,7 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  const [task, setTask] = useState<any | null>(null);
+  const [task, setTask] = useState<CareTask | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showAudioDialog, setShowAudioDialog] = useState(false);
   const [timer, setTimer] = useState(0);
@@ -142,8 +174,8 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
 
   // Mock data fetching
   useEffect(() => {
-    if (taskId && careTasksData[taskId as keyof typeof careTasksData]) {
-      const taskData = careTasksData[taskId as keyof typeof careTasksData];
+    if (taskId && careTasksData[taskId]) {
+      const taskData = careTasksData[taskId];
       setTask(taskData);
       
       // Only set initial values for non-Monthly Stability Review tasks
