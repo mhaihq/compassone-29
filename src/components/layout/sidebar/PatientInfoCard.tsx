@@ -4,6 +4,8 @@ import { User, Calendar, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { PatientData } from '@/data/patientData';
+import { PatientInteractionInsights } from '@/components/PatientInteractionInsights';
+import { matteoInteractionInsights } from '@/data/interactionInsights';
 
 interface PatientInfoCardProps {
   patientData: PatientData;
@@ -19,7 +21,7 @@ export const PatientInfoCard: React.FC<PatientInfoCardProps> = ({
   medicalConditions
 }) => {
   return (
-    <div className="p-4 bg-white">
+    <div className="p-4 bg-white space-y-4">
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
@@ -58,6 +60,11 @@ export const PatientInfoCard: React.FC<PatientInfoCardProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      <PatientInteractionInsights 
+        insights={matteoInteractionInsights} 
+        variant="compact" 
+      />
     </div>
   );
 };

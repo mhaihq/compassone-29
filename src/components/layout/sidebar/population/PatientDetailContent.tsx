@@ -10,6 +10,8 @@ import OverviewTab from '@/components/overview/OverviewTab';
 import { PatientCareLog } from './PatientCareLog';
 import { ProtocolsContent } from '../ProtocolsContent';
 import { BillingContent } from '../BillingContent';
+import { PatientInteractionInsights } from '@/components/PatientInteractionInsights';
+import { matteoInteractionInsights, defaultInteractionInsights } from '@/data/interactionInsights';
 
 interface PatientDetailContentProps {
   patientId: string;
@@ -38,6 +40,7 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
 
   // For detailed patient data, use the full patient data if available
   const isDetailedPatient = patientId === 'P100592';
+  const patientInsights = isDetailedPatient ? matteoInteractionInsights : defaultInteractionInsights;
 
   return (
     <div className="space-y-4">
@@ -61,6 +64,12 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
           </div>
         </CardContent>
       </Card>
+
+      {/* Patient Interaction Insights */}
+      <PatientInteractionInsights 
+        insights={patientInsights} 
+        variant="compact" 
+      />
 
       {/* Tabs for detailed view */}
       {isDetailedPatient ? (
