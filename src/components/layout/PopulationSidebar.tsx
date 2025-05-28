@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -142,8 +141,8 @@ export const PopulationSidebar = () => {
             </div>
           </div>
           
-          {/* Navigation Tabs - Always visible */}
-          <div className="sticky top-0 z-10">
+          {/* Navigation Tabs - Full width container */}
+          <div className="sticky top-0 z-10 px-4">
             <PopulationSidebarTabs activeTab={activeTab} setActiveTab={handleTabChange} />
           </div>
 

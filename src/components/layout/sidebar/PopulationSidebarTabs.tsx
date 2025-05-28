@@ -11,7 +11,7 @@ interface PopulationSidebarTabsProps {
 export const PopulationSidebarTabs: React.FC<PopulationSidebarTabsProps> = ({ activeTab, setActiveTab }) => {
   return (
     <div className="h-16 py-2 flex items-center z-10 bg-white border-b border-gray-200">
-      <div className="flex gap-2 px-4 overflow-x-auto medical-scrollbar">
+      <div className="flex gap-2 w-full overflow-x-auto medical-scrollbar">
         <Button 
           variant={activeTab === 'taskQueue' ? 'default' : 'outline'} 
           size="sm"
