@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BadgeAlert, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -8,20 +9,7 @@ import { AgentsCareLogContents } from './sidebar/AgentsCareLogContents';
 import { ProtocolsContent } from './sidebar/ProtocolsContent';
 import { BillingContent } from './sidebar/BillingContent';
 import { PatientInfoCard } from './sidebar/PatientInfoCard';
-
-// Calculate patient age based on date of birth
-const calculateAge = (dateOfBirth: string) => {
-  const birthDate = new Date(dateOfBirth);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDifference = today.getMonth() - birthDate.getMonth();
-  
-  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  
-  return age;
-};
+import { getPatientDataSummary } from '@/services/patientService';
 
 interface HanaSidebarProps {
   autoOpen?: boolean;
@@ -38,21 +26,8 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
     }
   }, [autoOpen]);
   
-  // Calculate patient age
-  const patientAge = calculateAge(patientData.dateOfBirth);
-  
-  // Get relevant medical conditions for quick reference
-  const medicalConditions = [
-    ...(patientData.medicalHistory.pastConditions.map(condition => condition.condition)),
-    patientData.diagnosis.primary
-  ];
-  
-  // Format last contacted date (using the latest session date)
-  const lastContactedDate = new Date(patientData.sessionNotes[0]?.date || '');
-  const lastContactedFormatted = lastContactedDate.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric' 
-  });
+  // Get consolidated patient data summary
+  const patientSummary = getPatientDataSummary(patientData);
 
   // Handler to switch to protocols tab when needed
   const handleProtocolClick = () => {
@@ -101,12 +76,7 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
           </div>
           
           {/* Patient Quick Information Card */}
-          <PatientInfoCard 
-            patientData={patientData} 
-            patientAge={patientAge}
-            lastContactedFormatted={lastContactedFormatted}
-            medicalConditions={medicalConditions}
-          />
+          <PatientInfoCard patientSummary={patientSummary} />
           
           {/* Navigation Tabs - With sticky positioning */}
           <SidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -122,7 +92,7 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
           {/* Footer with minimal design */}
           <div className="bg-white shadow-sm p-4 border-t border-gray-200">
             <p className="text-xs text-gray-500 text-center">
-              Hana Compass • Patient: Matteo Grassi (Male, 33) • Last updated: 4 days ago
+              Hana Compass • Patient: {patientSummary.patientData.name} ({patientSummary.patientData.gender}, {patientSummary.patientAge}) • Last updated: 4 days ago
             </p>
           </div>
         </div>

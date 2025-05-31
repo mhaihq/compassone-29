@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -13,6 +14,7 @@ import { PatientDetailContent } from './sidebar/population/PatientDetailContent'
 import { PatientInfoCard } from './sidebar/PatientInfoCard';
 import { useLocation } from 'react-router-dom';
 import { patientData } from '@/data/patientData';
+import { getPatientDataSummary } from '@/services/patientService';
 
 export const PopulationSidebar = () => {
   const [activeTab, setActiveTab] = useState<'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights'>('taskQueue');
@@ -68,24 +70,8 @@ export const PopulationSidebar = () => {
   
   const isViewingContent = isViewingTask || isViewingPatient;
 
-  // Calculate patient age and other data for the patient info card
-  const calculateAge = (dateOfBirth: string) => {
-    const birthDate = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-    if (monthDifference < 0 || monthDifference === 0 && today.getDate() < birthDate.getDate()) {
-      age--;
-    }
-    return age;
-  };
-  const patientAge = calculateAge(patientData.dateOfBirth);
-
-  // Use the most recent session note date as last contacted
-  const lastContactedFormatted = patientData.sessionNotes.length > 0 ? new Date(patientData.sessionNotes[0].date).toLocaleDateString() : 'No recent contact';
-
-  // Extract medical conditions from the pastConditions array
-  const medicalConditions = patientData.medicalHistory.pastConditions.filter(condition => condition.status === 'Active').map(condition => condition.condition);
+  // Get consolidated patient data summary
+  const patientSummary = getPatientDataSummary(patientData);
   
   return (
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
@@ -148,12 +134,7 @@ export const PopulationSidebar = () => {
 
           {/* Patient Info Card for Task View */}
           {isViewingTask && (
-            <PatientInfoCard 
-              patientData={patientData} 
-              patientAge={patientAge} 
-              lastContactedFormatted={lastContactedFormatted} 
-              medicalConditions={medicalConditions} 
-            />
+            <PatientInfoCard patientSummary={patientSummary} variant="compact" />
           )}
           
           {/* Tab Content - Full width for task view */}

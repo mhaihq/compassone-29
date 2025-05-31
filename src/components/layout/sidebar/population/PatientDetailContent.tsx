@@ -11,7 +11,8 @@ import { PatientCareLog } from './PatientCareLog';
 import { ProtocolsContent } from '../ProtocolsContent';
 import { BillingContent } from '../BillingContent';
 import { PatientInteractionInsights } from '@/components/PatientInteractionInsights';
-import { matteoInteractionInsights, defaultInteractionInsights } from '@/data/interactionInsights';
+import { getPatientDataSummary } from '@/services/patientService';
+import { getSeverityColor } from '@/utils/patientUtils';
 
 interface PatientDetailContentProps {
   patientId: string;
@@ -29,18 +30,9 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
     );
   }
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'Severe': return 'bg-red-100 text-red-800 border-red-200';
-      case 'Moderate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Mild': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
   // For detailed patient data, use the full patient data if available
   const isDetailedPatient = patientId === 'P100592';
-  const patientInsights = isDetailedPatient ? matteoInteractionInsights : defaultInteractionInsights;
+  const patientSummary = isDetailedPatient ? getPatientDataSummary(patientData) : null;
 
   return (
     <div className="space-y-4">
@@ -66,10 +58,12 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
       </Card>
 
       {/* Patient Interaction Insights */}
-      <PatientInteractionInsights 
-        insights={patientInsights} 
-        variant="compact" 
-      />
+      {patientSummary && (
+        <PatientInteractionInsights 
+          insights={patientSummary.insights} 
+          variant="compact" 
+        />
+      )}
 
       {/* Tabs for detailed view */}
       {isDetailedPatient ? (
