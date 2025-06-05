@@ -1,16 +1,7 @@
 
-export interface FollowUpStepProps {
-  taskContext?: import('@/types/taskCallIntegration').TaskCallContext;
-}
-
-export interface Script {
-  id: string;
-  title: string;
-  description: string;
-}
-
-export interface ScriptCombination {
-  id: string;
-  label: string;
-  scripts: string[];
-}
+// Re-export for backward compatibility
+export type { 
+  FollowUpStepProps, 
+  Script, 
+  ScriptCombination 
+} from './followUpTypes';

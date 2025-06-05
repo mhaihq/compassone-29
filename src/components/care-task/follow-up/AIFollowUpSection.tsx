@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Calendar, Plus } from 'lucide-react';
-import { availableScripts, suggestedCombinations } from './constants';
+import { availableScripts, suggestedCombinations } from './followUpConstants';
 
 interface AIFollowUpSectionProps {
   selectedScripts: string[];
@@ -30,7 +30,6 @@ export const AIFollowUpSection: React.FC<AIFollowUpSectionProps> = ({
 }) => {
   return (
     <div className="space-y-4">
-      {/* Script Builder */}
       <div className="border rounded-lg p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
@@ -90,6 +89,7 @@ export const AIFollowUpSection: React.FC<AIFollowUpSectionProps> = ({
                 size="sm"
                 onClick={() => onSetScriptCombination(combo.scripts)}
                 className="text-xs"
+                title={combo.description}
               >
                 {combo.label}
               </Button>
@@ -98,7 +98,6 @@ export const AIFollowUpSection: React.FC<AIFollowUpSectionProps> = ({
         </div>
       </div>
       
-      {/* Follow-up Date */}
       <div className="border rounded-lg p-4">
         <div className="flex items-center mb-3">
           <Calendar className="mr-2 text-gray-600" size={16} />
