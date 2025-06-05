@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Calendar, Phone, User, Edit3, AlertTriangle, Plus, PhoneCall, Brain, Sparkles, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +8,14 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { TaskCallIntegration } from './TaskCallIntegration';
+import { TaskPreCallIntelligence } from './call-integration/TaskPreCallIntelligence';
+import { CallQualityMetrics } from './call-integration/CallQualityMetrics';
+import { SourceCitationSystem } from './call-integration/SourceCitationSystem';
+import { EHRIntegration } from './call-integration/EHRIntegration';
+import { ComprehensiveCallAnalytics } from './call-integration/ComprehensiveCallAnalytics';
 import { TaskCallContext } from '@/types/taskCallIntegration';
+import { AICallSummary, generateCallSummary } from '@/services/aiCallService';
+import { useToast } from '@/hooks/use-toast';
 
 interface FollowUpStepProps {
   taskContext?: TaskCallContext;
@@ -22,6 +28,11 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
   const [escalationReason, setEscalationReason] = useState('');
   const [followUpDate, setFollowUpDate] = useState('May 27, 2025');
   const [showCallInterface, setShowCallInterface] = useState(false);
+  const [showPreCallIntel, setShowPreCallIntel] = useState(false);
+  const [callCompleted, setCallCompleted] = useState(false);
+  const [callSummary, setCallSummary] = useState<AICallSummary | null>(null);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const { toast } = useToast();
 
   const handleScriptToggle = (scriptId: string, checked: boolean) => {
     if (checked) {
@@ -31,13 +42,40 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
     }
   };
 
+  const handleStartPreCallIntel = () => {
+    setShowPreCallIntel(true);
+  };
+
   const handleStartCall = () => {
+    setShowPreCallIntel(false);
     setShowCallInterface(true);
   };
 
-  const handleCallComplete = () => {
+  const handleCallComplete = async () => {
     setShowCallInterface(false);
-    // Task will be updated through the call integration
+    setCallCompleted(true);
+    
+    // Generate comprehensive call summary
+    if (taskContext) {
+      const summary = await generateCallSummary(taskContext.patientId, [], '14:32');
+      setCallSummary(summary);
+    }
+    
+    toast({
+      title: "Call Completed Successfully",
+      description: "AI analysis complete. Comprehensive documentation ready for review."
+    });
+  };
+
+  const handleViewAnalytics = () => {
+    setShowAnalytics(true);
+  };
+
+  const handleEHRSubmit = (ehrData: any) => {
+    toast({
+      title: "Documentation Submitted",
+      description: "Call documentation has been successfully submitted to the EHR system."
+    });
   };
 
   const availableScripts = [
@@ -57,12 +95,155 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
     { id: 'wellness-check', label: 'Wellness Check', scripts: ['wellness', 'dietary', 'activity'] }
   ];
 
+  // Mock analytics data
+  const mockAnalytics = {
+    callEfficiency: 94,
+    patientSatisfaction: 89,
+    clinicalObjectivesAchieved: 92,
+    aiAssistanceUtilization: 87,
+    protocolAdherence: 96,
+    timeAllocation: {
+      assessment: 35,
+      intervention: 40,
+      planning: 20,
+      documentation: 5
+    },
+    comparisonToBaseline: {
+      averageCallDuration: '12:45 avg',
+      patientEngagement: 89,
+      outcomesAchieved: 92
+    }
+  };
+
+  const mockMetrics = {
+    duration: '14:32',
+    insightsUsed: 3,
+    questionsAsked: 8,
+    patientEngagement: 0.89,
+    callQuality: 'excellent' as const,
+    taskCompletionRate: 0.92,
+    aiAssistanceUtilization: 0.87
+  };
+
+  const mockCitations = [
+    {
+      id: 'cite-1',
+      timestamp: '3:45',
+      patientQuote: 'I\'ve been feeling much better since we increased my medication dose',
+      clinicianResponse: 'That\'s great to hear. Any side effects you\'ve noticed?',
+      context: 'Medication effectiveness discussion',
+      evidenceType: 'verbal' as const,
+      relevantInsight: 'Recent medication increase showing positive response',
+      confidence: 0.92
+    },
+    {
+      id: 'cite-2',
+      timestamp: '7:12',
+      patientQuote: 'My sleep has been much more consistent, usually 7-8 hours now',
+      clinicianResponse: 'Excellent improvement in sleep patterns',
+      context: 'Sleep quality assessment',
+      evidenceType: 'clinical_observation' as const,
+      relevantInsight: 'Sleep pattern improvement aligns with treatment goals',
+      confidence: 0.88
+    }
+  ];
+
+  // Show Pre-Call Intelligence
+  if (showPreCallIntel && taskContext) {
+    return (
+      <div className="space-y-6">
+        <TaskPreCallIntelligence
+          taskContext={taskContext}
+          onStartCall={handleStartCall}
+        />
+        <Button 
+          variant="outline" 
+          onClick={() => setShowPreCallIntel(false)}
+          className="w-full"
+        >
+          Back to Follow-up Options
+        </Button>
+      </div>
+    );
+  }
+
+  // Show Call Interface
   if (showCallInterface && taskContext) {
     return (
       <TaskCallIntegration
         taskContext={taskContext}
         onCallComplete={handleCallComplete}
       />
+    );
+  }
+
+  // Show Analytics View
+  if (showAnalytics && callSummary) {
+    return (
+      <div className="space-y-6">
+        <ComprehensiveCallAnalytics
+          analytics={mockAnalytics}
+          taskType={taskContext?.taskType || 'Monthly Stability Review'}
+          callDuration="14:32"
+        />
+        <Button 
+          variant="outline" 
+          onClick={() => setShowAnalytics(false)}
+          className="w-full"
+        >
+          Back to Summary
+        </Button>
+      </div>
+    );
+  }
+
+  // Show Post-Call Summary and Documentation
+  if (callCompleted && callSummary) {
+    return (
+      <div className="space-y-6">
+        {/* Call Completion Header */}
+        <Card className="border-l-4 border-l-green-500">
+          <CardHeader className="bg-green-50">
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="w-5 h-5 text-green-600" />
+              Call Completed - AI Analysis Complete
+            </CardTitle>
+            <p className="text-sm text-green-700">
+              Comprehensive documentation and analysis ready for review
+            </p>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="flex gap-2">
+              <Button onClick={handleViewAnalytics} variant="outline" className="flex-1">
+                <Brain className="w-4 h-4 mr-2" />
+                View Analytics
+              </Button>
+              <Button onClick={() => setCallCompleted(false)} variant="outline" className="flex-1">
+                Return to Tasks
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Call Quality Metrics */}
+        <CallQualityMetrics 
+          metrics={mockMetrics}
+          taskType={taskContext?.taskType || 'Monthly Stability Review'}
+        />
+
+        {/* Source Citations */}
+        <SourceCitationSystem
+          citations={mockCitations}
+          callDuration="14:32"
+        />
+
+        {/* EHR Integration */}
+        <EHRIntegration
+          callSummary={callSummary}
+          taskId={taskContext?.taskId || 'task-123'}
+          onEHRSubmit={handleEHRSubmit}
+        />
+      </div>
     );
   }
 
@@ -126,20 +307,23 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
         {/* Content based on selection */}
         {selectedAction === 'call-now' && (
           <div className="space-y-6">
-            {/* Enhanced AI Features Highlight */}
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg border border-purple-200">
-              <div className="flex items-center gap-2 mb-2">
-                <Brain className="w-5 h-5 text-purple-600" />
-                <h3 className="font-medium text-purple-900">Task-Integrated Call Intelligence</h3>
+            {/* Enhanced Careco AI Features Highlight */}
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border border-purple-200">
+              <div className="flex items-center gap-2 mb-3">
+                <Brain className="w-6 h-6 text-purple-600" />
+                <h3 className="text-lg font-semibold text-purple-900">Careco AI-Enhanced Calling</h3>
                 <Badge className="bg-purple-100 text-purple-800 border-purple-200">
                   <Sparkles className="w-3 h-3 mr-1" />
-                  AI-Enhanced
+                  Full AI Suite
                 </Badge>
               </div>
-              <div className="grid grid-cols-3 gap-4 text-sm mb-4">
+              <p className="text-purple-800 mb-4">
+                Complete AI-powered calling experience with pre-call intelligence, real-time assistance, and comprehensive post-call documentation.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-purple-800">Task-driven context</span>
+                  <span className="text-purple-800">Pre-call intelligence</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -147,96 +331,136 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-green-800">Automated task updates</span>
+                  <span className="text-green-800">Source citations</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-orange-800">EHR integration</span>
                 </div>
               </div>
             </div>
 
             {/* Enhanced Call Statistics */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-blue-600" />
                   <div>
                     <p className="text-sm text-gray-600">Avg Call Time</p>
                     <p className="text-lg font-semibold">12 min</p>
-                    <p className="text-xs text-green-600">↓ 30% with AI assist</p>
+                    <p className="text-xs text-green-600">↓ 30% with Careco AI</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-2">
                   <Brain className="w-5 h-5 text-purple-600" />
                   <div>
-                    <p className="text-sm text-gray-600">AI Insights</p>
+                    <p className="text-sm text-gray-600">AI Intelligence</p>
                     <p className="text-lg font-semibold">Ready</p>
                     <p className="text-xs text-purple-600 flex items-center gap-1">
                       <Sparkles className="w-3 h-3" />
-                      Pre-call intel available
+                      4 insights available
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-2">
                   <PhoneCall className="w-5 h-5 text-green-600" />
                   <div>
                     <p className="text-sm text-gray-600">Success Rate</p>
-                    <p className="text-lg font-semibold">94%</p>
+                    <p className="text-lg font-semibold">96%</p>
                     <p className="text-xs text-green-600">Task completion rate</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Enhanced Call Button */}
+            {/* Main Call Actions */}
             <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-              <Button 
-                className="w-full mb-4 bg-[#1E4D36] hover:bg-[#2A6349] h-12 text-lg"
-                onClick={handleStartCall}
-                disabled={!taskContext}
-              >
-                <PhoneCall className="mr-2" size={20} />
-                Start AI-Enhanced Task Call
-                <Badge className="ml-2 bg-green-500 text-white">
-                  <Brain className="w-3 h-3 mr-1" />
-                  AI Ready
-                </Badge>
-              </Button>
-              <p className="text-sm text-blue-700 text-center mb-4">
-                This will launch the AI-enhanced call interface with task context, pre-call insights, real-time transcription, and automated documentation.
-              </p>
+              <div className="space-y-4">
+                <Button 
+                  className="w-full mb-2 bg-purple-600 hover:bg-purple-700 h-12 text-lg"
+                  onClick={handleStartPreCallIntel}
+                  disabled={!taskContext}
+                >
+                  <Brain className="mr-2" size={20} />
+                  Start with AI Pre-Call Intelligence
+                  <Badge className="ml-2 bg-purple-500 text-white">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    Recommended
+                  </Badge>
+                </Button>
+                
+                <Button 
+                  className="w-full bg-[#1E4D36] hover:bg-[#2A6349] h-12 text-lg"
+                  onClick={handleStartCall}
+                  disabled={!taskContext}
+                  variant="outline"
+                >
+                  <PhoneCall className="mr-2" size={20} />
+                  Direct Call (Skip Intelligence)
+                </Button>
+              </div>
               
-              {/* Call Features Grid */}
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="bg-white p-3 rounded border">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Brain className="w-4 h-4 text-purple-600" />
-                    <span className="font-medium text-purple-800">Pre-Call Intelligence</span>
-                  </div>
-                  <p className="text-xs text-gray-600">AI-generated insights based on patient history and current task</p>
+              <p className="text-sm text-blue-700 text-center mt-4">
+                Get AI-powered insights about the patient and task before your call, or jump straight into the enhanced calling interface.
+              </p>
+            </div>
+
+            {/* Careco Features Showcase */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Brain className="w-5 h-5 text-purple-600" />
+                  <span className="font-medium text-purple-800">Pre-Call Intelligence</span>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <div className="flex items-center gap-2 mb-1">
-                    <PhoneCall className="w-4 h-4 text-blue-600" />
-                    <span className="font-medium text-blue-800">Real-Time Assistant</span>
-                  </div>
-                  <p className="text-xs text-gray-600">Live transcription and AI suggestions during the call</p>
+                <ul className="text-xs text-gray-600 space-y-1">
+                  <li>• Task-specific patient insights</li>
+                  <li>• Medication alerts & changes</li>
+                  <li>• Behavioral pattern analysis</li>
+                  <li>• Suggested conversation topics</li>
+                </ul>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <PhoneCall className="w-5 h-5 text-blue-600" />
+                  <span className="font-medium text-blue-800">Live Call Assistant</span>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Sparkles className="w-4 h-4 text-green-600" />
-                    <span className="font-medium text-green-800">Auto Documentation</span>
-                  </div>
-                  <p className="text-xs text-gray-600">Automatic call summary and task status updates</p>
+                <ul className="text-xs text-gray-600 space-y-1">
+                  <li>• Real-time transcription</li>
+                  <li>• AI conversation guidance</li>
+                  <li>• Automatic note-taking</li>
+                  <li>• Task progress tracking</li>
+                </ul>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="w-5 h-5 text-green-600" />
+                  <span className="font-medium text-green-800">Post-Call Documentation</span>
                 </div>
-                <div className="bg-white p-3 rounded border">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Calendar className="w-4 h-4 text-orange-600" />
-                    <span className="font-medium text-orange-800">Task Integration</span>
-                  </div>
-                  <p className="text-xs text-gray-600">Seamless integration with care task workflows</p>
+                <ul className="text-xs text-gray-600 space-y-1">
+                  <li>• Automatic SOAP notes</li>
+                  <li>• Source citations & evidence</li>
+                  <li>• Call quality analytics</li>
+                  <li>• EHR integration ready</li>
+                </ul>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="w-5 h-5 text-orange-600" />
+                  <span className="font-medium text-orange-800">Task Integration</span>
                 </div>
+                <ul className="text-xs text-gray-600 space-y-1">
+                  <li>• Automatic task updates</li>
+                  <li>• Follow-up scheduling</li>
+                  <li>• Outcome documentation</li>
+                  <li>• Care plan integration</li>
+                </ul>
               </div>
             </div>
           </div>
