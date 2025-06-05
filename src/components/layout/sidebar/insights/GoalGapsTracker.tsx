@@ -2,75 +2,33 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { 
-  Target,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  DollarSign
-} from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { AlertTriangle, Clock, Target, TrendingDown, Calendar } from 'lucide-react';
 
 interface GoalGap {
   id: string;
   patientName: string;
   goalType: string;
-  currentValue: number;
-  targetValue: number;
-  unit: string;
-  priority: 'critical' | 'high' | 'medium';
+  progress: number;
+  target: number;
   daysOverdue: number;
-  revenueImpact?: number;
+  priority: 'critical' | 'high' | 'medium';
   nextAction: string;
+  revenueImpact?: string;
 }
 
-const goalGaps: GoalGap[] = [
-  {
-    id: 'G1',
-    patientName: 'Matteo Grassi',
-    goalType: 'Blood Pressure Control',
-    currentValue: 138,
-    targetValue: 130,
-    unit: 'mmHg systolic',
-    priority: 'critical',
-    daysOverdue: 14,
-    revenueImpact: 42,
-    nextAction: 'Medication adjustment needed'
-  },
-  {
-    id: 'G2',
-    patientName: 'Matteo Grassi',
-    goalType: 'Exercise Minutes',
-    currentValue: 90,
-    targetValue: 150,
-    unit: 'min/week',
-    priority: 'high',
-    daysOverdue: 7,
-    nextAction: 'Motivation coaching session'
-  },
-  {
-    id: 'G3',
-    patientName: 'Sarah Chen',
-    goalType: 'A1C Level',
-    currentValue: 7.2,
-    targetValue: 7.0,
-    unit: '%',
-    priority: 'medium',
-    daysOverdue: 21,
-    revenueImpact: 48,
-    nextAction: 'Dietary consultation'
-  }
-];
+interface GoalGapsTrackerProps {
+  goals: GoalGap[];
+}
 
-export const GoalGapsTracker: React.FC = () => {
+export const GoalGapsTracker: React.FC<GoalGapsTrackerProps> = ({ goals }) => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'critical': return 'bg-red-50 border-red-200 text-red-800';
+      case 'high': return 'bg-orange-50 border-orange-200 text-orange-800';
+      case 'medium': return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+      default: return 'bg-gray-50 border-gray-200 text-gray-800';
     }
   };
 
@@ -83,79 +41,67 @@ export const GoalGapsTracker: React.FC = () => {
     }
   };
 
-  const calculateProgress = (current: number, target: number) => {
-    if (target === 0) return 0;
-    return Math.min(100, (current / target) * 100);
-  };
-
-  const totalRevenueAtRisk = goalGaps
-    .filter(gap => gap.revenueImpact)
-    .reduce((sum, gap) => sum + (gap.revenueImpact || 0), 0);
+  const criticalGoals = goals.filter(g => g.priority === 'critical').length;
+  const totalRevenue = goals.reduce((sum, goal) => {
+    if (goal.revenueImpact) {
+      const amount = parseInt(goal.revenueImpact.replace(/[^0-9]/g, ''));
+      return sum + amount;
+    }
+    return sum;
+  }, 0);
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-[#1E4D36] flex items-center gap-2">
           <Target className="w-5 h-5" />
-          Goal Gaps & Revenue Risk
+          Goal Gaps & Overdue Items
         </h3>
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2">
           <Badge className="bg-red-100 text-red-800">
-            ${totalRevenueAtRisk} at risk
+            {criticalGoals} Critical
           </Badge>
-          <Badge className="bg-[#1E4D36] text-white">
-            {goalGaps.length} gaps
+          <Badge className="bg-orange-100 text-orange-800">
+            ${totalRevenue} at Risk
           </Badge>
         </div>
       </div>
 
       <div className="space-y-3">
-        {goalGaps.map((gap) => (
-          <Card key={gap.id} className="border-l-4 border-l-red-400">
+        {goals.map((goal) => (
+          <Card key={goal.id} className={`border-l-4 ${getPriorityColor(goal.priority)}`}>
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  {getPriorityIcon(gap.priority)}
+                  {getPriorityIcon(goal.priority)}
                   <div>
-                    <h4 className="font-medium text-gray-900">{gap.patientName}</h4>
-                    <p className="text-sm text-gray-600">{gap.goalType}</p>
+                    <h4 className="font-medium text-gray-900">{goal.patientName}</h4>
+                    <p className="text-sm text-gray-600">{goal.goalType}</p>
                   </div>
                 </div>
-                <Badge className={getPriorityColor(gap.priority)}>
-                  {gap.priority}
-                </Badge>
+                <div className="text-right">
+                  <Badge variant="outline" className="text-xs mb-1">
+                    {goal.daysOverdue} days overdue
+                  </Badge>
+                  {goal.revenueImpact && (
+                    <p className="text-xs text-red-600 font-medium">{goal.revenueImpact}</p>
+                  )}
+                </div>
               </div>
 
               <div className="mb-3">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600">Progress to Goal</span>
-                  <span className="font-medium">
-                    {gap.currentValue} / {gap.targetValue} {gap.unit}
-                  </span>
+                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                  <span>Progress</span>
+                  <span>{goal.progress}% of {goal.target}%</span>
                 </div>
-                <Progress 
-                  value={calculateProgress(gap.currentValue, gap.targetValue)} 
-                  className="h-2"
-                />
-              </div>
-
-              <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {gap.daysOverdue} days overdue
-                </span>
-                {gap.revenueImpact && (
-                  <span className="flex items-center gap-1 text-red-600">
-                    <DollarSign className="w-3 h-3" />
-                    ${gap.revenueImpact}/month at risk
-                  </span>
-                )}
+                <Progress value={goal.progress} className="h-2" />
               </div>
 
               <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-700">{gap.nextAction}</p>
+                <p className="text-sm text-gray-700">{goal.nextAction}</p>
                 <Button size="sm" variant="outline" className="text-xs">
-                  Take Action
+                  <Calendar className="w-3 h-3 mr-1" />
+                  Schedule
                 </Button>
               </div>
             </CardContent>
@@ -163,20 +109,15 @@ export const GoalGapsTracker: React.FC = () => {
         ))}
       </div>
 
-      <Card className="bg-[#EBF4F0] border-[#1E4D36]/20">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <CheckCircle2 className="w-5 h-5 text-[#1E4D36]" />
-            <h4 className="font-medium text-[#1E4D36]">Quick Win Opportunity</h4>
-          </div>
-          <p className="text-sm text-gray-700 mb-3">
-            Prioritize Matteo's blood pressure goal - it's 14 days overdue and represents $42/month in CCM revenue risk.
-          </p>
-          <Button size="sm" className="bg-[#1E4D36] hover:bg-[#2A6349] text-white">
-            Review Matteo's Care Plan
-          </Button>
-        </CardContent>
-      </Card>
+      {goals.length === 0 && (
+        <Card className="bg-green-50 border-green-200">
+          <CardContent className="p-4 text-center">
+            <Target className="w-8 h-8 text-green-600 mx-auto mb-2" />
+            <p className="text-green-800 font-medium">All goals on track!</p>
+            <p className="text-green-600 text-sm">No overdue items to address.</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
