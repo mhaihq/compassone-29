@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Phone, Calendar, Edit3, Brain } from 'lucide-react';
+import { Phone, Calendar, Edit3 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface FollowUpActionSelectorProps {
