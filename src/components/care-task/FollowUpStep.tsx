@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Calendar, Phone, User, Edit3, AlertTriangle, Plus, PhoneCall } from 'lucide-react';
+import { Calendar, Phone, User, Edit3, AlertTriangle, Plus, PhoneCall, Brain, Sparkles, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -124,54 +125,118 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
 
         {/* Content based on selection */}
         {selectedAction === 'call-now' && (
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <Button 
-              className="w-full mb-4 bg-blue-600 hover:bg-blue-700"
-              onClick={handleStartCall}
-              disabled={!taskContext}
-            >
-              <PhoneCall className="mr-2" size={16} />
-              Start Task-Integrated Call
-            </Button>
-            <p className="text-sm text-blue-700">
-              This will launch the AI-enhanced call interface with task context and pre-call insights.
-            </p>
-            
-            <div className="mt-4">
-              <h4 className="font-medium text-blue-800 mb-2">Call Suggestions</h4>
-              <div className="space-y-2">
-                <div>
-                  <h5 className="text-sm font-medium text-blue-700">Conversation Starters</h5>
-                  <ul className="text-sm text-blue-600 ml-4 space-y-1">
-                    <li>• Hello, this is [Your Name] from [Practice Name]. How are you feeling today?</li>
-                    <li>• I'm calling to follow up on your recent visit. Do you have a few minutes to talk?</li>
-                    <li>• I wanted to check in about your medication and see how it's working for you.</li>
-                  </ul>
+          <div className="space-y-6">
+            {/* Enhanced AI Features Highlight */}
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg border border-purple-200">
+              <div className="flex items-center gap-2 mb-2">
+                <Brain className="w-5 h-5 text-purple-600" />
+                <h3 className="font-medium text-purple-900">Task-Integrated Call Intelligence</h3>
+                <Badge className="bg-purple-100 text-purple-800 border-purple-200">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  AI-Enhanced
+                </Badge>
+              </div>
+              <div className="grid grid-cols-3 gap-4 text-sm mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-purple-800">Task-driven context</span>
                 </div>
-                
-                <div>
-                  <h5 className="text-sm font-medium text-blue-700">Key Topics to Cover</h5>
-                  <ul className="text-sm text-blue-600 ml-4 space-y-1">
-                    <li>• Medication adherence and any side effects</li>
-                    <li>• Changes in symptoms since last conversation</li>
-                    <li>• Follow-up questions about recent lab results</li>
-                    <li>• Any new concerns or questions about their care plan</li>
-                  </ul>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span className="text-blue-800">Real-time transcription</span>
                 </div>
-                
-                <div>
-                  <h5 className="text-sm font-medium text-blue-700">Closing the Call</h5>
-                  <ul className="text-sm text-blue-600 ml-4 space-y-1">
-                    <li>• Summarize key points and next steps</li>
-                    <li>• Confirm patient understanding of any instructions</li>
-                    <li>• Set expectations for the next follow-up</li>
-                    <li>• Ask if they have any remaining questions or concerns</li>
-                  </ul>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-green-800">Automated task updates</span>
                 </div>
               </div>
+            </div>
+
+            {/* Enhanced Call Statistics */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-blue-600" />
+                  <div>
+                    <p className="text-sm text-gray-600">Avg Call Time</p>
+                    <p className="text-lg font-semibold">12 min</p>
+                    <p className="text-xs text-green-600">↓ 30% with AI assist</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2">
+                  <Brain className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="text-sm text-gray-600">AI Insights</p>
+                    <p className="text-lg font-semibold">Ready</p>
+                    <p className="text-xs text-purple-600 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" />
+                      Pre-call intel available
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2">
+                  <PhoneCall className="w-5 h-5 text-green-600" />
+                  <div>
+                    <p className="text-sm text-gray-600">Success Rate</p>
+                    <p className="text-lg font-semibold">94%</p>
+                    <p className="text-xs text-green-600">Task completion rate</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Enhanced Call Button */}
+            <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
+              <Button 
+                className="w-full mb-4 bg-[#1E4D36] hover:bg-[#2A6349] h-12 text-lg"
+                onClick={handleStartCall}
+                disabled={!taskContext}
+              >
+                <PhoneCall className="mr-2" size={20} />
+                Start AI-Enhanced Task Call
+                <Badge className="ml-2 bg-green-500 text-white">
+                  <Brain className="w-3 h-3 mr-1" />
+                  AI Ready
+                </Badge>
+              </Button>
+              <p className="text-sm text-blue-700 text-center mb-4">
+                This will launch the AI-enhanced call interface with task context, pre-call insights, real-time transcription, and automated documentation.
+              </p>
               
-              <div className="mt-3 p-2 bg-blue-100 rounded text-xs text-blue-700">
-                <strong>Pro tip:</strong> This call will be automatically documented and integrated with the task system.
+              {/* Call Features Grid */}
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="bg-white p-3 rounded border">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Brain className="w-4 h-4 text-purple-600" />
+                    <span className="font-medium text-purple-800">Pre-Call Intelligence</span>
+                  </div>
+                  <p className="text-xs text-gray-600">AI-generated insights based on patient history and current task</p>
+                </div>
+                <div className="bg-white p-3 rounded border">
+                  <div className="flex items-center gap-2 mb-1">
+                    <PhoneCall className="w-4 h-4 text-blue-600" />
+                    <span className="font-medium text-blue-800">Real-Time Assistant</span>
+                  </div>
+                  <p className="text-xs text-gray-600">Live transcription and AI suggestions during the call</p>
+                </div>
+                <div className="bg-white p-3 rounded border">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Sparkles className="w-4 h-4 text-green-600" />
+                    <span className="font-medium text-green-800">Auto Documentation</span>
+                  </div>
+                  <p className="text-xs text-gray-600">Automatic call summary and task status updates</p>
+                </div>
+                <div className="bg-white p-3 rounded border">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Calendar className="w-4 h-4 text-orange-600" />
+                    <span className="font-medium text-orange-800">Task Integration</span>
+                  </div>
+                  <p className="text-xs text-gray-600">Seamless integration with care task workflows</p>
+                </div>
               </div>
             </div>
           </div>
