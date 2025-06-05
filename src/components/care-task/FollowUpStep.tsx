@@ -34,6 +34,21 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const { toast } = useToast();
 
+  // Create a default task context if none is provided
+  const defaultTaskContext: TaskCallContext = {
+    taskId: 'demo-task-001',
+    taskTitle: 'Monthly Stability Review',
+    taskType: 'Monthly Stability Review',
+    patientId: 'PAT-001',
+    patientName: 'Sarah Johnson',
+    priority: 'Medium',
+    dueDate: '2025-06-07',
+    assignedTo: 'Dr. Smith',
+    status: 'in_progress'
+  };
+
+  const activeTaskContext = taskContext || defaultTaskContext;
+
   const handleScriptToggle = (scriptId: string, checked: boolean) => {
     if (checked) {
       setSelectedScripts(prev => [...prev, scriptId]);
@@ -43,23 +58,24 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
   };
 
   const handleStartPreCallIntel = () => {
+    console.log('Starting pre-call intelligence...');
     setShowPreCallIntel(true);
   };
 
   const handleStartCall = () => {
+    console.log('Starting direct call...');
     setShowPreCallIntel(false);
     setShowCallInterface(true);
   };
 
   const handleCallComplete = async () => {
+    console.log('Call completed, generating summary...');
     setShowCallInterface(false);
     setCallCompleted(true);
     
     // Generate comprehensive call summary
-    if (taskContext) {
-      const summary = await generateCallSummary(taskContext.patientId, [], '14:32');
-      setCallSummary(summary);
-    }
+    const summary = await generateCallSummary(activeTaskContext.patientId, [], '14:32');
+    setCallSummary(summary);
     
     toast({
       title: "Call Completed Successfully",
@@ -68,32 +84,17 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
   };
 
   const handleViewAnalytics = () => {
+    console.log('Viewing analytics...');
     setShowAnalytics(true);
   };
 
   const handleEHRSubmit = (ehrData: any) => {
+    console.log('EHR data submitted:', ehrData);
     toast({
       title: "Documentation Submitted",
       description: "Call documentation has been successfully submitted to the EHR system."
     });
   };
-
-  const availableScripts = [
-    { id: 'phq9', title: 'PHQ-9 Check-In', description: 'Mental health assessment' },
-    { id: 'medication', title: 'Medication Adherence', description: 'Check medication compliance' },
-    { id: 'symptom', title: 'Symptom Follow-Up', description: 'Review current symptoms' },
-    { id: 'lab', title: 'Lab Results Discussion', description: 'Review lab test results' },
-    { id: 'wellness', title: 'General Wellness Check', description: 'General health check-in' },
-    { id: 'sleep', title: 'Sleep Assessment', description: 'Review sleep patterns' },
-    { id: 'dietary', title: 'Dietary Check', description: 'Nutrition and diet review' },
-    { id: 'activity', title: 'Physical Activity', description: 'Exercise and mobility assessment' }
-  ];
-
-  const suggestedCombinations = [
-    { id: 'mental-health', label: 'Mental Health Focus', scripts: ['phq9', 'symptom', 'sleep'] },
-    { id: 'medication-review', label: 'Medication Review', scripts: ['medication', 'symptom', 'lab'] },
-    { id: 'wellness-check', label: 'Wellness Check', scripts: ['wellness', 'dietary', 'activity'] }
-  ];
 
   // Mock analytics data
   const mockAnalytics = {
@@ -149,11 +150,11 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
   ];
 
   // Show Pre-Call Intelligence
-  if (showPreCallIntel && taskContext) {
+  if (showPreCallIntel) {
     return (
       <div className="space-y-6">
         <TaskPreCallIntelligence
-          taskContext={taskContext}
+          taskContext={activeTaskContext}
           onStartCall={handleStartCall}
         />
         <Button 
@@ -168,10 +169,10 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
   }
 
   // Show Call Interface
-  if (showCallInterface && taskContext) {
+  if (showCallInterface) {
     return (
       <TaskCallIntegration
-        taskContext={taskContext}
+        taskContext={activeTaskContext}
         onCallComplete={handleCallComplete}
       />
     );
@@ -183,7 +184,7 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
       <div className="space-y-6">
         <ComprehensiveCallAnalytics
           analytics={mockAnalytics}
-          taskType={taskContext?.taskType || 'Monthly Stability Review'}
+          taskType={activeTaskContext.taskType}
           callDuration="14:32"
         />
         <Button 
@@ -228,7 +229,7 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
         {/* Call Quality Metrics */}
         <CallQualityMetrics 
           metrics={mockMetrics}
-          taskType={taskContext?.taskType || 'Monthly Stability Review'}
+          taskType={activeTaskContext.taskType}
         />
 
         {/* Source Citations */}
@@ -240,7 +241,7 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
         {/* EHR Integration */}
         <EHRIntegration
           callSummary={callSummary}
-          taskId={taskContext?.taskId || 'task-123'}
+          taskId={activeTaskContext.taskId}
           onEHRSubmit={handleEHRSubmit}
         />
       </div>
@@ -254,11 +255,9 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
           <Calendar className="mr-2 text-blue-500" size={20} />
           Set up the next steps for this patient
         </CardTitle>
-        {taskContext && (
-          <div className="text-sm text-gray-600">
-            Task: {taskContext.taskTitle} • Patient: {taskContext.patientName}
-          </div>
-        )}
+        <div className="text-sm text-gray-600">
+          Task: {activeTaskContext.taskTitle} • Patient: {activeTaskContext.patientName}
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* What happens next section */}
@@ -275,13 +274,13 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
             </div>
             
             <RadioGroup value={selectedAction} onValueChange={setSelectedAction} className="space-y-3">
-              <div className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-gray-50">
+              <div className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-gray-50 cursor-pointer">
                 <RadioGroupItem value="call-now" id="call-now" />
                 <Phone size={16} className="text-gray-600" />
                 <label htmlFor="call-now" className="cursor-pointer">I will call the patient now</label>
               </div>
               
-              <div className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-gray-50 bg-purple-50 border-purple-200">
+              <div className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-gray-50 bg-purple-50 border-purple-200 cursor-pointer">
                 <RadioGroupItem value="ai-followup" id="ai-followup" />
                 <div className="w-4 h-4 rounded-full bg-purple-500 flex items-center justify-center">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -289,13 +288,13 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
                 <label htmlFor="ai-followup" className="cursor-pointer">AI should follow up later</label>
               </div>
               
-              <div className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-gray-50">
+              <div className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-gray-50 cursor-pointer">
                 <RadioGroupItem value="manual-followup" id="manual-followup" />
                 <Calendar size={16} className="text-gray-600" />
                 <label htmlFor="manual-followup" className="cursor-pointer">I will follow up later</label>
               </div>
               
-              <div className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-gray-50">
+              <div className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-gray-50 cursor-pointer">
                 <RadioGroupItem value="escalate" id="escalate" />
                 <Edit3 size={16} className="text-gray-600" />
                 <label htmlFor="escalate" className="cursor-pointer">Escalate to clinician</label>
@@ -381,9 +380,8 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
             <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
               <div className="space-y-4">
                 <Button 
-                  className="w-full mb-2 bg-purple-600 hover:bg-purple-700 h-12 text-lg"
+                  className="w-full mb-2 bg-purple-600 hover:bg-purple-700 h-12 text-lg relative z-10"
                   onClick={handleStartPreCallIntel}
-                  disabled={!taskContext}
                 >
                   <Brain className="mr-2" size={20} />
                   Start with AI Pre-Call Intelligence
@@ -394,9 +392,8 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
                 </Button>
                 
                 <Button 
-                  className="w-full bg-[#1E4D36] hover:bg-[#2A6349] h-12 text-lg"
+                  className="w-full bg-[#1E4D36] hover:bg-[#2A6349] h-12 text-lg relative z-10"
                   onClick={handleStartCall}
-                  disabled={!taskContext}
                   variant="outline"
                 >
                   <PhoneCall className="mr-2" size={20} />
@@ -490,7 +487,7 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
                       <Checkbox 
                         id={script.id}
                         checked={selectedScripts.includes(script.id)}
-                        onCheckedChange={(checked) => handleScriptToggle(script.id, checked as boolean)}
+                        onCheckedChange={(checked) => handleScriptToggle(script.id, checked === true)}
                       />
                       <div className="flex-1">
                         <label htmlFor={script.id} className="text-sm font-medium cursor-pointer block">
