@@ -122,7 +122,7 @@ export const EHRIntegration: React.FC<EHRIntegrationProps> = ({
                   <Checkbox
                     id={cpt.code}
                     checked={selectedCptCodes.includes(cpt.code)}
-                    onCheckedChange={(checked) => handleCptCodeToggle(cpt.code, checked as boolean)}
+                    onCheckedChange={(checked) => handleCptCodeToggle(cpt.code, checked === true)}
                   />
                   <div className="flex-1">
                     <label htmlFor={cpt.code} className="text-sm font-medium cursor-pointer block">
@@ -171,7 +171,7 @@ export const EHRIntegration: React.FC<EHRIntegrationProps> = ({
               <Checkbox
                 id="include-transcript"
                 checked={includeTranscript}
-                onCheckedChange={setIncludeTranscript}
+                onCheckedChange={(checked) => setIncludeTranscript(checked === true)}
               />
               <label htmlFor="include-transcript" className="text-sm">
                 Include call transcript as supporting documentation
@@ -182,7 +182,7 @@ export const EHRIntegration: React.FC<EHRIntegrationProps> = ({
               <Checkbox
                 id="include-citations"
                 checked={includeCitations}
-                onCheckedChange={setIncludeCitations}
+                onCheckedChange={(checked) => setIncludeCitations(checked === true)}
               />
               <label htmlFor="include-citations" className="text-sm">
                 Include source citations and evidence
@@ -193,7 +193,7 @@ export const EHRIntegration: React.FC<EHRIntegrationProps> = ({
               <Checkbox
                 id="include-metrics"
                 checked={includeMetrics}
-                onCheckedChange={setIncludeMetrics}
+                onCheckedChange={(checked) => setIncludeMetrics(checked === true)}
               />
               <label htmlFor="include-metrics" className="text-sm">
                 Include call quality metrics and AI insights
