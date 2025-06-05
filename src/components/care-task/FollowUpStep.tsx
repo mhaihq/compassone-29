@@ -191,7 +191,6 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* What happens next section */}
         <div>
           <div className="flex items-center mb-4">
             <Calendar className="mr-2 text-blue-500" size={16} />
@@ -204,7 +203,6 @@ export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
           />
         </div>
 
-        {/* Content based on selection */}
         {selectedAction === 'call-now' && (
           <CallNowSection
             onStartPreCallIntel={handleStartPreCallIntel}
