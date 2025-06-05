@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { ListChecks, Users, Megaphone, FileText, BarChart3 } from 'lucide-react';
+import { ListChecks, Users, Megaphone, FileText, BarChart3, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PopulationSidebarTabsProps {
-  activeTab: 'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights';
-  setActiveTab: (tab: 'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights') => void;
+  activeTab: 'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights' | 'calls';
+  setActiveTab: (tab: 'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights' | 'calls') => void;
 }
 
 export const PopulationSidebarTabs: React.FC<PopulationSidebarTabsProps> = ({ activeTab, setActiveTab }) => {
@@ -29,6 +29,15 @@ export const PopulationSidebarTabs: React.FC<PopulationSidebarTabsProps> = ({ ac
         >
           <Users size={16} className="mr-1" />
           <span>Patients</span>
+        </Button>
+        <Button 
+          variant={activeTab === 'calls' ? 'default' : 'outline'} 
+          size="sm"
+          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'calls' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          onClick={() => setActiveTab('calls')}
+        >
+          <Phone size={16} className="mr-1" />
+          <span>Calls</span>
         </Button>
         <Button 
           variant={activeTab === 'campaigns' ? 'default' : 'outline'} 

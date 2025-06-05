@@ -9,6 +9,7 @@ import { PatientsListContent } from './sidebar/population/PatientsListContent';
 import { CampaignsContent } from './sidebar/population/CampaignsContent';
 import { BillingContent } from './sidebar/population/BillingContent';
 import { InsightsContent } from './sidebar/population/InsightsContent';
+import { CallsContent } from './sidebar/population/CallsContent';
 import { CareTaskContent } from '@/components/care-task/CareTaskContent';
 import { PatientDetailContent } from './sidebar/population/PatientDetailContent';
 import { PatientInfoCard } from './sidebar/PatientInfoCard';
@@ -17,7 +18,7 @@ import { patientData } from '@/data/patientData';
 import { getPatientDataSummary } from '@/services/patientService';
 
 export const PopulationSidebar = () => {
-  const [activeTab, setActiveTab] = useState<'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights'>('taskQueue');
+  const [activeTab, setActiveTab] = useState<'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights' | 'calls'>('taskQueue');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
@@ -55,7 +56,7 @@ export const PopulationSidebar = () => {
   };
 
   // Enhanced tab change handler that exits patient/task view when switching tabs
-  const handleTabChange = (tab: 'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights') => {
+  const handleTabChange = (tab: 'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights' | 'calls') => {
     setActiveTab(tab);
     // Exit patient or task view when switching tabs
     if (isViewingPatient) {
@@ -149,6 +150,7 @@ export const PopulationSidebar = () => {
               <>
                 {activeTab === 'taskQueue' && <TaskQueueContent onOpenTask={handleOpenTask} />}
                 {activeTab === 'patients' && <PatientsListContent onOpenPatient={handleOpenPatient} />}
+                {activeTab === 'calls' && <CallsContent />}
                 {activeTab === 'campaigns' && <CampaignsContent />}
                 {activeTab === 'billing' && <BillingContent />}
                 {activeTab === 'insights' && <InsightsContent />}
