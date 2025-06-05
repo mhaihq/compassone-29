@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Brain, PhoneCall, Sparkles, Clock } from 'lucide-react';
+import { Brain, PhoneCall, Sparkles, Clock, Calendar } from 'lucide-react';
 
 interface CallNowSectionProps {
   onStartPreCallIntel: () => void;
