@@ -6,7 +6,10 @@ export interface TaskCallContext {
   patientName: string;
   taskType: string;
   priority: 'High' | 'Medium' | 'Low';
-  description: string;
+  description?: string;
+  dueDate?: string;
+  assignedTo?: string;
+  status?: string;
 }
 
 export interface CallTaskUpdate {
