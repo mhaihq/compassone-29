@@ -1,23 +1,37 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { FileText, Brain, CheckCircle, AlertTriangle, Clock, Save, Send } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { FileText, Brain, CheckCircle, AlertTriangle, Clock, Save, Send, Plus } from 'lucide-react';
 import { AICallSummary } from '@/services/aiCallService';
+import { TaskCallContext, CallTaskUpdate } from '@/types/taskCallIntegration';
 
 interface PostCallSummaryProps {
   summary: AICallSummary;
-  onSave: () => void;
-  onSendToEHR: () => void;
+  taskContext?: TaskCallContext;
+  onSave?: () => void;
+  onSendToEHR?: () => void;
+  onTaskUpdate?: (update: CallTaskUpdate) => void;
 }
 
 export const PostCallSummary: React.FC<PostCallSummaryProps> = ({
   summary,
+  taskContext,
   onSave,
-  onSendToEHR
+  onSendToEHR,
+  onTaskUpdate
 }) => {
+  const [additionalNotes, setAdditionalNotes] = useState('');
+  const [taskStatus, setTaskStatus] = useState<'completed' | 'needs-follow-up' | 'escalated'>('completed');
+  const [newTasks, setNewTasks] = useState<Array<{
+    title: string;
+    description: string;
+    priority: 'High' | 'Medium' | 'Low';
+    dueDate: string;
+  }>>([]);
+
   const getRiskColor = (risk: string) => {
     switch (risk) {
       case 'critical': return 'bg-red-500 text-white';
@@ -37,6 +51,40 @@ export const PostCallSummary: React.FC<PostCallSummaryProps> = ({
     }
   };
 
+  const handleTaskUpdate = () => {
+    if (!taskContext || !onTaskUpdate) return;
+
+    const update: CallTaskUpdate = {
+      taskId: taskContext.taskId,
+      callSummary: summary.outcome,
+      outcome: summary.outcome,
+      nextSteps: summary.nextSteps,
+      newTasksCreated: newTasks,
+      taskStatus
+    };
+
+    onTaskUpdate(update);
+  };
+
+  const addNewTask = () => {
+    setNewTasks(prev => [...prev, {
+      title: '',
+      description: '',
+      priority: 'Medium',
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    }]);
+  };
+
+  const updateNewTask = (index: number, field: string, value: string) => {
+    setNewTasks(prev => prev.map((task, i) => 
+      i === index ? { ...task, [field]: value } : task
+    ));
+  };
+
+  const removeNewTask = (index: number) => {
+    setNewTasks(prev => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -45,6 +93,9 @@ export const PostCallSummary: React.FC<PostCallSummaryProps> = ({
           <CardTitle className="flex items-center gap-2">
             <Brain className="w-5 h-5 text-green-600" />
             AI-Generated Call Summary
+            {taskContext && (
+              <Badge variant="outline" className="ml-2">Task-Integrated</Badge>
+            )}
           </CardTitle>
           <div className="flex items-center gap-4 text-sm text-green-700">
             <span className="flex items-center gap-1">
@@ -52,9 +103,80 @@ export const PostCallSummary: React.FC<PostCallSummaryProps> = ({
               Duration: {summary.duration}
             </span>
             <span>Call ID: {summary.callId}</span>
+            {taskContext && (
+              <span>Task: {taskContext.taskTitle}</span>
+            )}
           </div>
         </CardHeader>
       </Card>
+
+      {/* Task Status Update Section */}
+      {taskContext && (
+        <Card className="border-l-4 border-l-purple-500">
+          <CardHeader className="bg-purple-50">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-purple-600" />
+              Task Status Update
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Task Outcome</label>
+              <Select value={taskStatus} onValueChange={(value: 'completed' | 'needs-follow-up' | 'escalated') => setTaskStatus(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="completed">Task Completed Successfully</SelectItem>
+                  <SelectItem value="needs-follow-up">Needs Additional Follow-up</SelectItem>
+                  <SelectItem value="escalated">Escalate to Clinician</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* New Tasks Creation */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium">Create Follow-up Tasks</label>
+                <Button onClick={addNewTask} size="sm" variant="outline">
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add Task
+                </Button>
+              </div>
+              {newTasks.map((task, index) => (
+                <div key={index} className="border rounded-lg p-3 space-y-2 mb-2">
+                  <div className="flex gap-2">
+                    <input
+                      placeholder="Task title..."
+                      value={task.title}
+                      onChange={(e) => updateNewTask(index, 'title', e.target.value)}
+                      className="flex-1 text-sm border rounded px-2 py-1"
+                    />
+                    <Select value={task.priority} onValueChange={(value: 'High' | 'Medium' | 'Low') => updateNewTask(index, 'priority', value)}>
+                      <SelectTrigger className="w-24">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="High">High</SelectItem>
+                        <SelectItem value="Medium">Medium</SelectItem>
+                        <SelectItem value="Low">Low</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button onClick={() => removeNewTask(index)} size="sm" variant="outline">×</Button>
+                  </div>
+                  <textarea
+                    placeholder="Task description..."
+                    value={task.description}
+                    onChange={(e) => updateNewTask(index, 'description', e.target.value)}
+                    className="w-full text-sm border rounded px-2 py-1"
+                    rows={2}
+                  />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Outcome & Risk Assessment */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,6 +310,8 @@ export const PostCallSummary: React.FC<PostCallSummaryProps> = ({
         <CardContent>
           <Textarea
             placeholder="Add any additional notes or observations..."
+            value={additionalNotes}
+            onChange={(e) => setAdditionalNotes(e.target.value)}
             className="min-h-20"
           />
         </CardContent>
@@ -195,14 +319,23 @@ export const PostCallSummary: React.FC<PostCallSummaryProps> = ({
 
       {/* Actions */}
       <div className="flex gap-3">
-        <Button onClick={onSave} className="flex-1" variant="outline">
-          <Save className="w-4 h-4 mr-2" />
-          Save Summary
-        </Button>
-        <Button onClick={onSendToEHR} className="flex-1 bg-[#1E4D36] hover:bg-[#2A6349]">
-          <Send className="w-4 h-4 mr-2" />
-          Send to EHR
-        </Button>
+        {onSave && (
+          <Button onClick={onSave} className="flex-1" variant="outline">
+            <Save className="w-4 h-4 mr-2" />
+            Save Summary
+          </Button>
+        )}
+        {taskContext && onTaskUpdate ? (
+          <Button onClick={handleTaskUpdate} className="flex-1 bg-[#1E4D36] hover:bg-[#2A6349]">
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Update Task & Complete
+          </Button>
+        ) : onSendToEHR && (
+          <Button onClick={onSendToEHR} className="flex-1 bg-[#1E4D36] hover:bg-[#2A6349]">
+            <Send className="w-4 h-4 mr-2" />
+            Send to EHR
+          </Button>
+        )}
       </div>
     </div>
   );

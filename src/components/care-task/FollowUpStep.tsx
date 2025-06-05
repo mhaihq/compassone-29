@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Calendar, Phone, User, Edit3, AlertTriangle, Plus } from 'lucide-react';
+import { Calendar, Phone, User, Edit3, AlertTriangle, Plus, PhoneCall } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,13 +7,20 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
+import { TaskCallIntegration } from './TaskCallIntegration';
+import { TaskCallContext } from '@/types/taskCallIntegration';
 
-export const FollowUpStep: React.FC = () => {
+interface FollowUpStepProps {
+  taskContext?: TaskCallContext;
+}
+
+export const FollowUpStep: React.FC<FollowUpStepProps> = ({ taskContext }) => {
   const [selectedAction, setSelectedAction] = useState('ai-followup');
   const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
   const [customScript, setCustomScript] = useState('');
   const [escalationReason, setEscalationReason] = useState('');
   const [followUpDate, setFollowUpDate] = useState('May 27, 2025');
+  const [showCallInterface, setShowCallInterface] = useState(false);
 
   const handleScriptToggle = (scriptId: string, checked: boolean) => {
     if (checked) {
@@ -22,6 +28,15 @@ export const FollowUpStep: React.FC = () => {
     } else {
       setSelectedScripts(prev => prev.filter(id => id !== scriptId));
     }
+  };
+
+  const handleStartCall = () => {
+    setShowCallInterface(true);
+  };
+
+  const handleCallComplete = () => {
+    setShowCallInterface(false);
+    // Task will be updated through the call integration
   };
 
   const availableScripts = [
@@ -41,6 +56,15 @@ export const FollowUpStep: React.FC = () => {
     { id: 'wellness-check', label: 'Wellness Check', scripts: ['wellness', 'dietary', 'activity'] }
   ];
 
+  if (showCallInterface && taskContext) {
+    return (
+      <TaskCallIntegration
+        taskContext={taskContext}
+        onCallComplete={handleCallComplete}
+      />
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -48,6 +72,11 @@ export const FollowUpStep: React.FC = () => {
           <Calendar className="mr-2 text-blue-500" size={20} />
           Set up the next steps for this patient
         </CardTitle>
+        {taskContext && (
+          <div className="text-sm text-gray-600">
+            Task: {taskContext.taskTitle} • Patient: {taskContext.patientName}
+          </div>
+        )}
       </CardHeader>
       <CardContent className="space-y-6">
         {/* What happens next section */}
@@ -96,12 +125,16 @@ export const FollowUpStep: React.FC = () => {
         {/* Content based on selection */}
         {selectedAction === 'call-now' && (
           <div className="bg-blue-50 p-4 rounded-lg">
-            <Button className="w-full mb-4 bg-blue-600 hover:bg-blue-700">
-              <Phone className="mr-2" size={16} />
-              Start Call Now
+            <Button 
+              className="w-full mb-4 bg-blue-600 hover:bg-blue-700"
+              onClick={handleStartCall}
+              disabled={!taskContext}
+            >
+              <PhoneCall className="mr-2" size={16} />
+              Start Task-Integrated Call
             </Button>
             <p className="text-sm text-blue-700">
-              This will launch the call module to contact the patient immediately.
+              This will launch the AI-enhanced call interface with task context and pre-call insights.
             </p>
             
             <div className="mt-4">
@@ -138,7 +171,7 @@ export const FollowUpStep: React.FC = () => {
               </div>
               
               <div className="mt-3 p-2 bg-blue-100 rounded text-xs text-blue-700">
-                <strong>Pro tip:</strong> Document key points from the call afterward for better continuity of care.
+                <strong>Pro tip:</strong> This call will be automatically documented and integrated with the task system.
               </div>
             </div>
           </div>
@@ -192,7 +225,6 @@ export const FollowUpStep: React.FC = () => {
                   <Button 
                     onClick={() => {
                       if (customScript.trim()) {
-                        // Add custom script logic here
                         setCustomScript('');
                       }
                     }}

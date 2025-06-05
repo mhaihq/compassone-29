@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,13 +9,15 @@ import { PreCallIntelligence } from './PreCallIntelligence';
 import { RealTimeCallAssistant } from './RealTimeCallAssistant';
 import { PostCallSummary } from './PostCallSummary';
 import { generatePreCallInsights, generateCallSummary, PreCallInsight, AICallSummary } from '@/services/aiCallService';
+import { TaskCallContext } from '@/types/taskCallIntegration';
 import { useToast } from '@/hooks/use-toast';
 
 interface ActiveCallProps {
-  onEndCall: () => void;
+  onEndCall: (duration?: number) => void;
+  taskContext?: TaskCallContext;
 }
 
-export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
+export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall, taskContext }) => {
   const [callDuration, setCallDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isRecording, setIsRecording] = useState(true);
@@ -27,6 +28,11 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
   const [showPostCall, setShowPostCall] = useState(false);
   const [activeTab, setActiveTab] = useState('assistant');
   const { toast } = useToast();
+
+  // Default patient info for non-task calls
+  const patientName = taskContext?.patientName || 'Matteo Grassi';
+  const patientId = taskContext?.patientId || 'P100592';
+  const callReason = taskContext?.taskTitle || 'Monthly Stability Check';
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,11 +45,11 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
   // Load pre-call insights
   useEffect(() => {
     const loadInsights = async () => {
-      const insights = await generatePreCallInsights('P100592');
+      const insights = await generatePreCallInsights(patientId);
       setPreCallInsights(insights);
     };
     loadInsights();
-  }, []);
+  }, [patientId]);
 
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -51,6 +57,7 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // ... keep existing code (callOutcomes array)
   const callOutcomes = [
     'Completed successfully',
     'Patient needs follow-up',
@@ -62,15 +69,18 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
 
   const handleEndCall = async () => {
     // Generate AI summary
-    const summary = await generateCallSummary('P100592', [], formatDuration(callDuration));
+    const summary = await generateCallSummary(patientId, [], formatDuration(callDuration));
     setCallSummary(summary);
     setShowPostCall(true);
     setActiveTab('summary');
     
     toast({
       title: "Call Ended",
-      description: "AI summary is being generated..."
+      description: taskContext ? "AI summary is being generated and task will be updated..." : "AI summary is being generated..."
     });
+
+    // Pass duration back to parent
+    onEndCall(callDuration);
   };
 
   const handleSaveSummary = () => {
@@ -87,7 +97,7 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
     });
     // Complete the call workflow
     setTimeout(() => {
-      onEndCall();
+      onEndCall(callDuration);
     }, 1500);
   };
 
@@ -103,8 +113,8 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
                   <User className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Matteo Grassi - Call Completed</h3>
-                  <p className="text-sm text-gray-600">ID: P100592 • Monthly Stability Check</p>
+                  <h3 className="text-lg font-semibold text-gray-900">{patientName} - Call Completed</h3>
+                  <p className="text-sm text-gray-600">ID: {patientId} • {callReason}</p>
                 </div>
               </div>
               <Badge className="bg-green-500 text-white">
@@ -117,6 +127,7 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
 
         <PostCallSummary
           summary={callSummary}
+          taskContext={taskContext}
           onSave={handleSaveSummary}
           onSendToEHR={handleSendToEHR}
         />
@@ -135,8 +146,13 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
                 <User className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Matteo Grassi</h3>
-                <p className="text-sm text-gray-600">ID: P100592 • Monthly Stability Check</p>
+                <h3 className="text-lg font-semibold text-gray-900">{patientName}</h3>
+                <p className="text-sm text-gray-600">ID: {patientId} • {callReason}</p>
+                {taskContext && (
+                  <Badge variant="outline" className="mt-1 text-xs">
+                    Task-Integrated Call
+                  </Badge>
+                )}
               </div>
             </div>
             <Badge className="bg-green-500 text-white">
@@ -188,14 +204,14 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
           <RealTimeCallAssistant
             isRecording={isRecording}
             onToggleRecording={() => setIsRecording(!isRecording)}
-            patientName="Matteo Grassi"
+            patientName={patientName}
           />
         </TabsContent>
 
         <TabsContent value="insights" className="space-y-4">
           <PreCallIntelligence
             insights={preCallInsights}
-            patientName="Matteo Grassi"
+            patientName={patientName}
           />
         </TabsContent>
 
@@ -205,10 +221,23 @@ export const ActiveCall: React.FC<ActiveCallProps> = ({ onEndCall }) => {
             <CardHeader>
               <CardTitle className="text-sm flex items-center gap-2">
                 <FileText className="w-4 h-4" />
-                Patient Context
+                {taskContext ? 'Task Context' : 'Patient Context'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+              {taskContext && (
+                <div className="bg-purple-50 p-3 rounded-lg mb-3">
+                  <h5 className="text-sm font-medium text-purple-900 mb-2">Current Task</h5>
+                  <div className="text-xs text-purple-800 space-y-1">
+                    <div>• <strong>Task:</strong> {taskContext.taskTitle}</div>
+                    <div>• <strong>Type:</strong> {taskContext.taskType}</div>
+                    <div>• <strong>Priority:</strong> {taskContext.priority}</div>
+                    <div>• <strong>Description:</strong> {taskContext.description}</div>
+                  </div>
+                </div>
+              )}
+              
+              {/* ... keep existing code (treatment context) */}
               <div className="bg-blue-50 p-3 rounded-lg">
                 <h5 className="text-sm font-medium text-blue-900 mb-2">Current Treatment</h5>
                 <ul className="text-xs text-blue-800 space-y-1">

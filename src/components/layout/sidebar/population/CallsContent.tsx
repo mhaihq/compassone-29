@@ -5,21 +5,27 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { CallQueue } from '../calls/CallQueue';
-import { ActiveCall } from '../calls/ActiveCall';
+import { TaskCallIntegration } from '@/components/care-task/TaskCallIntegration';
 import { CallHistory } from '../calls/CallHistory';
+import { TaskCallContext } from '@/types/taskCallIntegration';
 
 export const CallsContent: React.FC = () => {
   const [activeView, setActiveView] = useState<'queue' | 'active' | 'history'>('queue');
   const [searchTerm, setSearchTerm] = useState('');
   const [isInCall, setIsInCall] = useState(false);
+  const [currentTaskCall, setCurrentTaskCall] = useState<TaskCallContext | null>(null);
 
-  const handleStartCall = (patientId: string) => {
+  const handleStartCall = (patientId: string, taskContext?: TaskCallContext) => {
+    if (taskContext) {
+      setCurrentTaskCall(taskContext);
+    }
     setIsInCall(true);
     setActiveView('active');
   };
 
   const handleEndCall = () => {
     setIsInCall(false);
+    setCurrentTaskCall(null);
     setActiveView('queue');
   };
 
@@ -32,11 +38,11 @@ export const CallsContent: React.FC = () => {
           <h2 className="text-xl font-semibold text-gray-900">AI-Enhanced Patient Calls</h2>
           <Badge className="bg-purple-100 text-purple-800 border-purple-200">
             <Brain className="w-3 h-3 mr-1" />
-            AI-Powered
+            Task-Integrated
           </Badge>
         </div>
         <p className="text-sm text-gray-600">
-          Intelligent calling system with AI pre-call insights, real-time transcription, and automated documentation
+          Intelligent calling system with task integration, AI pre-call insights, real-time transcription, and automated documentation
         </p>
       </div>
 
@@ -63,7 +69,7 @@ export const CallsContent: React.FC = () => {
               <p className="text-lg font-semibold">12</p>
               <p className="text-xs text-purple-600 flex items-center gap-1">
                 <Brain className="w-3 h-3" />
-                AI summaries generated
+                Task-integrated calls
               </p>
             </div>
           </div>
@@ -84,12 +90,12 @@ export const CallsContent: React.FC = () => {
       <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg border border-purple-200">
         <div className="flex items-center gap-2 mb-2">
           <Brain className="w-5 h-5 text-purple-600" />
-          <h3 className="font-medium text-purple-900">AI-Powered Call Intelligence</h3>
+          <h3 className="font-medium text-purple-900">Task-Integrated Call Intelligence</h3>
         </div>
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-            <span className="text-purple-800">Pre-call patient insights</span>
+            <span className="text-purple-800">Task-driven call context</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -97,7 +103,7 @@ export const CallsContent: React.FC = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-green-800">Automated documentation</span>
+            <span className="text-green-800">Automated task updates</span>
           </div>
         </div>
       </div>
@@ -111,7 +117,7 @@ export const CallsContent: React.FC = () => {
           className={activeView === 'queue' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}
         >
           <Clock className="w-4 h-4 mr-1" />
-          AI Call Queue
+          Task Call Queue
         </Button>
         {isInCall && (
           <Button
@@ -142,7 +148,7 @@ export const CallsContent: React.FC = () => {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              placeholder="Search patients or AI insights..."
+              placeholder="Search patients, tasks, or AI insights..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -159,8 +165,11 @@ export const CallsContent: React.FC = () => {
       {activeView === 'queue' && (
         <CallQueue searchTerm={searchTerm} onStartCall={handleStartCall} />
       )}
-      {activeView === 'active' && isInCall && (
-        <ActiveCall onEndCall={handleEndCall} />
+      {activeView === 'active' && isInCall && currentTaskCall && (
+        <TaskCallIntegration
+          taskContext={currentTaskCall}
+          onCallComplete={handleEndCall}
+        />
       )}
       {activeView === 'history' && (
         <CallHistory searchTerm={searchTerm} />
