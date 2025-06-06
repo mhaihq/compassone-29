@@ -7,11 +7,13 @@ import { Brain, PhoneCall, Sparkles, Clock, Calendar } from 'lucide-react';
 interface CallNowSectionProps {
   onStartPreCallIntel: () => void;
   onStartCall: () => void;
+  isLoading?: boolean;
 }
 
 export const CallNowSection: React.FC<CallNowSectionProps> = ({
   onStartPreCallIntel,
-  onStartCall
+  onStartCall,
+  isLoading = false
 }) => {
   return (
     <div className="space-y-6">
@@ -91,9 +93,10 @@ export const CallNowSection: React.FC<CallNowSectionProps> = ({
           <Button 
             className="w-full mb-2 bg-purple-600 hover:bg-purple-700 h-12 text-lg relative z-10"
             onClick={onStartPreCallIntel}
+            disabled={isLoading}
           >
             <Brain className="mr-2" size={20} />
-            Start with AI Pre-Call Intelligence
+            {isLoading ? 'Starting...' : 'Start with AI Pre-Call Intelligence'}
             <Badge className="ml-2 bg-purple-500 text-white">
               <Sparkles className="w-3 h-3 mr-1" />
               Recommended
@@ -104,9 +107,10 @@ export const CallNowSection: React.FC<CallNowSectionProps> = ({
             className="w-full bg-[#1E4D36] hover:bg-[#2A6349] h-12 text-lg relative z-10"
             onClick={onStartCall}
             variant="outline"
+            disabled={isLoading}
           >
             <PhoneCall className="mr-2" size={20} />
-            Direct Call (Skip Intelligence)
+            {isLoading ? 'Starting...' : 'Direct Call (Skip Intelligence)'}
           </Button>
         </div>
         

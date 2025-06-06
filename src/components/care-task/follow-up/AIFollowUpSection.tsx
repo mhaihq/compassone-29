@@ -16,6 +16,7 @@ interface AIFollowUpSectionProps {
   onFollowUpDateChange: (value: string) => void;
   onAddCustomScript: () => void;
   onSetScriptCombination: (scripts: string[]) => void;
+  isLoading?: boolean;
 }
 
 export const AIFollowUpSection: React.FC<AIFollowUpSectionProps> = ({
@@ -26,7 +27,8 @@ export const AIFollowUpSection: React.FC<AIFollowUpSectionProps> = ({
   onCustomScriptChange,
   onFollowUpDateChange,
   onAddCustomScript,
-  onSetScriptCombination
+  onSetScriptCombination,
+  isLoading = false
 }) => {
   return (
     <div className="space-y-4">
@@ -52,6 +54,7 @@ export const AIFollowUpSection: React.FC<AIFollowUpSectionProps> = ({
                   id={script.id}
                   checked={selectedScripts.includes(script.id)}
                   onCheckedChange={(checked) => onScriptToggle(script.id, checked === true)}
+                  disabled={isLoading}
                 />
                 <div className="flex-1">
                   <label htmlFor={script.id} className="text-sm font-medium cursor-pointer block">
@@ -71,8 +74,9 @@ export const AIFollowUpSection: React.FC<AIFollowUpSectionProps> = ({
               value={customScript}
               onChange={(e) => onCustomScriptChange(e.target.value)}
               className="flex-1 mr-2"
+              disabled={isLoading}
             />
-            <Button onClick={onAddCustomScript}>
+            <Button onClick={onAddCustomScript} disabled={isLoading || !customScript.trim()}>
               <Plus size={16} className="mr-1" />
               Add
             </Button>
@@ -90,6 +94,7 @@ export const AIFollowUpSection: React.FC<AIFollowUpSectionProps> = ({
                 onClick={() => onSetScriptCombination(combo.scripts)}
                 className="text-xs"
                 title={combo.description}
+                disabled={isLoading}
               >
                 {combo.label}
               </Button>
@@ -109,6 +114,7 @@ export const AIFollowUpSection: React.FC<AIFollowUpSectionProps> = ({
             value={followUpDate}
             onChange={(e) => onFollowUpDateChange(e.target.value)}
             className="flex-1"
+            disabled={isLoading}
           />
         </div>
       </div>

@@ -8,11 +8,13 @@ import { AlertTriangle } from 'lucide-react';
 interface EscalationSectionProps {
   escalationReason: string;
   onEscalationReasonChange: (value: string) => void;
+  isLoading?: boolean;
 }
 
 export const EscalationSection: React.FC<EscalationSectionProps> = ({
   escalationReason,
-  onEscalationReasonChange
+  onEscalationReasonChange,
+  isLoading = false
 }) => {
   return (
     <div className="bg-orange-50 p-4 rounded-lg">
@@ -26,18 +28,22 @@ export const EscalationSection: React.FC<EscalationSectionProps> = ({
         value={escalationReason}
         onChange={(e) => onEscalationReasonChange(e.target.value)}
         className="mb-4 min-h-[100px]"
+        disabled={isLoading}
       />
       
       <div className="flex items-center space-x-2 mb-4">
-        <Checkbox id="attach-conversation" defaultChecked />
+        <Checkbox id="attach-conversation" defaultChecked disabled={isLoading} />
         <label htmlFor="attach-conversation" className="text-sm">
           📎 Attach conversation soundbite + transcript
         </label>
       </div>
       
-      <Button className="w-full bg-orange-600 hover:bg-orange-700">
+      <Button 
+        className="w-full bg-orange-600 hover:bg-orange-700"
+        disabled={isLoading || !escalationReason.trim()}
+      >
         <AlertTriangle className="mr-2" size={16} />
-        Create Escalation Task
+        {isLoading ? 'Creating...' : 'Create Escalation Task'}
       </Button>
     </div>
   );
