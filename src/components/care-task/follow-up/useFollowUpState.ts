@@ -1,19 +1,22 @@
 
 import { useState } from 'react';
 import { AICallSummary } from '@/services/aiCallService';
-import { TaskCallContext } from '@/types/taskCallIntegration';
 
 export interface FollowUpState {
   selectedAction: string;
   selectedScripts: string[];
   customScript: string;
   escalationReason: string;
-  followUpDate: string;
+  followUpDate: Date | undefined;
+  followUpNotes: string;
+  assignedTo: string;
   showCallInterface: boolean;
   showPreCallIntel: boolean;
   callCompleted: boolean;
   callSummary: AICallSummary | null;
   showAnalytics: boolean;
+  isLoading: boolean;
+  error: string | null;
 }
 
 export const useFollowUpState = () => {
@@ -22,12 +25,16 @@ export const useFollowUpState = () => {
     selectedScripts: [],
     customScript: '',
     escalationReason: '',
-    followUpDate: 'May 27, 2025',
+    followUpDate: undefined,
+    followUpNotes: '',
+    assignedTo: '',
     showCallInterface: false,
     showPreCallIntel: false,
     callCompleted: false,
     callSummary: null,
     showAnalytics: false,
+    isLoading: false,
+    error: null,
   });
 
   const updateState = (updates: Partial<FollowUpState>) => {
@@ -40,18 +47,32 @@ export const useFollowUpState = () => {
       selectedScripts: [],
       customScript: '',
       escalationReason: '',
-      followUpDate: 'May 27, 2025',
+      followUpDate: undefined,
+      followUpNotes: '',
+      assignedTo: '',
       showCallInterface: false,
       showPreCallIntel: false,
       callCompleted: false,
       callSummary: null,
       showAnalytics: false,
+      isLoading: false,
+      error: null,
     });
+  };
+
+  const setLoading = (isLoading: boolean) => {
+    updateState({ isLoading });
+  };
+
+  const setError = (error: string | null) => {
+    updateState({ error });
   };
 
   return {
     state,
     updateState,
     resetState,
+    setLoading,
+    setError,
   };
 };

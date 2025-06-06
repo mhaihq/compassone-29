@@ -42,10 +42,13 @@ export interface MockAnalytics {
 export interface FollowUpHandlers {
   onScriptToggle: (scriptId: string, checked: boolean) => void;
   onCustomScriptChange: (value: string) => void;
-  onFollowUpDateChange: (value: string) => void;
+  onFollowUpDateChange: (value: Date | undefined) => void;
+  onFollowUpNotesChange: (value: string) => void;
+  onAssignedToChange: (value: string) => void;
   onAddCustomScript: () => void;
   onSetScriptCombination: (scripts: string[]) => void;
   onEscalationReasonChange: (value: string) => void;
+  onScheduleManualFollowUp: () => void;
   onStartPreCallIntel: () => void;
   onStartCall: () => void;
   onCallComplete: () => void;

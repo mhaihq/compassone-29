@@ -9,12 +9,16 @@ import { FollowUpHandlers } from './followUpTypes';
 interface UseFollowUpHandlersProps {
   state: FollowUpState;
   updateState: (updates: Partial<FollowUpState>) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
   taskContext: TaskCallContext;
 }
 
 export const useFollowUpHandlers = ({
   state,
   updateState,
+  setLoading,
+  setError,
   taskContext
 }: UseFollowUpHandlersProps): FollowUpHandlers => {
   const { toast } = useToast();
@@ -31,8 +35,16 @@ export const useFollowUpHandlers = ({
     updateState({ customScript: value });
   }, [updateState]);
 
-  const onFollowUpDateChange = useCallback((value: string) => {
+  const onFollowUpDateChange = useCallback((value: Date | undefined) => {
     updateState({ followUpDate: value });
+  }, [updateState]);
+
+  const onFollowUpNotesChange = useCallback((value: string) => {
+    updateState({ followUpNotes: value });
+  }, [updateState]);
+
+  const onAssignedToChange = useCallback((value: string) => {
+    updateState({ assignedTo: value });
   }, [updateState]);
 
   const onAddCustomScript = useCallback(() => {
@@ -53,6 +65,38 @@ export const useFollowUpHandlers = ({
     updateState({ escalationReason: value });
   }, [updateState]);
 
+  const onScheduleManualFollowUp = useCallback(async () => {
+    if (!state.followUpDate || !state.followUpNotes.trim() || !state.assignedTo.trim()) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast({
+        title: "Manual Follow-up Scheduled",
+        description: `Follow-up has been scheduled for ${state.followUpDate.toDateString()} and assigned to ${state.assignedTo}.`
+      });
+
+      // Reset form
+      updateState({
+        followUpDate: undefined,
+        followUpNotes: '',
+        assignedTo: ''
+      });
+    } catch (error) {
+      setError('Failed to schedule follow-up. Please try again.');
+      console.error('Error scheduling manual follow-up:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [state.followUpDate, state.followUpNotes, state.assignedTo, setLoading, setError, toast, updateState]);
+
   const onStartPreCallIntel = useCallback(() => {
     console.log('Starting pre-call intelligence...');
     updateState({ showPreCallIntel: true });
@@ -68,6 +112,7 @@ export const useFollowUpHandlers = ({
 
   const onCallComplete = useCallback(async () => {
     console.log('Call completed, generating summary...');
+    setLoading(true);
     updateState({ 
       showCallInterface: false,
       callCompleted: true 
@@ -83,13 +128,16 @@ export const useFollowUpHandlers = ({
       });
     } catch (error) {
       console.error('Error generating call summary:', error);
+      setError('Failed to generate call summary. Please try again.');
       toast({
         title: "Error",
         description: "Failed to generate call summary. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
-  }, [updateState, taskContext.patientId, toast]);
+  }, [updateState, setLoading, setError, taskContext.patientId, toast]);
 
   const onViewAnalytics = useCallback(() => {
     console.log('Viewing analytics...');
@@ -108,9 +156,12 @@ export const useFollowUpHandlers = ({
     onScriptToggle,
     onCustomScriptChange,
     onFollowUpDateChange,
+    onFollowUpNotesChange,
+    onAssignedToChange,
     onAddCustomScript,
     onSetScriptCombination,
     onEscalationReasonChange,
+    onScheduleManualFollowUp,
     onStartPreCallIntel,
     onStartCall,
     onCallComplete,
