@@ -1,27 +1,23 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Brain, PhoneCall, Sparkles, Clock, Calendar } from 'lucide-react';
-
 interface CallNowSectionProps {
   onStartPreCallIntel: () => void;
   onStartCall: () => void;
   isLoading?: boolean;
 }
-
 export const CallNowSection: React.FC<CallNowSectionProps> = ({
   onStartPreCallIntel,
   onStartCall,
   isLoading = false
 }) => {
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Enhanced Careco AI Features Highlight */}
       <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border border-purple-200">
         <div className="flex items-center gap-2 mb-3">
           <Brain className="w-6 h-6 text-purple-600" />
-          <h3 className="text-lg font-semibold text-purple-900">Careco AI-Enhanced Calling</h3>
+          <h3 className="text-lg font-semibold text-purple-900">AI-Enhanced Calling</h3>
           <Badge className="bg-purple-100 text-purple-800 border-purple-200">
             <Sparkles className="w-3 h-3 mr-1" />
             Full AI Suite
@@ -90,11 +86,7 @@ export const CallNowSection: React.FC<CallNowSectionProps> = ({
       {/* Main Call Actions */}
       <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
         <div className="space-y-4">
-          <Button 
-            className="w-full mb-2 bg-purple-600 hover:bg-purple-700 h-12 text-lg relative z-10"
-            onClick={onStartPreCallIntel}
-            disabled={isLoading}
-          >
+          <Button className="w-full mb-2 bg-purple-600 hover:bg-purple-700 h-12 text-lg relative z-10" onClick={onStartPreCallIntel} disabled={isLoading}>
             <Brain className="mr-2" size={20} />
             {isLoading ? 'Starting...' : 'Start with AI Pre-Call Intelligence'}
             <Badge className="ml-2 bg-purple-500 text-white">
@@ -103,12 +95,7 @@ export const CallNowSection: React.FC<CallNowSectionProps> = ({
             </Badge>
           </Button>
           
-          <Button 
-            className="w-full bg-[#1E4D36] hover:bg-[#2A6349] h-12 text-lg relative z-10"
-            onClick={onStartCall}
-            variant="outline"
-            disabled={isLoading}
-          >
+          <Button className="w-full bg-[#1E4D36] hover:bg-[#2A6349] h-12 text-lg relative z-10" onClick={onStartCall} variant="outline" disabled={isLoading}>
             <PhoneCall className="mr-2" size={20} />
             {isLoading ? 'Starting...' : 'Direct Call (Skip Intelligence)'}
           </Button>
@@ -173,6 +160,5 @@ export const CallNowSection: React.FC<CallNowSectionProps> = ({
           </ul>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
