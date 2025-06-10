@@ -11,6 +11,7 @@ export interface PatientMapPoint {
   primaryDiagnosis: string;
   age: number;
   lastVisit: string;
+  daysSinceLastVisit: number;
 }
 
 export interface HexbinPoint extends PatientMapPoint {
@@ -21,28 +22,35 @@ export interface HexbinPoint extends PatientMapPoint {
 export const transformPatientsToMapPoints = (patients: PatientSummary[]): PatientMapPoint[] => {
   return patients.map(patient => {
     const age = calculateAge(patient.dateOfBirth);
+    const daysSinceLastVisit = calculateDaysSinceLastVisit(patient.lastVisit);
     
-    // Create synthetic positioning based on severity and age
-    // This creates logical clustering for the visualization
-    const severityWeight = patient.severity === 'Severe' ? 0.8 : 
-                          patient.severity === 'Moderate' ? 0.5 : 0.2;
+    // Map severity to X-axis position (0 to 1)
+    const severityToX = {
+      'Mild': 0.2,
+      'Moderate': 0.5,
+      'Severe': 0.8
+    };
     
-    const ageWeight = Math.min(age / 100, 1); // Normalize age
+    // Map days since last visit to Y-axis position (0 to 1)
+    // Invert Y so recent visits are at top
+    const maxDays = 30; // Assuming max 30 days for scaling
+    const normalizedDays = Math.min(daysSinceLastVisit / maxDays, 1);
+    const y = 1 - normalizedDays; // Invert so recent visits are at top
     
-    // Add some randomness for realistic distribution
-    const jitter = 0.2;
-    const x = severityWeight + (Math.random() - 0.5) * jitter;
-    const y = ageWeight + (Math.random() - 0.5) * jitter;
+    // Add some jitter to prevent exact overlaps
+    const jitterX = (Math.random() - 0.5) * 0.15;
+    const jitterY = (Math.random() - 0.5) * 0.1;
     
     return {
       id: patient.id,
       name: patient.name,
-      x: Math.max(0, Math.min(1, x)), // Clamp to [0,1]
-      y: Math.max(0, Math.min(1, y)), // Clamp to [0,1]
+      x: Math.max(0.1, Math.min(0.9, severityToX[patient.severity] + jitterX)),
+      y: Math.max(0.1, Math.min(0.9, y + jitterY)),
       severity: patient.severity,
       primaryDiagnosis: patient.primaryDiagnosis,
       age,
-      lastVisit: patient.lastVisit
+      lastVisit: patient.lastVisit,
+      daysSinceLastVisit
     };
   });
 };
@@ -60,42 +68,30 @@ const calculateAge = (dateOfBirth: string): number => {
   return age;
 };
 
+const calculateDaysSinceLastVisit = (lastVisit: string): number => {
+  const lastVisitDate = new Date(lastVisit);
+  const today = new Date();
+  const diffTime = today.getTime() - lastVisitDate.getTime();
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+};
+
 export const createHexbinData = (
   points: PatientMapPoint[], 
   width: number, 
   height: number, 
   hexRadius: number = 20
 ): HexbinPoint[] => {
-  // Calculate grid dimensions based on hex radius
-  const hexWidth = hexRadius * 2 * 0.866; // Width of hexagon
-  const hexHeight = hexRadius * 1.5; // Height spacing for hexagons
-  
-  // Calculate how many hexagons can fit in each dimension
-  const cols = Math.floor(width / hexWidth);
-  const rows = Math.floor(height / hexHeight);
-  
-  // Create grid positions for hexagons
-  return points.map((point, index) => {
-    // Calculate grid position for this hexagon
-    const col = index % cols;
-    const row = Math.floor(index / cols);
-    
-    // Calculate actual x,y position in the grid
-    // Offset every other row for proper hexagon tiling
-    const offsetX = (row % 2) * (hexWidth / 2);
-    const x = col * hexWidth + hexWidth / 2 + offsetX;
-    const y = row * hexHeight + hexRadius;
-    
-    // Ensure the hexagon stays within bounds
-    const clampedX = Math.max(hexRadius, Math.min(width - hexRadius, x));
-    const clampedY = Math.max(hexRadius, Math.min(height - hexRadius, y));
+  // Convert normalized positions to actual pixel positions
+  return points.map(point => {
+    const x = point.x * (width - hexRadius * 2) + hexRadius;
+    const y = point.y * (height - hexRadius * 2) + hexRadius;
     
     return {
       ...point,
-      x: clampedX,
-      y: clampedY,
+      x,
+      y,
       count: 1,
-      patients: [{ ...point, x: clampedX, y: clampedY }]
+      patients: [{ ...point, x, y }]
     };
   });
 };

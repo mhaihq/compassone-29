@@ -33,7 +33,10 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 12; // Reduced size since we're showing individual patients
+  const hexRadius = 8; // Smaller hexagons for better scatter plot appearance
+  const margin = { top: 20, right: 20, bottom: 40, left: 60 };
+  const plotWidth = width - margin.left - margin.right;
+  const plotHeight = height - margin.top - margin.bottom;
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -55,14 +58,66 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     // Transform patient data to map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
     
-    // Create individual hexagons for each patient
-    const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
+    // Create hexagon positions
+    const hexbinData = createHexbinData(mapPoints, plotWidth, plotHeight, hexRadius);
 
-    // Create main group with zoom transform
+    // Create main group with zoom transform and margin offset
     const g = svg.append('g')
-      .attr('transform', `scale(${zoom})`);
+      .attr('transform', `translate(${margin.left}, ${margin.top}) scale(${zoom})`);
 
-    // Draw hexagons - one for each individual patient
+    // Add axis labels
+    const axisGroup = svg.append('g');
+    
+    // X-axis label
+    axisGroup.append('text')
+      .attr('x', width / 2)
+      .attr('y', height - 5)
+      .attr('text-anchor', 'middle')
+      .attr('class', 'text-xs fill-gray-600')
+      .text('Severity Level');
+
+    // Y-axis label
+    axisGroup.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -height / 2)
+      .attr('y', 15)
+      .attr('text-anchor', 'middle')
+      .attr('class', 'text-xs fill-gray-600')
+      .text('Days Since Last Touch');
+
+    // Add severity labels on X-axis
+    const severityLabels = [
+      { label: 'Low', x: 0.2 * plotWidth },
+      { label: 'Medium', x: 0.5 * plotWidth },
+      { label: 'High', x: 0.8 * plotWidth }
+    ];
+
+    severityLabels.forEach(({ label, x }) => {
+      axisGroup.append('text')
+        .attr('x', margin.left + x)
+        .attr('y', height - 20)
+        .attr('text-anchor', 'middle')
+        .attr('class', 'text-xs fill-gray-500')
+        .text(label);
+    });
+
+    // Add day labels on Y-axis
+    const dayLabels = [
+      { label: 'Recent', y: 0.1 * plotHeight },
+      { label: '2 weeks', y: 0.5 * plotHeight },
+      { label: '1 month+', y: 0.9 * plotHeight }
+    ];
+
+    dayLabels.forEach(({ label, y }) => {
+      axisGroup.append('text')
+        .attr('x', margin.left - 10)
+        .attr('y', margin.top + y)
+        .attr('text-anchor', 'end')
+        .attr('class', 'text-xs fill-gray-500')
+        .text(label);
+    });
+
+    // Draw hexagons
     const hexagons = g.selectAll('.hexagon')
       .data(hexbinData)
       .enter()
@@ -70,7 +125,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .attr('class', 'hexagon')
       .attr('transform', d => `translate(${d.x},${d.y})`);
 
-    // Create hexagon path using d3.geoPath
+    // Create hexagon path
     const hexPath = d3.geoPath(d3.geoIdentity());
     const hexagonPath = hexPath({
       type: 'Polygon',
@@ -88,21 +143,20 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     hexagons.append('path')
       .attr('d', hexagonPath)
       .attr('fill', d => getSeverityColor(d.severity))
-      .attr('fill-opacity', 0.7)
-      .attr('stroke', d => getSeverityColor(d.severity))
+      .attr('fill-opacity', 0.8)
+      .attr('stroke', '#fff')
       .attr('stroke-width', 1)
-      .attr('stroke-opacity', 0.9)
       .style('cursor', 'pointer')
       .on('mouseover', function(event, d) {
         d3.select(this)
           .attr('stroke-width', 2)
-          .attr('fill-opacity', 0.9);
+          .attr('fill-opacity', 1);
         setSelectedHex(d);
       })
       .on('mouseout', function(event, d) {
         d3.select(this)
           .attr('stroke-width', 1)
-          .attr('fill-opacity', 0.7);
+          .attr('fill-opacity', 0.8);
         setSelectedHex(null);
       })
       .on('click', function(event, d) {
@@ -123,7 +177,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users size={16} className="text-[#1E4D36]" />
-            <h3 className="text-sm font-semibold text-[#1E4D36]">Aligned Patient Map</h3>
+            <h3 className="text-sm font-semibold text-[#1E4D36]">Patient Risk Scatter Plot</h3>
             <Badge variant="outline" className="text-xs">
               {patients.length} patients
             </Badge>
@@ -178,6 +232,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
                     <div>ID: {selectedHex.id}</div>
                     <div>Age: {selectedHex.age}y</div>
                     <div>Severity: {selectedHex.severity}</div>
+                    <div>Days since last visit: {selectedHex.daysSinceLastVisit}</div>
                     <div>Diagnosis: {selectedHex.primaryDiagnosis}</div>
                   </div>
                 </div>
@@ -186,7 +241,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           )}
         </div>
 
-        {/* Legend */}
+        {/* Updated Legend */}
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
@@ -203,7 +258,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
             </div>
           </div>
           <div className="text-gray-500">
-            Each hexagon represents one patient
+            Position shows risk vs. recency
           </div>
         </div>
       </div>
