@@ -111,20 +111,6 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         }
       });
 
-    // Add patient initials for better identification
-    hexagons.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dy', '0.35em')
-      .attr('font-size', '8px')
-      .attr('font-weight', 'bold')
-      .attr('fill', 'white')
-      .text(d => {
-        const nameParts = d.name.split(' ');
-        return nameParts.length >= 2 ? 
-          nameParts[0].charAt(0) + nameParts[1].charAt(0) : 
-          nameParts[0].charAt(0);
-      });
-
   }, [patients, searchTerm, severityFilter, zoom]);
 
   const handleZoomIn = () => setZoom(Math.min(zoom * 1.2, 3));
