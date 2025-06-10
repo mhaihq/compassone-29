@@ -7,7 +7,7 @@ import { Users, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { PatientSummary } from '@/data/patientsData';
 import { 
   transformPatientsToMapPoints, 
-  createSmoothHexbinData, 
+  createHexbinData, 
   getSeverityColor,
   PatientMapPoint,
   HexbinPoint 
@@ -52,9 +52,9 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       return matchesSearch && matchesSeverity;
     });
 
-    // Transform patient data to map points with smooth distribution
+    // Transform patient data to map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
-    const hexbinData = createSmoothHexbinData(mapPoints, width, height, hexRadius);
+    const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
 
     // Create main group with zoom transform
     const g = svg.append('g')
@@ -85,41 +85,36 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
 
     hexagons.append('path')
       .attr('d', hexagonPath)
-      .attr('fill', d => d.gradientColor)
-      .attr('fill-opacity', d => d.isRealPatient ? 0.8 : 0.4)
-      .attr('stroke', d => d.gradientColor)
+      .attr('fill', d => d.solidColor)
+      .attr('fill-opacity', 0.8)
+      .attr('stroke', d => d.solidColor)
       .attr('stroke-width', 0.5)
-      .attr('stroke-opacity', d => d.isRealPatient ? 1 : 0.6)
-      .style('cursor', d => d.isRealPatient ? 'pointer' : 'default')
+      .style('cursor', 'pointer')
       .on('mouseover', function(event, d) {
-        if (d.isRealPatient) {
-          d3.select(this)
-            .attr('stroke-width', 2)
-            .attr('fill-opacity', 1)
-            .attr('transform', 'scale(1.1)');
-          
-          setHoveredHex(d);
-          const rect = svgRef.current?.getBoundingClientRect();
-          if (rect) {
-            setMousePosition({
-              x: event.clientX - rect.left,
-              y: event.clientY - rect.top
-            });
-          }
+        d3.select(this)
+          .attr('stroke-width', 2)
+          .attr('fill-opacity', 1)
+          .attr('transform', 'scale(1.1)');
+        
+        setHoveredHex(d);
+        const rect = svgRef.current?.getBoundingClientRect();
+        if (rect) {
+          setMousePosition({
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+          });
         }
       })
       .on('mouseout', function(event, d) {
-        if (d.isRealPatient) {
-          d3.select(this)
-            .attr('stroke-width', 0.5)
-            .attr('fill-opacity', 0.8)
-            .attr('transform', 'scale(1)');
-          
-          setHoveredHex(null);
-        }
+        d3.select(this)
+          .attr('stroke-width', 0.5)
+          .attr('fill-opacity', 0.8)
+          .attr('transform', 'scale(1)');
+        
+        setHoveredHex(null);
       })
       .on('click', function(event, d) {
-        if (onPatientSelect && d.isRealPatient) {
+        if (onPatientSelect) {
           onPatientSelect(d.id);
         }
       });
@@ -130,14 +125,25 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   const handleZoomOut = () => setZoom(Math.max(zoom / 1.2, 0.5));
   const handleResetZoom = () => setZoom(1);
 
+  // Filter patients for correct count display
+  const filteredPatients = patients.filter(patient => {
+    const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         patient.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         patient.primaryDiagnosis.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesSeverity = severityFilter === 'all' || patient.severity === severityFilter;
+    
+    return matchesSearch && matchesSeverity;
+  });
+
   return (
     <div className="bg-white border rounded-lg p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Users size={16} className="text-[#1E4D36]" />
-          <h3 className="text-sm font-semibold text-[#1E4D36]">Aligned Patient Map</h3>
+          <h3 className="text-sm font-semibold text-[#1E4D36]">Patient Population Map</h3>
           <Badge variant="outline" className="text-xs">
-            {patients.length} patients
+            {filteredPatients.length} patients
           </Badge>
         </div>
         
@@ -178,8 +184,8 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           style={{ overflow: 'hidden' }}
         />
         
-        {/* Enhanced hover tooltip */}
-        {hoveredHex && hoveredHex.isRealPatient && (
+        {/* Hover tooltip */}
+        {hoveredHex && (
           <div 
             className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-3 pointer-events-none min-w-[200px]"
             style={{
@@ -226,7 +232,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         )}
       </div>
 
-      {/* Updated legend */}
+      {/* Legend */}
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">

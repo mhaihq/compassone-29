@@ -16,7 +16,7 @@ export interface PatientMapPoint {
 export interface HexbinPoint extends PatientMapPoint {
   count: number;
   patients: PatientMapPoint[];
-  gradientColor: string;
+  solidColor: string;
   isRealPatient: boolean;
 }
 
@@ -24,17 +24,14 @@ export const transformPatientsToMapPoints = (patients: PatientSummary[]): Patien
   return patients.map(patient => {
     const age = calculateAge(patient.dateOfBirth);
     
-    // Create synthetic positioning based on severity and age
-    // This creates logical clustering for the visualization
-    const severityWeight = patient.severity === 'Severe' ? 0.8 : 
-                          patient.severity === 'Moderate' ? 0.5 : 0.2;
+    // Create positioning based on severity for visual grouping
+    const severityWeight = patient.severity === 'Severe' ? 0.2 : 
+                          patient.severity === 'Moderate' ? 0.5 : 0.8;
     
-    const ageWeight = Math.min(age / 100, 1); // Normalize age
-    
-    // Add some randomness for realistic distribution
-    const jitter = 0.2;
-    const x = severityWeight + (Math.random() - 0.5) * jitter;
-    const y = ageWeight + (Math.random() - 0.5) * jitter;
+    // Add randomness for distribution within severity zones
+    const jitter = 0.15;
+    const x = Math.random(); // Random X position
+    const y = severityWeight + (Math.random() - 0.5) * jitter;
     
     return {
       id: patient.id,
@@ -62,7 +59,7 @@ const calculateAge = (dateOfBirth: string): number => {
   return age;
 };
 
-export const createSmoothHexbinData = (
+export const createHexbinData = (
   points: PatientMapPoint[], 
   width: number, 
   height: number, 
@@ -71,21 +68,16 @@ export const createSmoothHexbinData = (
   const hexWidth = hexRadius * 2 * 0.866;
   const hexHeight = hexRadius * 1.5;
   
-  // Calculate grid dimensions for tighter packing
-  const cols = Math.floor(width / hexWidth) + 2;
-  const rows = Math.floor(height / hexHeight) + 2;
-  
-  // Create color interpolation for smooth gradient
-  const colorScale = d3.scaleLinear<string>()
-    .domain([0, 0.5, 1])
-    .range(['#dc2626', '#d97706', '#059669']); // Red -> Orange -> Green
+  // Calculate grid dimensions
+  const cols = Math.floor(width / hexWidth) + 1;
+  const rows = Math.floor(height / hexHeight) + 1;
   
   const hexbinData: HexbinPoint[] = [];
   let patientIndex = 0;
   
-  // Create hexagonal grid with smooth gradient
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
+  // Create hexagonal grid - only real patients, no synthetic ones
+  for (let row = 0; row < rows && patientIndex < points.length; row++) {
+    for (let col = 0; col < cols && patientIndex < points.length; col++) {
       // Calculate position with offset for hexagonal packing
       const offsetX = (row % 2) * (hexWidth / 2);
       const x = col * hexWidth + hexWidth / 2 + offsetX;
@@ -96,48 +88,24 @@ export const createSmoothHexbinData = (
         continue;
       }
       
-      // Calculate gradient position (0 = bottom/severe, 1 = top/mild)
-      const normalizedY = 1 - (row / (rows - 1));
-      const gradientColor = colorScale(normalizedY);
-      
-      // Assign real patient or create synthetic based on availability
-      let hexData: HexbinPoint;
-      const isRealPatient = patientIndex < points.length;
-      
-      if (isRealPatient) {
+      // Only create hexagons for real patients
+      if (patientIndex < points.length) {
         const patient = points[patientIndex];
-        hexData = {
+        const solidColor = getSeverityColor(patient.severity);
+        
+        const hexData: HexbinPoint = {
           ...patient,
           x,
           y,
           count: 1,
           patients: [{ ...patient, x, y }],
-          gradientColor,
+          solidColor,
           isRealPatient: true
         };
-        patientIndex++;
-      } else {
-        // Create synthetic hexagon for visual density
-        const syntheticSeverity = normalizedY > 0.67 ? 'Mild' : 
-                                 normalizedY > 0.33 ? 'Moderate' : 'Severe';
         
-        hexData = {
-          id: `synthetic-${row}-${col}`,
-          name: 'Background',
-          x,
-          y,
-          severity: syntheticSeverity,
-          primaryDiagnosis: 'Background',
-          age: 0,
-          lastVisit: '2025-01-01',
-          count: 0,
-          patients: [],
-          gradientColor,
-          isRealPatient: false
-        };
+        hexbinData.push(hexData);
+        patientIndex++;
       }
-      
-      hexbinData.push(hexData);
     }
   }
   
