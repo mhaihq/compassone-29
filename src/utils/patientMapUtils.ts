@@ -1,6 +1,5 @@
 
 import * as d3 from 'd3';
-import { hexbin } from 'd3-hexbin';
 import { PatientSummary } from '@/data/patientsData';
 
 export interface PatientMapPoint {
@@ -67,38 +66,19 @@ export const createHexbinData = (
   height: number, 
   hexRadius: number = 20
 ): HexbinPoint[] => {
-  // Scale points to svg dimensions
-  const scaledPoints = points.map(p => ({
-    ...p,
-    x: p.x * width,
-    y: p.y * height
-  }));
-  
-  // Create hexbin generator using the imported hexbin function
-  const hexbinGenerator = hexbin()
-    .radius(hexRadius)
-    .extent([[0, 0], [width, height]]);
-  
-  // Generate hexbins
-  const bins = hexbinGenerator(scaledPoints.map(p => [p.x, p.y] as [number, number]));
-  
-  // Transform bins to include patient data
-  return bins.map(bin => {
-    const patientsInBin = scaledPoints.filter(point => {
-      const dx = point.x - bin.x;
-      const dy = point.y - bin.y;
-      return Math.sqrt(dx * dx + dy * dy) <= hexRadius;
-    });
+  // Scale points to svg dimensions and create individual hexagons for each patient
+  return points.map(point => {
+    const scaledPoint = {
+      ...point,
+      x: point.x * width,
+      y: point.y * height
+    };
     
-    // Use the first patient as representative data
-    const representative = patientsInBin[0] || scaledPoints[0];
-    
+    // Each patient gets their own hexagon
     return {
-      ...representative,
-      x: bin.x,
-      y: bin.y,
-      count: bin.length,
-      patients: patientsInBin
+      ...scaledPoint,
+      count: 1,
+      patients: [scaledPoint]
     };
   });
 };

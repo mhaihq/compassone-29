@@ -33,7 +33,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 15;
+  const hexRadius = 12; // Reduced size since we're showing individual patients
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -55,14 +55,14 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     // Transform patient data to map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
     
-    // Create hexbin data
+    // Create individual hexagons for each patient
     const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
 
     // Create main group with zoom transform
     const g = svg.append('g')
       .attr('transform', `scale(${zoom})`);
 
-    // Draw hexagons
+    // Draw hexagons - one for each individual patient
     const hexagons = g.selectAll('.hexagon')
       .data(hexbinData)
       .enter()
@@ -88,38 +88,42 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     hexagons.append('path')
       .attr('d', hexagonPath)
       .attr('fill', d => getSeverityColor(d.severity))
-      .attr('fill-opacity', d => Math.min(0.3 + (d.count * 0.2), 0.9))
+      .attr('fill-opacity', 0.7)
       .attr('stroke', d => getSeverityColor(d.severity))
       .attr('stroke-width', 1)
-      .attr('stroke-opacity', 0.8)
+      .attr('stroke-opacity', 0.9)
       .style('cursor', 'pointer')
       .on('mouseover', function(event, d) {
         d3.select(this)
           .attr('stroke-width', 2)
-          .attr('fill-opacity', 0.8);
+          .attr('fill-opacity', 0.9);
         setSelectedHex(d);
       })
       .on('mouseout', function(event, d) {
         d3.select(this)
           .attr('stroke-width', 1)
-          .attr('fill-opacity', Math.min(0.3 + (d.count * 0.2), 0.9));
+          .attr('fill-opacity', 0.7);
         setSelectedHex(null);
       })
       .on('click', function(event, d) {
-        if (onPatientSelect && d.patients.length > 0) {
-          onPatientSelect(d.patients[0].id);
+        if (onPatientSelect) {
+          onPatientSelect(d.id);
         }
       });
 
-    // Add count labels for hexagons with multiple patients
-    hexagons.filter(d => d.count > 1)
-      .append('text')
+    // Add patient initials for better identification
+    hexagons.append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '0.35em')
-      .attr('font-size', '10px')
+      .attr('font-size', '8px')
       .attr('font-weight', 'bold')
       .attr('fill', 'white')
-      .text(d => d.count);
+      .text(d => {
+        const nameParts = d.name.split(' ');
+        return nameParts.length >= 2 ? 
+          nameParts[0].charAt(0) + nameParts[1].charAt(0) : 
+          nameParts[0].charAt(0);
+      });
 
   }, [patients, searchTerm, severityFilter, zoom]);
 
@@ -189,11 +193,6 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
                     <div>Age: {selectedHex.age}y</div>
                     <div>Severity: {selectedHex.severity}</div>
                     <div>Diagnosis: {selectedHex.primaryDiagnosis}</div>
-                    {selectedHex.count > 1 && (
-                      <div className="text-blue-600">
-                        +{selectedHex.count - 1} other patients in this area
-                      </div>
-                    )}
                   </div>
                 </div>
               </TooltipContent>
@@ -218,7 +217,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
             </div>
           </div>
           <div className="text-gray-500">
-            Click hexagons to view patients
+            Each hexagon represents one patient
           </div>
         </div>
       </div>
