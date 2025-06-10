@@ -31,9 +31,9 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   const [selectedHex, setSelectedHex] = useState<HexbinPoint | null>(null);
   const [zoom, setZoom] = useState(1);
   
-  const width = 320;
-  const height = 180;
-  const hexRadius = 12;
+  const width = 400;
+  const height = 240;
+  const hexRadius = 15;
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -70,7 +70,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .attr('class', 'hexagon')
       .attr('transform', d => `translate(${d.x},${d.y})`);
 
-    // Add hexagon paths
+    // Create hexagon path using d3.geoPath
     const hexPath = d3.geoPath(d3.geoIdentity());
     const hexagonPath = hexPath({
       type: 'Polygon',
@@ -172,7 +172,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
             ref={svgRef}
             width={width}
             height={height}
-            className="border border-gray-200 rounded bg-gray-50"
+            className="border border-gray-200 rounded bg-gray-50 w-full"
             style={{ overflow: 'hidden' }}
           />
           
