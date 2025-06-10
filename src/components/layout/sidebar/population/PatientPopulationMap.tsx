@@ -3,12 +3,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Users, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { PatientSummary } from '@/data/patientsData';
 import { 
   transformPatientsToMapPoints, 
-  createHexbinData, 
+  createSmoothHexbinData, 
   getSeverityColor,
   PatientMapPoint,
   HexbinPoint 
@@ -34,7 +33,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 8;
+  const hexRadius = 6;
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -53,9 +52,9 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       return matchesSearch && matchesSeverity;
     });
 
-    // Transform patient data to map points
+    // Transform patient data to map points with smooth distribution
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
-    const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
+    const hexbinData = createSmoothHexbinData(mapPoints, width, height, hexRadius);
 
     // Create main group with zoom transform
     const g = svg.append('g')
@@ -86,17 +85,18 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
 
     hexagons.append('path')
       .attr('d', hexagonPath)
-      .attr('fill', d => getSeverityColor(d.severity))
-      .attr('fill-opacity', 0.7)
-      .attr('stroke', d => getSeverityColor(d.severity))
+      .attr('fill', d => d.gradientColor)
+      .attr('fill-opacity', d => d.isRealPatient ? 0.8 : 0.4)
+      .attr('stroke', d => d.gradientColor)
       .attr('stroke-width', 0.5)
-      .attr('stroke-opacity', 0.9)
-      .style('cursor', d => d.id.startsWith('synthetic-') ? 'default' : 'pointer')
+      .attr('stroke-opacity', d => d.isRealPatient ? 1 : 0.6)
+      .style('cursor', d => d.isRealPatient ? 'pointer' : 'default')
       .on('mouseover', function(event, d) {
-        if (!d.id.startsWith('synthetic-')) {
+        if (d.isRealPatient) {
           d3.select(this)
             .attr('stroke-width', 2)
-            .attr('fill-opacity', 0.9);
+            .attr('fill-opacity', 1)
+            .attr('transform', 'scale(1.1)');
           
           setHoveredHex(d);
           const rect = svgRef.current?.getBoundingClientRect();
@@ -109,16 +109,17 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         }
       })
       .on('mouseout', function(event, d) {
-        if (!d.id.startsWith('synthetic-')) {
+        if (d.isRealPatient) {
           d3.select(this)
             .attr('stroke-width', 0.5)
-            .attr('fill-opacity', 0.7);
+            .attr('fill-opacity', 0.8)
+            .attr('transform', 'scale(1)');
           
           setHoveredHex(null);
         }
       })
       .on('click', function(event, d) {
-        if (onPatientSelect && !d.id.startsWith('synthetic-')) {
+        if (onPatientSelect && d.isRealPatient) {
           onPatientSelect(d.id);
         }
       });
@@ -177,60 +178,72 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           style={{ overflow: 'hidden' }}
         />
         
-        {/* Enhanced hover card */}
-        {hoveredHex && !hoveredHex.id.startsWith('synthetic-') && (
+        {/* Enhanced hover tooltip */}
+        {hoveredHex && hoveredHex.isRealPatient && (
           <div 
-            className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-3 pointer-events-none"
+            className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-3 pointer-events-none min-w-[200px]"
             style={{
-              left: mousePosition.x + 10,
+              left: mousePosition.x > width / 2 ? mousePosition.x - 210 : mousePosition.x + 10,
               top: mousePosition.y - 10,
-              transform: mousePosition.x > width / 2 ? 'translateX(-100%)' : 'none'
+              maxWidth: '250px'
             }}
           >
             <div className="space-y-2">
-              <div className="font-medium text-sm">{hoveredHex.name}</div>
+              <div className="font-medium text-sm text-gray-900">{hoveredHex.name}</div>
               <div className="text-xs space-y-1 text-gray-600">
-                <div>ID: <span className="font-mono">{hoveredHex.id}</span></div>
-                <div>Age: {hoveredHex.age} years</div>
-                <div className="flex items-center gap-2">
-                  <span>Severity:</span>
+                <div className="flex justify-between">
+                  <span>ID:</span>
+                  <span className="font-mono text-gray-800">{hoveredHex.id}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Age:</span>
+                  <span className="text-gray-800">{hoveredHex.age} years</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Risk Level:</span>
                   <div className="flex items-center gap-1">
                     <div 
                       className="w-2 h-2 rounded-full" 
                       style={{ backgroundColor: getSeverityColor(hoveredHex.severity) }}
                     />
-                    <span className="font-medium">{hoveredHex.severity}</span>
+                    <span className="font-medium text-gray-800">{hoveredHex.severity}</span>
                   </div>
                 </div>
-                <div>Diagnosis: {hoveredHex.primaryDiagnosis}</div>
-                <div>Last Visit: {new Date(hoveredHex.lastVisit).toLocaleDateString()}</div>
+                <div className="flex justify-between">
+                  <span>Diagnosis:</span>
+                  <span className="text-gray-800 text-right">{hoveredHex.primaryDiagnosis}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Last Visit:</span>
+                  <span className="text-gray-800">{new Date(hoveredHex.lastVisit).toLocaleDateString()}</span>
+                </div>
               </div>
               {onPatientSelect && (
-                <div className="text-xs text-blue-600 mt-2">Click to view details</div>
+                <div className="text-xs text-blue-600 mt-2 font-medium">Click to view patient details</div>
               )}
             </div>
           </div>
         )}
       </div>
 
-      {/* Legend */}
+      {/* Updated legend */}
       <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Severe') }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#dc2626' }}></div>
             <span>High Risk</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Moderate') }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#d97706' }}></div>
             <span>Medium Risk</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Mild') }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#059669' }}></div>
             <span>Low Risk</span>
           </div>
         </div>
         <div className="text-gray-500">
-          Hover hexagons to see patient details
+          Hover for patient details • Click to view
         </div>
       </div>
     </div>
