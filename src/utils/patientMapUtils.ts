@@ -63,33 +63,33 @@ export const createHexbinData = (
   points: PatientMapPoint[], 
   width: number, 
   height: number, 
-  hexRadius: number = 6
+  hexRadius: number = 4
 ): HexbinPoint[] => {
   const hexWidth = hexRadius * 2 * 0.866;
   const hexHeight = hexRadius * 1.5;
   
-  // Calculate grid dimensions
-  const cols = Math.floor(width / hexWidth) + 1;
-  const rows = Math.floor(height / hexHeight) + 1;
+  // Calculate grid dimensions with tighter packing
+  const cols = Math.floor(width / hexWidth) + 2;
+  const rows = Math.floor(height / hexHeight) + 2;
   
   const hexbinData: HexbinPoint[] = [];
   let patientIndex = 0;
   
-  // Create hexagonal grid - only real patients, no synthetic ones
-  for (let row = 0; row < rows && patientIndex < points.length; row++) {
-    for (let col = 0; col < cols && patientIndex < points.length; col++) {
+  // Create hexagonal grid - fill with real patients first, then synthetic ones
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
       // Calculate position with offset for hexagonal packing
       const offsetX = (row % 2) * (hexWidth / 2);
       const x = col * hexWidth + hexWidth / 2 + offsetX;
       const y = row * hexHeight + hexRadius;
       
-      // Skip hexagons outside bounds
-      if (x + hexRadius > width || y + hexRadius > height || x - hexRadius < 0 || y - hexRadius < 0) {
+      // Skip hexagons outside bounds with smaller margin
+      if (x + hexRadius > width + 5 || y + hexRadius > height + 5 || x - hexRadius < -5 || y - hexRadius < -5) {
         continue;
       }
       
-      // Only create hexagons for real patients
       if (patientIndex < points.length) {
+        // Real patient data
         const patient = points[patientIndex];
         const solidColor = getSeverityColor(patient.severity);
         
@@ -105,6 +105,32 @@ export const createHexbinData = (
         
         hexbinData.push(hexData);
         patientIndex++;
+      } else {
+        // Synthetic patient data for visual density
+        const severities: ('Mild' | 'Moderate' | 'Severe')[] = ['Mild', 'Moderate', 'Severe'];
+        const randomSeverity = severities[Math.floor(Math.random() * severities.length)];
+        const solidColor = getSeverityColor(randomSeverity);
+        
+        const syntheticPatient: PatientMapPoint = {
+          id: `synthetic-${row}-${col}`,
+          name: 'Anonymous Patient',
+          x,
+          y,
+          severity: randomSeverity,
+          primaryDiagnosis: 'Various Conditions',
+          age: Math.floor(Math.random() * 60) + 20,
+          lastVisit: new Date().toISOString().split('T')[0]
+        };
+        
+        const hexData: HexbinPoint = {
+          ...syntheticPatient,
+          count: 1,
+          patients: [syntheticPatient],
+          solidColor,
+          isRealPatient: false
+        };
+        
+        hexbinData.push(hexData);
       }
     }
   }

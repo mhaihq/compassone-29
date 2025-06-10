@@ -33,7 +33,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 6;
+  const hexRadius = 4; // Smaller hexagons for more density
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -86,15 +86,17 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     hexagons.append('path')
       .attr('d', hexagonPath)
       .attr('fill', d => d.solidColor)
-      .attr('fill-opacity', 0.8)
+      .attr('fill-opacity', d => d.isRealPatient ? 0.8 : 0.3) // Reduced opacity for synthetic patients
       .attr('stroke', d => d.solidColor)
-      .attr('stroke-width', 0.5)
-      .style('cursor', 'pointer')
+      .attr('stroke-width', 0.3)
+      .style('cursor', d => d.isRealPatient ? 'pointer' : 'default')
       .on('mouseover', function(event, d) {
+        if (!d.isRealPatient) return; // Only real patients are hoverable
+        
         d3.select(this)
-          .attr('stroke-width', 2)
+          .attr('stroke-width', 1.5)
           .attr('fill-opacity', 1)
-          .attr('transform', 'scale(1.1)');
+          .attr('transform', 'scale(1.2)');
         
         setHoveredHex(d);
         const rect = svgRef.current?.getBoundingClientRect();
@@ -106,15 +108,17 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         }
       })
       .on('mouseout', function(event, d) {
+        if (!d.isRealPatient) return;
+        
         d3.select(this)
-          .attr('stroke-width', 0.5)
+          .attr('stroke-width', 0.3)
           .attr('fill-opacity', 0.8)
           .attr('transform', 'scale(1)');
         
         setHoveredHex(null);
       })
       .on('click', function(event, d) {
-        if (onPatientSelect) {
+        if (d.isRealPatient && onPatientSelect) {
           onPatientSelect(d.id);
         }
       });
@@ -184,8 +188,8 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           style={{ overflow: 'hidden' }}
         />
         
-        {/* Hover tooltip */}
-        {hoveredHex && (
+        {/* Hover tooltip - only for real patients */}
+        {hoveredHex && hoveredHex.isRealPatient && (
           <div 
             className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-3 pointer-events-none min-w-[200px]"
             style={{
@@ -249,7 +253,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           </div>
         </div>
         <div className="text-gray-500">
-          Hover for patient details • Click to view
+          Real patients clickable • Faded hexagons show population density
         </div>
       </div>
     </div>
