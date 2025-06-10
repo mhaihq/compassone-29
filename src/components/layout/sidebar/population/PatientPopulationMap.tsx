@@ -33,7 +33,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 12;
+  const hexRadius = 8; // Smaller radius for grid cells
   const margin = { top: 20, right: 40, bottom: 30, left: 50 };
 
   useEffect(() => {
@@ -53,10 +53,10 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       return matchesSearch && matchesSeverity;
     });
 
-    // Transform patient data to map points
+    // Transform patient data to grid-based map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
     
-    // Create hexagon data with actual positions
+    // Create hexagon data with grid positions
     const plotWidth = width - margin.left - margin.right;
     const plotHeight = height - margin.top - margin.bottom;
     const hexbinData = createHexbinData(mapPoints, plotWidth, plotHeight, hexRadius);
@@ -64,6 +64,37 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     // Create main group with zoom and translation
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top}) scale(${zoom})`);
+
+    // Draw grid lines (optional, for visualization)
+    const cols = Math.max(...mapPoints.map(p => p.gridCol)) + 1;
+    const rows = Math.max(...mapPoints.map(p => p.gridRow)) + 1;
+    const cellWidth = plotWidth / Math.max(cols - 1, 1);
+    const cellHeight = plotHeight / Math.max(rows - 1, 1);
+
+    // Add subtle grid lines
+    const gridGroup = g.append('g').attr('class', 'grid').style('opacity', 0.1);
+    
+    // Vertical lines
+    for (let i = 0; i <= cols; i++) {
+      gridGroup.append('line')
+        .attr('x1', i * cellWidth)
+        .attr('y1', 0)
+        .attr('x2', i * cellWidth)
+        .attr('y2', plotHeight)
+        .attr('stroke', '#999')
+        .attr('stroke-width', 0.5);
+    }
+    
+    // Horizontal lines
+    for (let i = 0; i <= rows; i++) {
+      gridGroup.append('line')
+        .attr('x1', 0)
+        .attr('y1', i * cellHeight)
+        .attr('x2', plotWidth)
+        .attr('y2', i * cellHeight)
+        .attr('stroke', '#999')
+        .attr('stroke-width', 0.5);
+    }
 
     // Add Y-axis label (Risk Level)
     svg.append('text')
@@ -75,14 +106,14 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .style('fill', '#6b7280')
       .text('Risk Level');
 
-    // Add X-axis label (Severity Distribution)
+    // Add X-axis label (Patient Distribution)
     svg.append('text')
       .attr('x', width / 2)
       .attr('y', height - 5)
       .style('text-anchor', 'middle')
       .style('font-size', '10px')
       .style('fill', '#6b7280')
-      .text('Severity Distribution');
+      .text('Patient Grid');
 
     // Add risk level indicators on Y-axis
     const riskLabels = [
@@ -102,7 +133,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         .text(label.text);
     });
 
-    // Draw hexagons
+    // Draw hexagons in grid cells
     const hexagons = g.selectAll('.hexagon')
       .data(hexbinData)
       .enter()
@@ -128,21 +159,23 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     hexagons.append('path')
       .attr('d', hexagonPath)
       .attr('fill', d => getSeverityColor(d.severity))
-      .attr('fill-opacity', 0.7)
+      .attr('fill-opacity', 0.8)
       .attr('stroke', d => getSeverityColor(d.severity))
       .attr('stroke-width', 1)
-      .attr('stroke-opacity', 0.9)
+      .attr('stroke-opacity', 1)
       .style('cursor', 'pointer')
       .on('mouseover', function(event, d) {
         d3.select(this)
           .attr('stroke-width', 2)
-          .attr('fill-opacity', 0.9);
+          .attr('fill-opacity', 1)
+          .attr('transform', 'scale(1.1)'); // Slight hover effect
         setSelectedHex(d);
       })
       .on('mouseout', function(event, d) {
         d3.select(this)
           .attr('stroke-width', 1)
-          .attr('fill-opacity', 0.7);
+          .attr('fill-opacity', 0.8)
+          .attr('transform', 'scale(1)');
         setSelectedHex(null);
       })
       .on('click', function(event, d) {
@@ -163,7 +196,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users size={16} className="text-[#1E4D36]" />
-            <h3 className="text-sm font-semibold text-[#1E4D36]">Patient Risk Scatter Plot</h3>
+            <h3 className="text-sm font-semibold text-[#1E4D36]">Patient Population Grid</h3>
             <Badge variant="outline" className="text-xs">
               {patients.length} patients
             </Badge>
@@ -219,6 +252,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
                     <div>Age: {selectedHex.age}y</div>
                     <div>Severity: {selectedHex.severity}</div>
                     <div>Diagnosis: {selectedHex.primaryDiagnosis}</div>
+                    <div>Grid: ({selectedHex.gridCol}, {selectedHex.gridRow})</div>
                   </div>
                 </div>
               </TooltipContent>
@@ -243,7 +277,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
             </div>
           </div>
           <div className="text-gray-500">
-            Scattered by risk & recency
+            Grid-based layout
           </div>
         </div>
       </div>

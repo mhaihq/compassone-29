@@ -11,6 +11,8 @@ export interface PatientMapPoint {
   primaryDiagnosis: string;
   age: number;
   lastVisit: string;
+  gridCol: number;
+  gridRow: number;
 }
 
 export interface HexbinPoint extends PatientMapPoint {
@@ -19,60 +21,60 @@ export interface HexbinPoint extends PatientMapPoint {
 }
 
 export const transformPatientsToMapPoints = (patients: PatientSummary[]): PatientMapPoint[] => {
-  return patients.map(patient => {
-    // Calculate days since last visit for Y-axis positioning
-    const lastVisitDate = new Date(patient.lastVisit);
-    const today = new Date();
-    const daysSinceLastVisit = Math.floor((today.getTime() - lastVisitDate.getTime()) / (1000 * 60 * 60 * 24));
+  // Calculate grid dimensions based on patient count
+  const patientCount = patients.length;
+  const cols = Math.ceil(Math.sqrt(patientCount * 1.5)); // Wider grid
+  const rows = Math.ceil(patientCount / cols);
+  
+  // Group patients by severity for better distribution
+  const severityGroups = {
+    'Severe': patients.filter(p => p.severity === 'Severe'),
+    'Moderate': patients.filter(p => p.severity === 'Moderate'),
+    'Mild': patients.filter(p => p.severity === 'Mild')
+  };
+  
+  let gridIndex = 0;
+  const mapPoints: PatientMapPoint[] = [];
+  
+  // Distribute severe patients in top rows
+  const topRows = Math.ceil(rows * 0.3);
+  const middleRows = Math.ceil(rows * 0.4);
+  
+  ['Severe', 'Moderate', 'Mild'].forEach((severity) => {
+    const patientsInSeverity = severityGroups[severity as keyof typeof severityGroups];
     
-    // Map severity to X-axis (with more spread)
-    let severityX;
-    switch (patient.severity) {
-      case 'Severe': 
-        severityX = 0.8 + (Math.random() - 0.5) * 0.3; // Right side with scatter
-        break;
-      case 'Moderate': 
-        severityX = 0.5 + (Math.random() - 0.5) * 0.4; // Center with scatter
-        break;
-      case 'Mild': 
-        severityX = 0.2 + (Math.random() - 0.5) * 0.3; // Left side with scatter
-        break;
-      default:
-        severityX = 0.5;
-    }
-    
-    // Map severity to Y-axis (inverted so severe is at top)
-    // Also factor in days since last visit for additional positioning
-    let severityY;
-    switch (patient.severity) {
-      case 'Severe': 
-        severityY = 0.15 + Math.random() * 0.25; // Top area (red on top)
-        break;
-      case 'Moderate': 
-        severityY = 0.35 + Math.random() * 0.3; // Middle area (yellow in middle)
-        break;
-      case 'Mild': 
-        severityY = 0.7 + Math.random() * 0.25; // Bottom area (green at bottom)
-        break;
-      default:
-        severityY = 0.5;
-    }
-    
-    // Add some influence from days since last visit for more realistic scatter
-    const daysFactor = Math.min(daysSinceLastVisit / 365, 1); // Normalize to 0-1 over a year
-    const yWithDays = severityY + (daysFactor * 0.1) + (Math.random() - 0.5) * 0.15;
-    
-    return {
-      id: patient.id,
-      name: patient.name,
-      x: Math.max(0.05, Math.min(0.95, severityX)), // Keep within bounds with margin
-      y: Math.max(0.05, Math.min(0.95, yWithDays)), // Keep within bounds with margin
-      severity: patient.severity,
-      primaryDiagnosis: patient.primaryDiagnosis,
-      age: calculateAge(patient.dateOfBirth),
-      lastVisit: patient.lastVisit
-    };
+    patientsInSeverity.forEach((patient) => {
+      const col = gridIndex % cols;
+      const row = Math.floor(gridIndex / cols);
+      
+      // Adjust row based on severity
+      let adjustedRow = row;
+      if (severity === 'Severe') {
+        adjustedRow = Math.min(row, topRows - 1);
+      } else if (severity === 'Moderate') {
+        adjustedRow = topRows + Math.min(row, middleRows - 1);
+      } else {
+        adjustedRow = topRows + middleRows + row;
+      }
+      
+      mapPoints.push({
+        id: patient.id,
+        name: patient.name,
+        x: col / (cols - 1), // Normalized 0-1
+        y: adjustedRow / (rows - 1), // Normalized 0-1
+        severity: patient.severity,
+        primaryDiagnosis: patient.primaryDiagnosis,
+        age: calculateAge(patient.dateOfBirth),
+        lastVisit: patient.lastVisit,
+        gridCol: col,
+        gridRow: adjustedRow
+      });
+      
+      gridIndex++;
+    });
   });
+  
+  return mapPoints;
 };
 
 const calculateAge = (dateOfBirth: string): number => {
@@ -94,10 +96,17 @@ export const createHexbinData = (
   height: number, 
   hexRadius: number = 20
 ): HexbinPoint[] => {
-  // Convert normalized coordinates to actual pixel positions
+  // Calculate grid cell size
+  const cols = Math.max(...points.map(p => p.gridCol)) + 1;
+  const rows = Math.max(...points.map(p => p.gridRow)) + 1;
+  
+  const cellWidth = (width - 2 * hexRadius) / Math.max(cols - 1, 1);
+  const cellHeight = (height - 2 * hexRadius) / Math.max(rows - 1, 1);
+  
   return points.map(point => {
-    const x = point.x * (width - 2 * hexRadius) + hexRadius;
-    const y = point.y * (height - 2 * hexRadius) + hexRadius;
+    // Position hexagon in center of its grid cell
+    const x = hexRadius + (point.gridCol * cellWidth);
+    const y = hexRadius + (point.gridRow * cellHeight);
     
     return {
       ...point,
