@@ -1,5 +1,4 @@
 
-import * as d3 from 'd3';
 import { PatientSummary } from '@/data/patientsData';
 
 export interface PatientMapPoint {
@@ -13,7 +12,7 @@ export interface PatientMapPoint {
   lastVisit: string;
 }
 
-export interface HexbinPoint extends PatientMapPoint {
+export interface ClusterPoint extends PatientMapPoint {
   count: number;
   patients: PatientMapPoint[];
 }
@@ -60,12 +59,12 @@ const calculateAge = (dateOfBirth: string): number => {
   return age;
 };
 
-export const createHexbinData = (
+export const createClusterData = (
   points: PatientMapPoint[], 
   width: number, 
   height: number, 
-  hexRadius: number = 20
-): HexbinPoint[] => {
+  clusterRadius: number = 25
+): ClusterPoint[] => {
   // Scale points to svg dimensions
   const scaledPoints = points.map(p => ({
     ...p,
@@ -73,33 +72,48 @@ export const createHexbinData = (
     y: p.y * height
   }));
   
-  // Create hexbin generator
-  const hexbin = d3.hexbin()
-    .radius(hexRadius)
-    .extent([[0, 0], [width, height]]);
+  const clusters: ClusterPoint[] = [];
+  const processedPoints = new Set<number>();
   
-  // Generate hexbins
-  const bins = hexbin(scaledPoints.map(p => [p.x, p.y] as [number, number]));
-  
-  // Transform bins to include patient data
-  return bins.map(bin => {
-    const patientsInBin = scaledPoints.filter(point => {
-      const dx = point.x - bin.x;
-      const dy = point.y - bin.y;
-      return Math.sqrt(dx * dx + dy * dy) <= hexRadius;
+  scaledPoints.forEach((point, index) => {
+    if (processedPoints.has(index)) return;
+    
+    // Find nearby points within cluster radius
+    const nearbyPoints = scaledPoints.filter((otherPoint, otherIndex) => {
+      if (processedPoints.has(otherIndex)) return false;
+      
+      const dx = point.x - otherPoint.x;
+      const dy = point.y - otherPoint.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      return distance <= clusterRadius;
     });
     
-    // Use the first patient as representative data
-    const representative = patientsInBin[0] || scaledPoints[0];
+    // Mark all nearby points as processed
+    nearbyPoints.forEach((nearbyPoint) => {
+      const nearbyIndex = scaledPoints.findIndex(p => p.id === nearbyPoint.id);
+      if (nearbyIndex !== -1) {
+        processedPoints.add(nearbyIndex);
+      }
+    });
     
-    return {
+    // Calculate cluster center
+    const centerX = nearbyPoints.reduce((sum, p) => sum + p.x, 0) / nearbyPoints.length;
+    const centerY = nearbyPoints.reduce((sum, p) => sum + p.y, 0) / nearbyPoints.length;
+    
+    // Use the first patient as representative data
+    const representative = nearbyPoints[0];
+    
+    clusters.push({
       ...representative,
-      x: bin.x,
-      y: bin.y,
-      count: bin.length,
-      patients: patientsInBin
-    };
+      x: centerX,
+      y: centerY,
+      count: nearbyPoints.length,
+      patients: nearbyPoints
+    });
   });
+  
+  return clusters;
 };
 
 export const getSeverityColor = (severity: string): string => {
