@@ -33,13 +33,14 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 12; // Reduced size since we're showing individual patients
+  const hexRadius = 12;
+  const margin = { top: 20, right: 40, bottom: 30, left: 50 };
 
   useEffect(() => {
     if (!svgRef.current) return;
 
     const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove(); // Clear previous render
+    svg.selectAll("*").remove();
 
     // Filter patients based on search and severity
     const filteredPatients = patients.filter(patient => {
@@ -55,14 +56,53 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     // Transform patient data to map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
     
-    // Create individual hexagons for each patient
-    const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
+    // Create hexagon data with actual positions
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+    const hexbinData = createHexbinData(mapPoints, plotWidth, plotHeight, hexRadius);
 
-    // Create main group with zoom transform
+    // Create main group with zoom and translation
     const g = svg.append('g')
-      .attr('transform', `scale(${zoom})`);
+      .attr('transform', `translate(${margin.left}, ${margin.top}) scale(${zoom})`);
 
-    // Draw hexagons - one for each individual patient
+    // Add Y-axis label (Risk Level)
+    svg.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', 15)
+      .attr('x', -(height / 2))
+      .style('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .style('fill', '#6b7280')
+      .text('Risk Level');
+
+    // Add X-axis label (Severity Distribution)
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', height - 5)
+      .style('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .style('fill', '#6b7280')
+      .text('Severity Distribution');
+
+    // Add risk level indicators on Y-axis
+    const riskLabels = [
+      { text: 'High', y: margin.top + 20, color: '#dc2626' },
+      { text: 'Med', y: height / 2, color: '#d97706' },
+      { text: 'Low', y: height - margin.bottom - 20, color: '#16a34a' }
+    ];
+
+    riskLabels.forEach(label => {
+      svg.append('text')
+        .attr('x', 8)
+        .attr('y', label.y)
+        .style('text-anchor', 'middle')
+        .style('font-size', '9px')
+        .style('fill', label.color)
+        .style('font-weight', 'bold')
+        .text(label.text);
+    });
+
+    // Draw hexagons
     const hexagons = g.selectAll('.hexagon')
       .data(hexbinData)
       .enter()
@@ -70,7 +110,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .attr('class', 'hexagon')
       .attr('transform', d => `translate(${d.x},${d.y})`);
 
-    // Create hexagon path using d3.geoPath
+    // Create hexagon path
     const hexPath = d3.geoPath(d3.geoIdentity());
     const hexagonPath = hexPath({
       type: 'Polygon',
@@ -123,7 +163,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users size={16} className="text-[#1E4D36]" />
-            <h3 className="text-sm font-semibold text-[#1E4D36]">Aligned Patient Map</h3>
+            <h3 className="text-sm font-semibold text-[#1E4D36]">Patient Risk Scatter Plot</h3>
             <Badge variant="outline" className="text-xs">
               {patients.length} patients
             </Badge>
@@ -191,19 +231,19 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Severe') }}></div>
-              <span>High Risk</span>
+              <span>High Risk (Top)</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Moderate') }}></div>
-              <span>Medium Risk</span>
+              <span>Medium Risk (Middle)</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Mild') }}></div>
-              <span>Low Risk</span>
+              <span>Low Risk (Bottom)</span>
             </div>
           </div>
           <div className="text-gray-500">
-            Each hexagon represents one patient
+            Scattered by risk & recency
           </div>
         </div>
       </div>

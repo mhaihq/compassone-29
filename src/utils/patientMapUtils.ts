@@ -20,28 +20,56 @@ export interface HexbinPoint extends PatientMapPoint {
 
 export const transformPatientsToMapPoints = (patients: PatientSummary[]): PatientMapPoint[] => {
   return patients.map(patient => {
-    const age = calculateAge(patient.dateOfBirth);
+    // Calculate days since last visit for Y-axis positioning
+    const lastVisitDate = new Date(patient.lastVisit);
+    const today = new Date();
+    const daysSinceLastVisit = Math.floor((today.getTime() - lastVisitDate.getTime()) / (1000 * 60 * 60 * 24));
     
-    // Create synthetic positioning based on severity and age
-    // This creates logical clustering for the visualization
-    const severityWeight = patient.severity === 'Severe' ? 0.8 : 
-                          patient.severity === 'Moderate' ? 0.5 : 0.2;
+    // Map severity to X-axis (with more spread)
+    let severityX;
+    switch (patient.severity) {
+      case 'Severe': 
+        severityX = 0.8 + (Math.random() - 0.5) * 0.3; // Right side with scatter
+        break;
+      case 'Moderate': 
+        severityX = 0.5 + (Math.random() - 0.5) * 0.4; // Center with scatter
+        break;
+      case 'Mild': 
+        severityX = 0.2 + (Math.random() - 0.5) * 0.3; // Left side with scatter
+        break;
+      default:
+        severityX = 0.5;
+    }
     
-    const ageWeight = Math.min(age / 100, 1); // Normalize age
+    // Map severity to Y-axis (inverted so severe is at top)
+    // Also factor in days since last visit for additional positioning
+    let severityY;
+    switch (patient.severity) {
+      case 'Severe': 
+        severityY = 0.15 + Math.random() * 0.25; // Top area (red on top)
+        break;
+      case 'Moderate': 
+        severityY = 0.35 + Math.random() * 0.3; // Middle area (yellow in middle)
+        break;
+      case 'Mild': 
+        severityY = 0.7 + Math.random() * 0.25; // Bottom area (green at bottom)
+        break;
+      default:
+        severityY = 0.5;
+    }
     
-    // Add some randomness for realistic distribution
-    const jitter = 0.2;
-    const x = severityWeight + (Math.random() - 0.5) * jitter;
-    const y = ageWeight + (Math.random() - 0.5) * jitter;
+    // Add some influence from days since last visit for more realistic scatter
+    const daysFactor = Math.min(daysSinceLastVisit / 365, 1); // Normalize to 0-1 over a year
+    const yWithDays = severityY + (daysFactor * 0.1) + (Math.random() - 0.5) * 0.15;
     
     return {
       id: patient.id,
       name: patient.name,
-      x: Math.max(0, Math.min(1, x)), // Clamp to [0,1]
-      y: Math.max(0, Math.min(1, y)), // Clamp to [0,1]
+      x: Math.max(0.05, Math.min(0.95, severityX)), // Keep within bounds with margin
+      y: Math.max(0.05, Math.min(0.95, yWithDays)), // Keep within bounds with margin
       severity: patient.severity,
       primaryDiagnosis: patient.primaryDiagnosis,
-      age,
+      age: calculateAge(patient.dateOfBirth),
       lastVisit: patient.lastVisit
     };
   });
@@ -66,36 +94,17 @@ export const createHexbinData = (
   height: number, 
   hexRadius: number = 20
 ): HexbinPoint[] => {
-  // Calculate grid dimensions based on hex radius
-  const hexWidth = hexRadius * 2 * 0.866; // Width of hexagon
-  const hexHeight = hexRadius * 1.5; // Height spacing for hexagons
-  
-  // Calculate how many hexagons can fit in each dimension
-  const cols = Math.floor(width / hexWidth);
-  const rows = Math.floor(height / hexHeight);
-  
-  // Create grid positions for hexagons
-  return points.map((point, index) => {
-    // Calculate grid position for this hexagon
-    const col = index % cols;
-    const row = Math.floor(index / cols);
-    
-    // Calculate actual x,y position in the grid
-    // Offset every other row for proper hexagon tiling
-    const offsetX = (row % 2) * (hexWidth / 2);
-    const x = col * hexWidth + hexWidth / 2 + offsetX;
-    const y = row * hexHeight + hexRadius;
-    
-    // Ensure the hexagon stays within bounds
-    const clampedX = Math.max(hexRadius, Math.min(width - hexRadius, x));
-    const clampedY = Math.max(hexRadius, Math.min(height - hexRadius, y));
+  // Convert normalized coordinates to actual pixel positions
+  return points.map(point => {
+    const x = point.x * (width - 2 * hexRadius) + hexRadius;
+    const y = point.y * (height - 2 * hexRadius) + hexRadius;
     
     return {
       ...point,
-      x: clampedX,
-      y: clampedY,
+      x,
+      y,
       count: 1,
-      patients: [{ ...point, x: clampedX, y: clampedY }]
+      patients: [{ ...point, x, y }]
     };
   });
 };
