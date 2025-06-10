@@ -33,7 +33,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 12; // Reduced size since we're showing individual patients
+  const hexRadius = 8; // Much smaller radius for tripled density
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -55,14 +55,14 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     // Transform patient data to map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
     
-    // Create individual hexagons for each patient
+    // Create tripled density hexagons
     const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
 
     // Create main group with zoom transform
     const g = svg.append('g')
       .attr('transform', `scale(${zoom})`);
 
-    // Draw hexagons - one for each individual patient
+    // Draw hexagons - much more dense grid
     const hexagons = g.selectAll('.hexagon')
       .data(hexbinData)
       .enter()
@@ -70,18 +70,19 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .attr('class', 'hexagon')
       .attr('transform', d => `translate(${d.x},${d.y})`);
 
-    // Create hexagon path using d3.geoPath
+    // Create hexagon path using d3.geoPath with smaller radius
+    const adjustedHexRadius = hexRadius * 0.4; // Match the adjusted radius from utils
     const hexPath = d3.geoPath(d3.geoIdentity());
     const hexagonPath = hexPath({
       type: 'Polygon',
       coordinates: [[
-        [-hexRadius * 0.866, -hexRadius * 0.5],
-        [0, -hexRadius],
-        [hexRadius * 0.866, -hexRadius * 0.5],
-        [hexRadius * 0.866, hexRadius * 0.5],
-        [0, hexRadius],
-        [-hexRadius * 0.866, hexRadius * 0.5],
-        [-hexRadius * 0.866, -hexRadius * 0.5]
+        [-adjustedHexRadius * 0.866, -adjustedHexRadius * 0.5],
+        [0, -adjustedHexRadius],
+        [adjustedHexRadius * 0.866, -adjustedHexRadius * 0.5],
+        [adjustedHexRadius * 0.866, adjustedHexRadius * 0.5],
+        [0, adjustedHexRadius],
+        [-adjustedHexRadius * 0.866, adjustedHexRadius * 0.5],
+        [-adjustedHexRadius * 0.866, -adjustedHexRadius * 0.5]
       ]]
     });
 
@@ -90,23 +91,23 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .attr('fill', d => getSeverityColor(d.severity))
       .attr('fill-opacity', 0.7)
       .attr('stroke', d => getSeverityColor(d.severity))
-      .attr('stroke-width', 1)
+      .attr('stroke-width', 0.5)
       .attr('stroke-opacity', 0.9)
       .style('cursor', 'pointer')
       .on('mouseover', function(event, d) {
         d3.select(this)
-          .attr('stroke-width', 2)
+          .attr('stroke-width', 1)
           .attr('fill-opacity', 0.9);
         setSelectedHex(d);
       })
       .on('mouseout', function(event, d) {
         d3.select(this)
-          .attr('stroke-width', 1)
+          .attr('stroke-width', 0.5)
           .attr('fill-opacity', 0.7);
         setSelectedHex(null);
       })
       .on('click', function(event, d) {
-        if (onPatientSelect) {
+        if (onPatientSelect && !d.id.startsWith('synthetic-')) {
           onPatientSelect(d.id);
         }
       });
@@ -166,7 +167,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
             style={{ overflow: 'hidden' }}
           />
           
-          {selectedHex && (
+          {selectedHex && !selectedHex.id.startsWith('synthetic-') && (
             <Tooltip open={!!selectedHex}>
               <TooltipTrigger asChild>
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none" />

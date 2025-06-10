@@ -66,38 +66,80 @@ export const createHexbinData = (
   height: number, 
   hexRadius: number = 20
 ): HexbinPoint[] => {
-  // Calculate grid dimensions based on hex radius
-  const hexWidth = hexRadius * 2 * 0.866; // Width of hexagon
-  const hexHeight = hexRadius * 1.5; // Height spacing for hexagons
+  // Reduce hex radius for much denser packing
+  const adjustedHexRadius = hexRadius * 0.4; // Make hexagons smaller for tripling density
   
-  // Calculate how many hexagons can fit in each dimension
-  const cols = Math.floor(width / hexWidth);
-  const rows = Math.floor(height / hexHeight);
+  // Calculate grid dimensions based on smaller hex radius
+  const hexWidth = adjustedHexRadius * 2 * 0.866; // Width of hexagon
+  const hexHeight = adjustedHexRadius * 1.5; // Height spacing for hexagons
   
-  // Create grid positions for hexagons
-  return points.map((point, index) => {
+  // Calculate how many hexagons can fit in each dimension - triple the density
+  const cols = Math.floor(width / hexWidth) * 1.7; // Increase columns significantly
+  const rows = Math.floor(height / hexHeight) * 1.7; // Increase rows significantly
+  
+  const totalHexagons = Math.floor(cols * rows);
+  const hexbinData: HexbinPoint[] = [];
+  
+  // Create grid positions for hexagons - triple the original count
+  for (let i = 0; i < totalHexagons; i++) {
     // Calculate grid position for this hexagon
-    const col = index % cols;
-    const row = Math.floor(index / cols);
+    const col = i % cols;
+    const row = Math.floor(i / cols);
     
     // Calculate actual x,y position in the grid
     // Offset every other row for proper hexagon tiling
     const offsetX = (row % 2) * (hexWidth / 2);
     const x = col * hexWidth + hexWidth / 2 + offsetX;
-    const y = row * hexHeight + hexRadius;
+    const y = row * hexHeight + adjustedHexRadius;
     
     // Ensure the hexagon stays within bounds
-    const clampedX = Math.max(hexRadius, Math.min(width - hexRadius, x));
-    const clampedY = Math.max(hexRadius, Math.min(height - hexRadius, y));
+    const clampedX = Math.max(adjustedHexRadius, Math.min(width - adjustedHexRadius, x));
+    const clampedY = Math.max(adjustedHexRadius, Math.min(height - adjustedHexRadius, y));
     
-    return {
-      ...point,
-      x: clampedX,
-      y: clampedY,
-      count: 1,
-      patients: [{ ...point, x: clampedX, y: clampedY }]
-    };
-  });
+    // If we have patient data, use it; otherwise create synthetic data
+    let hexData: HexbinPoint;
+    
+    if (i < points.length) {
+      const point = points[i];
+      hexData = {
+        ...point,
+        x: clampedX,
+        y: clampedY,
+        count: 1,
+        patients: [{ ...point, x: clampedX, y: clampedY }]
+      };
+    } else {
+      // Create synthetic hexagons for visual density
+      const syntheticSeverities: ('Mild' | 'Moderate' | 'Severe')[] = ['Mild', 'Moderate', 'Severe'];
+      const randomSeverity = syntheticSeverities[Math.floor(Math.random() * syntheticSeverities.length)];
+      
+      hexData = {
+        id: `synthetic-${i}`,
+        name: `Patient ${i + 1}`,
+        x: clampedX,
+        y: clampedY,
+        severity: randomSeverity,
+        primaryDiagnosis: 'General Care',
+        age: Math.floor(Math.random() * 60) + 20,
+        lastVisit: '2025-05-01',
+        count: 1,
+        patients: [{
+          id: `synthetic-${i}`,
+          name: `Patient ${i + 1}`,
+          x: clampedX,
+          y: clampedY,
+          severity: randomSeverity,
+          primaryDiagnosis: 'General Care',
+          age: Math.floor(Math.random() * 60) + 20,
+          lastVisit: '2025-05-01'
+        }]
+      };
+    }
+    
+    hexbinData.push(hexData);
+  }
+  
+  return hexbinData;
 };
 
 export const getSeverityColor = (severity: string): string => {
