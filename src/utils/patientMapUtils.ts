@@ -1,3 +1,4 @@
+
 import * as d3 from 'd3';
 import { PatientSummary } from '@/data/patientsData';
 
@@ -65,75 +66,90 @@ export const createHexbinData = (
   height: number, 
   hexRadius: number = 20
 ): HexbinPoint[] => {
-  // Keep the original hex radius (no reduction)
-  const hexWidth = hexRadius * 2 * 0.866; // Width of hexagon
-  const hexHeight = hexRadius * 1.5; // Height spacing for hexagons
+  const hexWidth = hexRadius * 2 * 0.866;
+  const hexHeight = hexRadius * 1.5;
   
-  // Increase the grid density to get more hexagons
-  const cols = Math.floor(width / hexWidth) * 2; // Double the columns
-  const rows = Math.floor(height / hexHeight) * 2; // Double the rows
+  // Define zones with white space separation
+  const zoneHeight = height / 4; // Divide into 4 sections (3 colors + spacing)
+  const zones = {
+    severe: { start: height - zoneHeight, end: height, severity: 'Severe' as const },
+    moderate: { start: height - 2.5 * zoneHeight, end: height - 1.5 * zoneHeight, severity: 'Moderate' as const },
+    mild: { start: 0, end: zoneHeight, severity: 'Mild' as const }
+  };
   
-  const totalHexagons = Math.floor(cols * rows);
+  // Group patients by severity
+  const patientsBySeverity = {
+    Severe: points.filter(p => p.severity === 'Severe'),
+    Moderate: points.filter(p => p.severity === 'Moderate'),
+    Mild: points.filter(p => p.severity === 'Mild')
+  };
+  
   const hexbinData: HexbinPoint[] = [];
   
-  // Create grid positions for more hexagons
-  for (let i = 0; i < totalHexagons; i++) {
-    // Calculate grid position for this hexagon
-    const col = i % cols;
-    const row = Math.floor(i / cols);
+  // Process each zone
+  Object.entries(zones).forEach(([zoneName, zone]) => {
+    const zonePatients = patientsBySeverity[zone.severity];
+    const zoneActualHeight = zone.end - zone.start;
     
-    // Calculate actual x,y position in the grid
-    // Offset every other row for proper hexagon tiling
-    const offsetX = (row % 2) * (hexWidth / 2);
-    const x = col * hexWidth + hexWidth / 2 + offsetX;
-    const y = row * hexHeight + hexRadius;
+    // Calculate how many hexagons fit in this zone
+    const colsInZone = Math.floor(width / hexWidth);
+    const rowsInZone = Math.floor(zoneActualHeight / hexHeight);
+    const hexagonsInZone = colsInZone * rowsInZone;
     
-    // Ensure the hexagon stays within bounds
-    const clampedX = Math.max(hexRadius, Math.min(width - hexRadius, x));
-    const clampedY = Math.max(hexRadius, Math.min(height - hexRadius, y));
-    
-    // If we have patient data, use it; otherwise create synthetic data
-    let hexData: HexbinPoint;
-    
-    if (i < points.length) {
-      const point = points[i];
-      hexData = {
-        ...point,
-        x: clampedX,
-        y: clampedY,
-        count: 1,
-        patients: [{ ...point, x: clampedX, y: clampedY }]
-      };
-    } else {
-      // Create synthetic hexagons for visual density
-      const syntheticSeverities: ('Mild' | 'Moderate' | 'Severe')[] = ['Mild', 'Moderate', 'Severe'];
-      const randomSeverity = syntheticSeverities[Math.floor(Math.random() * syntheticSeverities.length)];
+    // Create hexagons for this zone
+    for (let i = 0; i < hexagonsInZone; i++) {
+      const col = i % colsInZone;
+      const row = Math.floor(i / colsInZone);
       
-      hexData = {
-        id: `synthetic-${i}`,
-        name: `Patient ${i + 1}`,
-        x: clampedX,
-        y: clampedY,
-        severity: randomSeverity,
-        primaryDiagnosis: 'General Care',
-        age: Math.floor(Math.random() * 60) + 20,
-        lastVisit: '2025-05-01',
-        count: 1,
-        patients: [{
-          id: `synthetic-${i}`,
-          name: `Patient ${i + 1}`,
+      // Calculate position within the zone
+      const offsetX = (row % 2) * (hexWidth / 2);
+      const x = col * hexWidth + hexWidth / 2 + offsetX;
+      const y = zone.start + row * hexHeight + hexRadius;
+      
+      // Ensure hexagon stays within zone bounds
+      const clampedX = Math.max(hexRadius, Math.min(width - hexRadius, x));
+      const clampedY = Math.max(zone.start + hexRadius, Math.min(zone.end - hexRadius, y));
+      
+      let hexData: HexbinPoint;
+      
+      // Use real patient data if available, otherwise create synthetic
+      if (i < zonePatients.length) {
+        const patient = zonePatients[i];
+        hexData = {
+          ...patient,
           x: clampedX,
           y: clampedY,
-          severity: randomSeverity,
+          count: 1,
+          patients: [{ ...patient, x: clampedX, y: clampedY }]
+        };
+      } else {
+        // Create synthetic patient for visual density
+        hexData = {
+          id: `synthetic-${zone.severity}-${i}`,
+          name: `Patient ${hexbinData.length + 1}`,
+          x: clampedX,
+          y: clampedY,
+          severity: zone.severity,
           primaryDiagnosis: 'General Care',
           age: Math.floor(Math.random() * 60) + 20,
-          lastVisit: '2025-05-01'
-        }]
-      };
+          lastVisit: '2025-05-01',
+          count: 1,
+          patients: [{
+            id: `synthetic-${zone.severity}-${i}`,
+            name: `Patient ${hexbinData.length + 1}`,
+            x: clampedX,
+            y: clampedY,
+            severity: zone.severity,
+            primaryDiagnosis: 'General Care',
+            age: Math.floor(Math.random() * 60) + 20,
+            lastVisit: '2025-05-01'
+          }]
+        };
+      }
+      
+      hexbinData.push(hexData);
     }
-    
-    hexbinData.push(hexData);
-  }
+  });
   
   return hexbinData;
 };
