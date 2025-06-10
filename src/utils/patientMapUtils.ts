@@ -66,19 +66,36 @@ export const createHexbinData = (
   height: number, 
   hexRadius: number = 20
 ): HexbinPoint[] => {
-  // Scale points to svg dimensions and create individual hexagons for each patient
-  return points.map(point => {
-    const scaledPoint = {
-      ...point,
-      x: point.x * width,
-      y: point.y * height
-    };
+  // Calculate grid dimensions based on hex radius
+  const hexWidth = hexRadius * 2 * 0.866; // Width of hexagon
+  const hexHeight = hexRadius * 1.5; // Height spacing for hexagons
+  
+  // Calculate how many hexagons can fit in each dimension
+  const cols = Math.floor(width / hexWidth);
+  const rows = Math.floor(height / hexHeight);
+  
+  // Create grid positions for hexagons
+  return points.map((point, index) => {
+    // Calculate grid position for this hexagon
+    const col = index % cols;
+    const row = Math.floor(index / cols);
     
-    // Each patient gets their own hexagon
+    // Calculate actual x,y position in the grid
+    // Offset every other row for proper hexagon tiling
+    const offsetX = (row % 2) * (hexWidth / 2);
+    const x = col * hexWidth + hexWidth / 2 + offsetX;
+    const y = row * hexHeight + hexRadius;
+    
+    // Ensure the hexagon stays within bounds
+    const clampedX = Math.max(hexRadius, Math.min(width - hexRadius, x));
+    const clampedY = Math.max(hexRadius, Math.min(height - hexRadius, y));
+    
     return {
-      ...scaledPoint,
+      ...point,
+      x: clampedX,
+      y: clampedY,
       count: 1,
-      patients: [scaledPoint]
+      patients: [{ ...point, x: clampedX, y: clampedY }]
     };
   });
 };
