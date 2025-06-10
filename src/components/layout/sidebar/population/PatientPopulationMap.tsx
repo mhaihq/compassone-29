@@ -33,7 +33,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 4; // Smaller hexagons for more density
+  const hexRadius = 4;
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -86,24 +86,21 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     hexagons.append('path')
       .attr('d', hexagonPath)
       .attr('fill', d => d.solidColor)
-      .attr('fill-opacity', d => d.isRealPatient ? 0.8 : 0.3)
-      .attr('stroke', d => d.solidColor)
-      .attr('stroke-width', 0.3)
+      .attr('fill-opacity', 0.7) // Uniform opacity for all hexagons
+      .attr('stroke', '#ffffff')
+      .attr('stroke-width', 0.5)
       .style('cursor', d => d.isRealPatient ? 'pointer' : 'default')
       .on('mouseenter', function(event, d) {
-        console.log('Mouse enter:', d.isRealPatient, d.name);
+        // Only show hover effects for real patients
         if (!d.isRealPatient) return;
         
         d3.select(this)
-          .attr('stroke-width', 1.5)
-          .attr('fill-opacity', 1)
-          .transition()
-          .duration(200)
-          .attr('transform', 'scale(1.2)');
+          .attr('stroke-width', 2)
+          .attr('fill-opacity', 0.9)
+          .attr('stroke', '#333333');
         
         setHoveredHex(d);
         
-        // Get the bounding box of the SVG element
         const svgRect = svgRef.current?.getBoundingClientRect();
         if (svgRect) {
           setMousePosition({
@@ -113,15 +110,12 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         }
       })
       .on('mouseleave', function(event, d) {
-        console.log('Mouse leave:', d.isRealPatient, d.name);
         if (!d.isRealPatient) return;
         
         d3.select(this)
-          .attr('stroke-width', 0.3)
-          .attr('fill-opacity', 0.8)
-          .transition()
-          .duration(200)
-          .attr('transform', 'scale(1)');
+          .attr('stroke-width', 0.5)
+          .attr('fill-opacity', 0.7)
+          .attr('stroke', '#ffffff');
         
         setHoveredHex(null);
       })
@@ -137,13 +131,12 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         }
       })
       .on('click', function(event, d) {
-        console.log('Click:', d.isRealPatient, d.name);
         if (d.isRealPatient && onPatientSelect) {
           onPatientSelect(d.id);
         }
       });
 
-  }, [patients, searchTerm, severityFilter, zoom, hoveredHex]);
+  }, [patients, searchTerm, severityFilter, zoom]);
 
   const handleZoomIn = () => setZoom(Math.min(zoom * 1.2, 3));
   const handleZoomOut = () => setZoom(Math.max(zoom / 1.2, 0.5));
@@ -273,7 +266,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           </div>
         </div>
         <div className="text-gray-500">
-          Real patients clickable • Faded hexagons show population density
+          Hover over hexagons to see patient details
         </div>
       </div>
     </div>

@@ -24,20 +24,18 @@ export const transformPatientsToMapPoints = (patients: PatientSummary[]): Patien
   return patients.map(patient => {
     const age = calculateAge(patient.dateOfBirth);
     
-    // Create positioning based on severity for visual grouping
-    const severityWeight = patient.severity === 'Severe' ? 0.2 : 
-                          patient.severity === 'Moderate' ? 0.5 : 0.8;
+    // Create more natural clustering by severity with some randomness
+    const severityBaseY = patient.severity === 'Severe' ? 0.15 : 
+                         patient.severity === 'Moderate' ? 0.5 : 0.85;
     
-    // Add randomness for distribution within severity zones
-    const jitter = 0.15;
-    const x = Math.random(); // Random X position
-    const y = severityWeight + (Math.random() - 0.5) * jitter;
+    const x = Math.random();
+    const y = severityBaseY + (Math.random() - 0.5) * 0.3; // Add some spread
     
     return {
       id: patient.id,
       name: patient.name,
-      x: Math.max(0, Math.min(1, x)), // Clamp to [0,1]
-      y: Math.max(0, Math.min(1, y)), // Clamp to [0,1]
+      x: Math.max(0, Math.min(1, x)),
+      y: Math.max(0, Math.min(1, y)),
       severity: patient.severity,
       primaryDiagnosis: patient.primaryDiagnosis,
       age,
@@ -68,23 +66,23 @@ export const createHexbinData = (
   const hexWidth = hexRadius * 2 * 0.866;
   const hexHeight = hexRadius * 1.5;
   
-  // Calculate grid dimensions with tighter packing
-  const cols = Math.floor(width / hexWidth) + 2;
-  const rows = Math.floor(height / hexHeight) + 2;
+  // Create a tighter, more uniform grid
+  const cols = Math.floor(width / hexWidth) + 1;
+  const rows = Math.floor(height / hexHeight) + 1;
   
   const hexbinData: HexbinPoint[] = [];
   let patientIndex = 0;
   
-  // Create hexagonal grid - fill with real patients first, then synthetic ones
+  // Create uniform hexagonal grid
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      // Calculate position with offset for hexagonal packing
+      // Calculate position with proper hexagonal offset
       const offsetX = (row % 2) * (hexWidth / 2);
       const x = col * hexWidth + hexWidth / 2 + offsetX;
       const y = row * hexHeight + hexRadius;
       
-      // Skip hexagons outside bounds with smaller margin
-      if (x + hexRadius > width + 5 || y + hexRadius > height + 5 || x - hexRadius < -5 || y - hexRadius < -5) {
+      // Skip hexagons that are completely outside bounds
+      if (x - hexRadius > width || y - hexRadius > height || x + hexRadius < 0 || y + hexRadius < 0) {
         continue;
       }
       
@@ -106,14 +104,14 @@ export const createHexbinData = (
         hexbinData.push(hexData);
         patientIndex++;
       } else {
-        // Synthetic patient data for visual density
+        // Synthetic data for visual completeness - distributed evenly
         const severities: ('Mild' | 'Moderate' | 'Severe')[] = ['Mild', 'Moderate', 'Severe'];
         const randomSeverity = severities[Math.floor(Math.random() * severities.length)];
         const solidColor = getSeverityColor(randomSeverity);
         
         const syntheticPatient: PatientMapPoint = {
           id: `synthetic-${row}-${col}`,
-          name: 'Anonymous Patient',
+          name: 'Population Data',
           x,
           y,
           severity: randomSeverity,
@@ -140,9 +138,9 @@ export const createHexbinData = (
 
 export const getSeverityColor = (severity: string): string => {
   switch (severity) {
-    case 'Severe': return '#dc2626'; // red-600
-    case 'Moderate': return '#d97706'; // amber-600
-    case 'Mild': return '#059669'; // emerald-600
-    default: return '#6b7280'; // gray-500
+    case 'Severe': return '#dc2626';
+    case 'Moderate': return '#d97706';
+    case 'Mild': return '#059669';
+    default: return '#6b7280';
   }
 };
