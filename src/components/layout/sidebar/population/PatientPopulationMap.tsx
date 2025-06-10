@@ -8,10 +8,10 @@ import { Users, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { PatientSummary } from '@/data/patientsData';
 import { 
   transformPatientsToMapPoints, 
-  createClusterData, 
+  createHexbinData, 
   getSeverityColor,
   PatientMapPoint,
-  ClusterPoint 
+  HexbinPoint 
 } from '@/utils/patientMapUtils';
 
 interface PatientPopulationMapProps {
@@ -28,12 +28,12 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   severityFilter = 'all'
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [selectedCluster, setSelectedCluster] = useState<ClusterPoint | null>(null);
+  const [selectedHex, setSelectedHex] = useState<HexbinPoint | null>(null);
   const [zoom, setZoom] = useState(1);
   
   const width = 320;
   const height = 180;
-  const clusterRadius = 20;
+  const hexRadius = 12;
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -55,41 +55,55 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     // Transform patient data to map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
     
-    // Create cluster data
-    const clusterData = createClusterData(mapPoints, width, height, clusterRadius);
+    // Create hexbin data
+    const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
 
     // Create main group with zoom transform
     const g = svg.append('g')
       .attr('transform', `scale(${zoom})`);
 
-    // Draw clusters as circles
-    const clusters = g.selectAll('.cluster')
-      .data(clusterData)
+    // Draw hexagons
+    const hexagons = g.selectAll('.hexagon')
+      .data(hexbinData)
       .enter()
       .append('g')
-      .attr('class', 'cluster')
+      .attr('class', 'hexagon')
       .attr('transform', d => `translate(${d.x},${d.y})`);
 
-    // Add cluster circles
-    clusters.append('circle')
-      .attr('r', d => Math.max(8, Math.min(16, 6 + d.count * 2)))
+    // Add hexagon paths
+    const hexPath = d3.geoPath(d3.geoIdentity());
+    const hexagonPath = hexPath({
+      type: 'Polygon',
+      coordinates: [[
+        [-hexRadius * 0.866, -hexRadius * 0.5],
+        [0, -hexRadius],
+        [hexRadius * 0.866, -hexRadius * 0.5],
+        [hexRadius * 0.866, hexRadius * 0.5],
+        [0, hexRadius],
+        [-hexRadius * 0.866, hexRadius * 0.5],
+        [-hexRadius * 0.866, -hexRadius * 0.5]
+      ]]
+    });
+
+    hexagons.append('path')
+      .attr('d', hexagonPath)
       .attr('fill', d => getSeverityColor(d.severity))
-      .attr('fill-opacity', d => Math.min(0.4 + (d.count * 0.15), 0.8))
+      .attr('fill-opacity', d => Math.min(0.3 + (d.count * 0.2), 0.9))
       .attr('stroke', d => getSeverityColor(d.severity))
-      .attr('stroke-width', 2)
-      .attr('stroke-opacity', 0.9)
+      .attr('stroke-width', 1)
+      .attr('stroke-opacity', 0.8)
       .style('cursor', 'pointer')
       .on('mouseover', function(event, d) {
         d3.select(this)
-          .attr('stroke-width', 3)
-          .attr('fill-opacity', 0.9);
-        setSelectedCluster(d);
+          .attr('stroke-width', 2)
+          .attr('fill-opacity', 0.8);
+        setSelectedHex(d);
       })
       .on('mouseout', function(event, d) {
         d3.select(this)
-          .attr('stroke-width', 2)
-          .attr('fill-opacity', Math.min(0.4 + (d.count * 0.15), 0.8));
-        setSelectedCluster(null);
+          .attr('stroke-width', 1)
+          .attr('fill-opacity', Math.min(0.3 + (d.count * 0.2), 0.9));
+        setSelectedHex(null);
       })
       .on('click', function(event, d) {
         if (onPatientSelect && d.patients.length > 0) {
@@ -97,8 +111,8 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         }
       });
 
-    // Add count labels for clusters with multiple patients
-    clusters.filter(d => d.count > 1)
+    // Add count labels for hexagons with multiple patients
+    hexagons.filter(d => d.count > 1)
       .append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '0.35em')
@@ -162,22 +176,22 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
             style={{ overflow: 'hidden' }}
           />
           
-          {selectedCluster && (
-            <Tooltip open={!!selectedCluster}>
+          {selectedHex && (
+            <Tooltip open={!!selectedHex}>
               <TooltipTrigger asChild>
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none" />
               </TooltipTrigger>
               <TooltipContent side="right" className="max-w-xs">
                 <div className="space-y-2">
-                  <div className="font-medium">{selectedCluster.name}</div>
+                  <div className="font-medium">{selectedHex.name}</div>
                   <div className="text-xs space-y-1">
-                    <div>ID: {selectedCluster.id}</div>
-                    <div>Age: {selectedCluster.age}y</div>
-                    <div>Severity: {selectedCluster.severity}</div>
-                    <div>Diagnosis: {selectedCluster.primaryDiagnosis}</div>
-                    {selectedCluster.count > 1 && (
+                    <div>ID: {selectedHex.id}</div>
+                    <div>Age: {selectedHex.age}y</div>
+                    <div>Severity: {selectedHex.severity}</div>
+                    <div>Diagnosis: {selectedHex.primaryDiagnosis}</div>
+                    {selectedHex.count > 1 && (
                       <div className="text-blue-600">
-                        +{selectedCluster.count - 1} other patients in this area
+                        +{selectedHex.count - 1} other patients in this area
                       </div>
                     )}
                   </div>
@@ -191,20 +205,20 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getSeverityColor('Severe') }}></div>
+              <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Severe') }}></div>
               <span>High Risk</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getSeverityColor('Moderate') }}></div>
+              <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Moderate') }}></div>
               <span>Medium Risk</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getSeverityColor('Mild') }}></div>
+              <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Mild') }}></div>
               <span>Low Risk</span>
             </div>
           </div>
           <div className="text-gray-500">
-            Click circles to view patients
+            Click hexagons to view patients
           </div>
         </div>
       </div>
