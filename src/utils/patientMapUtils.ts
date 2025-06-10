@@ -21,9 +21,9 @@ export interface HexbinPoint extends PatientMapPoint {
 }
 
 export const transformPatientsToMapPoints = (patients: PatientSummary[]): PatientMapPoint[] => {
-  // Calculate grid dimensions based on patient count
+  // Calculate grid dimensions for a denser layout
   const patientCount = patients.length;
-  const cols = Math.ceil(Math.sqrt(patientCount * 1.8)); // Wider grid for more density
+  const cols = Math.ceil(Math.sqrt(patientCount * 1.3)); // More square-like grid
   const rows = Math.ceil(patientCount / cols);
   
   // Group patients by severity for better distribution
@@ -36,32 +36,39 @@ export const transformPatientsToMapPoints = (patients: PatientSummary[]): Patien
   let gridIndex = 0;
   const mapPoints: PatientMapPoint[] = [];
   
-  // Distribute severe patients in top rows
-  const topRows = Math.ceil(rows * 0.3);
-  const middleRows = Math.ceil(rows * 0.4);
+  // Distribute patients more evenly across the grid
+  const severeCount = severityGroups['Severe'].length;
+  const moderateCount = severityGroups['Moderate'].length;
+  const mildCount = severityGroups['Mild'].length;
   
-  ['Severe', 'Moderate', 'Mild'].forEach((severity) => {
+  // Calculate rows per severity group
+  const topRows = Math.ceil((severeCount / patientCount) * rows);
+  const middleRows = Math.ceil((moderateCount / patientCount) * rows);
+  const bottomRows = rows - topRows - middleRows;
+  
+  let currentRow = 0;
+  
+  ['Severe', 'Moderate', 'Mild'].forEach((severity, severityIndex) => {
     const patientsInSeverity = severityGroups[severity as keyof typeof severityGroups];
+    let rowsForThisSeverity;
     
-    patientsInSeverity.forEach((patient) => {
-      const col = gridIndex % cols;
-      const row = Math.floor(gridIndex / cols);
+    if (severityIndex === 0) rowsForThisSeverity = topRows;
+    else if (severityIndex === 1) rowsForThisSeverity = middleRows;
+    else rowsForThisSeverity = bottomRows;
+    
+    patientsInSeverity.forEach((patient, index) => {
+      const positionInGroup = index;
+      const patientsPerRow = Math.ceil(patientsInSeverity.length / rowsForThisSeverity);
       
-      // Adjust row based on severity
-      let adjustedRow = row;
-      if (severity === 'Severe') {
-        adjustedRow = Math.min(row, topRows - 1);
-      } else if (severity === 'Moderate') {
-        adjustedRow = topRows + Math.min(row, middleRows - 1);
-      } else {
-        adjustedRow = topRows + middleRows + row;
-      }
+      const col = positionInGroup % cols;
+      const localRow = Math.floor(positionInGroup / cols);
+      const adjustedRow = currentRow + Math.min(localRow, rowsForThisSeverity - 1);
       
       mapPoints.push({
         id: patient.id,
         name: patient.name,
-        x: col / (cols - 1), // Normalized 0-1
-        y: adjustedRow / (rows - 1), // Normalized 0-1
+        x: col / Math.max(cols - 1, 1), // Normalized 0-1
+        y: adjustedRow / Math.max(rows - 1, 1), // Normalized 0-1
         severity: patient.severity,
         primaryDiagnosis: patient.primaryDiagnosis,
         age: calculateAge(patient.dateOfBirth),
@@ -69,9 +76,9 @@ export const transformPatientsToMapPoints = (patients: PatientSummary[]): Patien
         gridCol: col,
         gridRow: adjustedRow
       });
-      
-      gridIndex++;
     });
+    
+    currentRow += rowsForThisSeverity;
   });
   
   return mapPoints;
@@ -94,19 +101,20 @@ export const createHexbinData = (
   points: PatientMapPoint[], 
   width: number, 
   height: number, 
-  hexRadius: number = 20
+  hexRadius: number = 15
 ): HexbinPoint[] => {
-  // Calculate grid cell size
+  // Calculate grid cell size based on actual data
   const cols = Math.max(...points.map(p => p.gridCol)) + 1;
   const rows = Math.max(...points.map(p => p.gridRow)) + 1;
   
+  // Make cells smaller to fit more hexagons
   const cellWidth = (width - 2 * hexRadius) / Math.max(cols - 1, 1);
   const cellHeight = (height - 2 * hexRadius) / Math.max(rows - 1, 1);
   
-  // Calculate hexagon size based on grid density
+  // Calculate optimal hexagon size
   const adjustedHexRadius = Math.min(
     hexRadius,
-    Math.min(cellWidth, cellHeight) / 2 * 0.95 // Slightly smaller to ensure spacing
+    Math.min(cellWidth, cellHeight) / 2.5 // Smaller hexagons for denser packing
   );
   
   return points.map(point => {
