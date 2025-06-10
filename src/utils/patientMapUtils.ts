@@ -1,5 +1,6 @@
 
 import * as d3 from 'd3';
+import { hexbin } from 'd3-hexbin';
 import { PatientSummary } from '@/data/patientsData';
 
 export interface PatientMapPoint {
@@ -73,13 +74,13 @@ export const createHexbinData = (
     y: p.y * height
   }));
   
-  // Create hexbin generator
-  const hexbin = d3.hexbin()
+  // Create hexbin generator using the imported hexbin function
+  const hexbinGenerator = hexbin()
     .radius(hexRadius)
     .extent([[0, 0], [width, height]]);
   
   // Generate hexbins
-  const bins = hexbin(scaledPoints.map(p => [p.x, p.y] as [number, number]));
+  const bins = hexbinGenerator(scaledPoints.map(p => [p.x, p.y] as [number, number]));
   
   // Transform bins to include patient data
   return bins.map(bin => {
