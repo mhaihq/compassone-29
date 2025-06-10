@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Badge } from '@/components/ui/badge';
@@ -33,7 +32,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 6;
+  const hexRadius = 3.5; // Smaller radius for maximum density
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -86,35 +85,39 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     hexagons.append('path')
       .attr('d', hexagonPath)
       .attr('fill', d => d.solidColor)
-      .attr('fill-opacity', 0.8)
+      .attr('fill-opacity', d => d.isRealPatient ? 0.9 : 0.4)
       .attr('stroke', d => d.solidColor)
-      .attr('stroke-width', 0.5)
-      .style('cursor', 'pointer')
+      .attr('stroke-width', 0.3)
+      .style('cursor', d => d.isRealPatient ? 'pointer' : 'default')
       .on('mouseover', function(event, d) {
-        d3.select(this)
-          .attr('stroke-width', 2)
-          .attr('fill-opacity', 1)
-          .attr('transform', 'scale(1.1)');
-        
-        setHoveredHex(d);
-        const rect = svgRef.current?.getBoundingClientRect();
-        if (rect) {
-          setMousePosition({
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top
-          });
+        if (d.isRealPatient) {
+          d3.select(this)
+            .attr('stroke-width', 1.5)
+            .attr('fill-opacity', 1)
+            .attr('transform', 'scale(1.2)');
+          
+          setHoveredHex(d);
+          const rect = svgRef.current?.getBoundingClientRect();
+          if (rect) {
+            setMousePosition({
+              x: event.clientX - rect.left,
+              y: event.clientY - rect.top
+            });
+          }
         }
       })
       .on('mouseout', function(event, d) {
-        d3.select(this)
-          .attr('stroke-width', 0.5)
-          .attr('fill-opacity', 0.8)
-          .attr('transform', 'scale(1)');
-        
-        setHoveredHex(null);
+        if (d.isRealPatient) {
+          d3.select(this)
+            .attr('stroke-width', 0.3)
+            .attr('fill-opacity', 0.9)
+            .attr('transform', 'scale(1)');
+          
+          setHoveredHex(null);
+        }
       })
       .on('click', function(event, d) {
-        if (onPatientSelect) {
+        if (d.isRealPatient && onPatientSelect) {
           onPatientSelect(d.id);
         }
       });
