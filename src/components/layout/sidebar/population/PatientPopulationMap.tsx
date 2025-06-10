@@ -31,9 +31,10 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   
-  const width = 400;
-  const height = 240;
-  const hexRadius = 4;
+  // Increased dimensions to extend the map for the whole section
+  const width = 500;
+  const height = 320;
+  const hexRadius = 6; // Increased from 4 to 6
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -249,7 +250,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         )}
       </div>
 
-      {/* Legend */}
+      {/* Legend - Updated colors and order */}
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
@@ -257,7 +258,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
             <span>High Risk</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#d97706' }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#eab308' }}></div>
             <span>Medium Risk</span>
           </div>
           <div className="flex items-center gap-1">

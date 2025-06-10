@@ -24,7 +24,7 @@ export const transformPatientsToMapPoints = (patients: PatientSummary[]): Patien
   return patients.map(patient => {
     const age = calculateAge(patient.dateOfBirth);
     
-    // Create more natural clustering by severity with some randomness
+    // Rearrange positioning: Severe (red) at top, Moderate (gold) in middle, Mild (green) at bottom
     const severityBaseY = patient.severity === 'Severe' ? 0.15 : 
                          patient.severity === 'Moderate' ? 0.5 : 0.85;
     
@@ -61,7 +61,7 @@ export const createHexbinData = (
   points: PatientMapPoint[], 
   width: number, 
   height: number, 
-  hexRadius: number = 4
+  hexRadius: number = 6 // Increased from 4 to 6 for bigger hexagons
 ): HexbinPoint[] => {
   const hexWidth = hexRadius * 2 * 0.866;
   const hexHeight = hexRadius * 1.5;
@@ -138,9 +138,9 @@ export const createHexbinData = (
 
 export const getSeverityColor = (severity: string): string => {
   switch (severity) {
-    case 'Severe': return '#dc2626';
-    case 'Moderate': return '#d97706';
-    case 'Mild': return '#059669';
+    case 'Severe': return '#dc2626'; // Red
+    case 'Moderate': return '#eab308'; // Gold instead of orange
+    case 'Mild': return '#059669'; // Green
     default: return '#6b7280';
   }
 };
