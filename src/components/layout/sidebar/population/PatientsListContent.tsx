@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { patientsData } from '@/data/patientsData';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { PatientPopulationMap } from './PatientPopulationMap';
 
 interface PatientsListContentProps {
   onOpenPatient: (patientId: string) => void;
@@ -64,6 +64,14 @@ export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpen
           {filteredPatients.length} Patients
         </Badge>
       </div>
+
+      {/* Patient Population Map */}
+      <PatientPopulationMap
+        patients={filteredPatients}
+        onPatientSelect={onOpenPatient}
+        searchTerm={searchTerm}
+        severityFilter={severityFilter}
+      />
 
       {/* Risk Counters */}
       <div className="grid grid-cols-3 gap-2 p-3 bg-white rounded-lg border">
