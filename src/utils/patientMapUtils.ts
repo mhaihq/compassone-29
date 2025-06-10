@@ -23,7 +23,7 @@ export interface HexbinPoint extends PatientMapPoint {
 export const transformPatientsToMapPoints = (patients: PatientSummary[]): PatientMapPoint[] => {
   // Calculate grid dimensions based on patient count
   const patientCount = patients.length;
-  const cols = Math.ceil(Math.sqrt(patientCount * 1.5)); // Wider grid
+  const cols = Math.ceil(Math.sqrt(patientCount * 1.8)); // Wider grid for more density
   const rows = Math.ceil(patientCount / cols);
   
   // Group patients by severity for better distribution
@@ -102,6 +102,12 @@ export const createHexbinData = (
   
   const cellWidth = (width - 2 * hexRadius) / Math.max(cols - 1, 1);
   const cellHeight = (height - 2 * hexRadius) / Math.max(rows - 1, 1);
+  
+  // Calculate hexagon size based on grid density
+  const adjustedHexRadius = Math.min(
+    hexRadius,
+    Math.min(cellWidth, cellHeight) / 2 * 0.95 // Slightly smaller to ensure spacing
+  );
   
   return points.map(point => {
     // Position hexagon in center of its grid cell

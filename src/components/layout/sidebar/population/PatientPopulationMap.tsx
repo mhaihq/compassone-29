@@ -33,7 +33,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 8; // Smaller radius for grid cells
+  const hexRadius = 6; // Smaller radius for more dense grid
   const margin = { top: 20, right: 40, bottom: 30, left: 50 };
 
   useEffect(() => {
