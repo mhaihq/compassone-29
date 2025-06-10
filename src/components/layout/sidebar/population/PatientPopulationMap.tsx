@@ -86,44 +86,64 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     hexagons.append('path')
       .attr('d', hexagonPath)
       .attr('fill', d => d.solidColor)
-      .attr('fill-opacity', d => d.isRealPatient ? 0.8 : 0.3) // Reduced opacity for synthetic patients
+      .attr('fill-opacity', d => d.isRealPatient ? 0.8 : 0.3)
       .attr('stroke', d => d.solidColor)
       .attr('stroke-width', 0.3)
       .style('cursor', d => d.isRealPatient ? 'pointer' : 'default')
-      .on('mouseover', function(event, d) {
-        if (!d.isRealPatient) return; // Only real patients are hoverable
+      .on('mouseenter', function(event, d) {
+        console.log('Mouse enter:', d.isRealPatient, d.name);
+        if (!d.isRealPatient) return;
         
         d3.select(this)
           .attr('stroke-width', 1.5)
           .attr('fill-opacity', 1)
+          .transition()
+          .duration(200)
           .attr('transform', 'scale(1.2)');
         
         setHoveredHex(d);
-        const rect = svgRef.current?.getBoundingClientRect();
-        if (rect) {
+        
+        // Get the bounding box of the SVG element
+        const svgRect = svgRef.current?.getBoundingClientRect();
+        if (svgRect) {
           setMousePosition({
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top
+            x: event.clientX - svgRect.left,
+            y: event.clientY - svgRect.top
           });
         }
       })
-      .on('mouseout', function(event, d) {
+      .on('mouseleave', function(event, d) {
+        console.log('Mouse leave:', d.isRealPatient, d.name);
         if (!d.isRealPatient) return;
         
         d3.select(this)
           .attr('stroke-width', 0.3)
           .attr('fill-opacity', 0.8)
+          .transition()
+          .duration(200)
           .attr('transform', 'scale(1)');
         
         setHoveredHex(null);
       })
+      .on('mousemove', function(event, d) {
+        if (!d.isRealPatient || !hoveredHex) return;
+        
+        const svgRect = svgRef.current?.getBoundingClientRect();
+        if (svgRect) {
+          setMousePosition({
+            x: event.clientX - svgRect.left,
+            y: event.clientY - svgRect.top
+          });
+        }
+      })
       .on('click', function(event, d) {
+        console.log('Click:', d.isRealPatient, d.name);
         if (d.isRealPatient && onPatientSelect) {
           onPatientSelect(d.id);
         }
       });
 
-  }, [patients, searchTerm, severityFilter, zoom]);
+  }, [patients, searchTerm, severityFilter, zoom, hoveredHex]);
 
   const handleZoomIn = () => setZoom(Math.min(zoom * 1.2, 3));
   const handleZoomOut = () => setZoom(Math.max(zoom / 1.2, 0.5));
@@ -185,7 +205,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           width={width}
           height={height}
           className="border border-gray-200 rounded bg-gray-50 w-full"
-          style={{ overflow: 'hidden' }}
+          style={{ overflow: 'visible' }}
         />
         
         {/* Hover tooltip - only for real patients */}
