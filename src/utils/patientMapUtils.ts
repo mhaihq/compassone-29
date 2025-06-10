@@ -1,4 +1,3 @@
-
 import * as d3 from 'd3';
 import { PatientSummary } from '@/data/patientsData';
 
@@ -66,21 +65,18 @@ export const createHexbinData = (
   height: number, 
   hexRadius: number = 20
 ): HexbinPoint[] => {
-  // Reduce hex radius for much denser packing
-  const adjustedHexRadius = hexRadius * 0.4; // Make hexagons smaller for tripling density
+  // Keep the original hex radius (no reduction)
+  const hexWidth = hexRadius * 2 * 0.866; // Width of hexagon
+  const hexHeight = hexRadius * 1.5; // Height spacing for hexagons
   
-  // Calculate grid dimensions based on smaller hex radius
-  const hexWidth = adjustedHexRadius * 2 * 0.866; // Width of hexagon
-  const hexHeight = adjustedHexRadius * 1.5; // Height spacing for hexagons
-  
-  // Calculate how many hexagons can fit in each dimension - triple the density
-  const cols = Math.floor(width / hexWidth) * 1.7; // Increase columns significantly
-  const rows = Math.floor(height / hexHeight) * 1.7; // Increase rows significantly
+  // Increase the grid density to get more hexagons
+  const cols = Math.floor(width / hexWidth) * 2; // Double the columns
+  const rows = Math.floor(height / hexHeight) * 2; // Double the rows
   
   const totalHexagons = Math.floor(cols * rows);
   const hexbinData: HexbinPoint[] = [];
   
-  // Create grid positions for hexagons - triple the original count
+  // Create grid positions for more hexagons
   for (let i = 0; i < totalHexagons; i++) {
     // Calculate grid position for this hexagon
     const col = i % cols;
@@ -90,11 +86,11 @@ export const createHexbinData = (
     // Offset every other row for proper hexagon tiling
     const offsetX = (row % 2) * (hexWidth / 2);
     const x = col * hexWidth + hexWidth / 2 + offsetX;
-    const y = row * hexHeight + adjustedHexRadius;
+    const y = row * hexHeight + hexRadius;
     
     // Ensure the hexagon stays within bounds
-    const clampedX = Math.max(adjustedHexRadius, Math.min(width - adjustedHexRadius, x));
-    const clampedY = Math.max(adjustedHexRadius, Math.min(height - adjustedHexRadius, y));
+    const clampedX = Math.max(hexRadius, Math.min(width - hexRadius, x));
+    const clampedY = Math.max(hexRadius, Math.min(height - hexRadius, y));
     
     // If we have patient data, use it; otherwise create synthetic data
     let hexData: HexbinPoint;

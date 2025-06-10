@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Badge } from '@/components/ui/badge';
@@ -33,7 +32,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   
   const width = 400;
   const height = 240;
-  const hexRadius = 8; // Much smaller radius for tripled density
+  const hexRadius = 8; // Keep the original radius
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -55,14 +54,14 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     // Transform patient data to map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
     
-    // Create tripled density hexagons
+    // Create more hexagons with the same size
     const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
 
     // Create main group with zoom transform
     const g = svg.append('g')
       .attr('transform', `scale(${zoom})`);
 
-    // Draw hexagons - much more dense grid
+    // Draw hexagons with the same size as before
     const hexagons = g.selectAll('.hexagon')
       .data(hexbinData)
       .enter()
@@ -70,19 +69,18 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .attr('class', 'hexagon')
       .attr('transform', d => `translate(${d.x},${d.y})`);
 
-    // Create hexagon path using d3.geoPath with smaller radius
-    const adjustedHexRadius = hexRadius * 0.4; // Match the adjusted radius from utils
+    // Create hexagon path using the original radius
     const hexPath = d3.geoPath(d3.geoIdentity());
     const hexagonPath = hexPath({
       type: 'Polygon',
       coordinates: [[
-        [-adjustedHexRadius * 0.866, -adjustedHexRadius * 0.5],
-        [0, -adjustedHexRadius],
-        [adjustedHexRadius * 0.866, -adjustedHexRadius * 0.5],
-        [adjustedHexRadius * 0.866, adjustedHexRadius * 0.5],
-        [0, adjustedHexRadius],
-        [-adjustedHexRadius * 0.866, adjustedHexRadius * 0.5],
-        [-adjustedHexRadius * 0.866, -adjustedHexRadius * 0.5]
+        [-hexRadius * 0.866, -hexRadius * 0.5],
+        [0, -hexRadius],
+        [hexRadius * 0.866, -hexRadius * 0.5],
+        [hexRadius * 0.866, hexRadius * 0.5],
+        [0, hexRadius],
+        [-hexRadius * 0.866, hexRadius * 0.5],
+        [-hexRadius * 0.866, -hexRadius * 0.5]
       ]]
     });
 
