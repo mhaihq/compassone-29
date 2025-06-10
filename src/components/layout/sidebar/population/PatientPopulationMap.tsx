@@ -1,8 +1,9 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Users, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { PatientSummary } from '@/data/patientsData';
 import { 
@@ -27,18 +28,19 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   severityFilter = 'all'
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [selectedHex, setSelectedHex] = useState<HexbinPoint | null>(null);
+  const [hoveredHex, setHoveredHex] = useState<HexbinPoint | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   
   const width = 400;
   const height = 240;
-  const hexRadius = 8; // Keep the original radius
+  const hexRadius = 8;
 
   useEffect(() => {
     if (!svgRef.current) return;
 
     const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove(); // Clear previous render
+    svg.selectAll("*").remove();
 
     // Filter patients based on search and severity
     const filteredPatients = patients.filter(patient => {
@@ -53,15 +55,13 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
 
     // Transform patient data to map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
-    
-    // Create more hexagons with the same size
     const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
 
     // Create main group with zoom transform
     const g = svg.append('g')
       .attr('transform', `scale(${zoom})`);
 
-    // Draw hexagons with the same size as before
+    // Draw hexagons
     const hexagons = g.selectAll('.hexagon')
       .data(hexbinData)
       .enter()
@@ -69,7 +69,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .attr('class', 'hexagon')
       .attr('transform', d => `translate(${d.x},${d.y})`);
 
-    // Create hexagon path using the original radius
+    // Create hexagon path
     const hexPath = d3.geoPath(d3.geoIdentity());
     const hexagonPath = hexPath({
       type: 'Polygon',
@@ -91,18 +91,31 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .attr('stroke', d => getSeverityColor(d.severity))
       .attr('stroke-width', 0.5)
       .attr('stroke-opacity', 0.9)
-      .style('cursor', 'pointer')
+      .style('cursor', d => d.id.startsWith('synthetic-') ? 'default' : 'pointer')
       .on('mouseover', function(event, d) {
-        d3.select(this)
-          .attr('stroke-width', 1)
-          .attr('fill-opacity', 0.9);
-        setSelectedHex(d);
+        if (!d.id.startsWith('synthetic-')) {
+          d3.select(this)
+            .attr('stroke-width', 2)
+            .attr('fill-opacity', 0.9);
+          
+          setHoveredHex(d);
+          const rect = svgRef.current?.getBoundingClientRect();
+          if (rect) {
+            setMousePosition({
+              x: event.clientX - rect.left,
+              y: event.clientY - rect.top
+            });
+          }
+        }
       })
       .on('mouseout', function(event, d) {
-        d3.select(this)
-          .attr('stroke-width', 0.5)
-          .attr('fill-opacity', 0.7);
-        setSelectedHex(null);
+        if (!d.id.startsWith('synthetic-')) {
+          d3.select(this)
+            .attr('stroke-width', 0.5)
+            .attr('fill-opacity', 0.7);
+          
+          setHoveredHex(null);
+        }
       })
       .on('click', function(event, d) {
         if (onPatientSelect && !d.id.startsWith('synthetic-')) {
@@ -117,95 +130,109 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   const handleResetZoom = () => setZoom(1);
 
   return (
-    <TooltipProvider>
-      <div className="bg-white border rounded-lg p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Users size={16} className="text-[#1E4D36]" />
-            <h3 className="text-sm font-semibold text-[#1E4D36]">Aligned Patient Map</h3>
-            <Badge variant="outline" className="text-xs">
-              {patients.length} patients
-            </Badge>
-          </div>
-          
-          <div className="flex items-center gap-1">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={handleZoomIn}
-            >
-              <ZoomIn size={12} />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={handleZoomOut}
-            >
-              <ZoomOut size={12} />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={handleResetZoom}
-            >
-              <RotateCcw size={12} />
-            </Button>
-          </div>
+    <div className="bg-white border rounded-lg p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Users size={16} className="text-[#1E4D36]" />
+          <h3 className="text-sm font-semibold text-[#1E4D36]">Aligned Patient Map</h3>
+          <Badge variant="outline" className="text-xs">
+            {patients.length} patients
+          </Badge>
         </div>
-
-        <div className="relative">
-          <svg
-            ref={svgRef}
-            width={width}
-            height={height}
-            className="border border-gray-200 rounded bg-gray-50 w-full"
-            style={{ overflow: 'hidden' }}
-          />
-          
-          {selectedHex && !selectedHex.id.startsWith('synthetic-') && (
-            <Tooltip open={!!selectedHex}>
-              <TooltipTrigger asChild>
-                <div className="absolute top-0 left-0 w-full h-full pointer-events-none" />
-              </TooltipTrigger>
-              <TooltipContent side="right" className="max-w-xs">
-                <div className="space-y-2">
-                  <div className="font-medium">{selectedHex.name}</div>
-                  <div className="text-xs space-y-1">
-                    <div>ID: {selectedHex.id}</div>
-                    <div>Age: {selectedHex.age}y</div>
-                    <div>Severity: {selectedHex.severity}</div>
-                    <div>Diagnosis: {selectedHex.primaryDiagnosis}</div>
-                  </div>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          )}
-        </div>
-
-        {/* Legend */}
-        <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Severe') }}></div>
-              <span>High Risk</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Moderate') }}></div>
-              <span>Medium Risk</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Mild') }}></div>
-              <span>Low Risk</span>
-            </div>
-          </div>
-          <div className="text-gray-500">
-            Each hexagon represents one patient
-          </div>
+        
+        <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-6 w-6 p-0"
+            onClick={handleZoomIn}
+          >
+            <ZoomIn size={12} />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-6 w-6 p-0"
+            onClick={handleZoomOut}
+          >
+            <ZoomOut size={12} />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-6 w-6 p-0"
+            onClick={handleResetZoom}
+          >
+            <RotateCcw size={12} />
+          </Button>
         </div>
       </div>
-    </TooltipProvider>
+
+      <div className="relative">
+        <svg
+          ref={svgRef}
+          width={width}
+          height={height}
+          className="border border-gray-200 rounded bg-gray-50 w-full"
+          style={{ overflow: 'hidden' }}
+        />
+        
+        {/* Enhanced hover card */}
+        {hoveredHex && !hoveredHex.id.startsWith('synthetic-') && (
+          <div 
+            className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-3 pointer-events-none"
+            style={{
+              left: mousePosition.x + 10,
+              top: mousePosition.y - 10,
+              transform: mousePosition.x > width / 2 ? 'translateX(-100%)' : 'none'
+            }}
+          >
+            <div className="space-y-2">
+              <div className="font-medium text-sm">{hoveredHex.name}</div>
+              <div className="text-xs space-y-1 text-gray-600">
+                <div>ID: <span className="font-mono">{hoveredHex.id}</span></div>
+                <div>Age: {hoveredHex.age} years</div>
+                <div className="flex items-center gap-2">
+                  <span>Severity:</span>
+                  <div className="flex items-center gap-1">
+                    <div 
+                      className="w-2 h-2 rounded-full" 
+                      style={{ backgroundColor: getSeverityColor(hoveredHex.severity) }}
+                    />
+                    <span className="font-medium">{hoveredHex.severity}</span>
+                  </div>
+                </div>
+                <div>Diagnosis: {hoveredHex.primaryDiagnosis}</div>
+                <div>Last Visit: {new Date(hoveredHex.lastVisit).toLocaleDateString()}</div>
+              </div>
+              {onPatientSelect && (
+                <div className="text-xs text-blue-600 mt-2">Click to view details</div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Severe') }}></div>
+            <span>High Risk</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Moderate') }}></div>
+            <span>Medium Risk</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: getSeverityColor('Mild') }}></div>
+            <span>Low Risk</span>
+          </div>
+        </div>
+        <div className="text-gray-500">
+          Hover hexagons to see patient details
+        </div>
+      </div>
+    </div>
   );
 };
