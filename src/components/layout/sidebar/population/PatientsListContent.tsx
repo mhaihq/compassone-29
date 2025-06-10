@@ -2,13 +2,12 @@
 import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, Search, Filter, Grid, List } from 'lucide-react';
+import { Eye, Search, Filter } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { patientsData } from '@/data/patientsData';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { PatientPopulationGrid } from './PatientPopulationGrid';
 
 interface PatientsListContentProps {
   onOpenPatient: (patientId: string) => void;
@@ -17,7 +16,6 @@ interface PatientsListContentProps {
 export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpenPatient }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [severityFilter, setSeverityFilter] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   
   const activePatients = patientsData.filter(patient => patient.status === 'Active');
   
@@ -89,7 +87,7 @@ export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpen
         </div>
       </div>
 
-      {/* Search, Filter Controls, and View Toggle */}
+      {/* Search and Filter Controls */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -124,105 +122,75 @@ export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpen
             </div>
           </PopoverContent>
         </Popover>
-
-        {/* View Mode Toggle */}
-        <div className="flex border rounded-lg overflow-hidden">
-          <Button
-            variant={viewMode === 'list' ? 'default' : 'ghost'}
-            size="sm"
-            className="h-8 px-2 rounded-none"
-            onClick={() => setViewMode('list')}
-          >
-            <List size={14} />
-          </Button>
-          <Button
-            variant={viewMode === 'grid' ? 'default' : 'ghost'}
-            size="sm"
-            className="h-8 px-2 rounded-none"
-            onClick={() => setViewMode('grid')}
-          >
-            <Grid size={14} />
-          </Button>
-        </div>
+      </div>
+      
+      <div className="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead className="text-xs font-medium">Patient</TableHead>
+              <TableHead className="text-xs font-medium">Age/Gender</TableHead>
+              <TableHead className="text-xs font-medium">Severity</TableHead>
+              <TableHead className="text-xs font-medium">Last Visit</TableHead>
+              <TableHead className="text-xs font-medium">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredPatients.map(patient => (
+              <TableRow key={patient.id} className="hover:bg-gray-50">
+                <TableCell className="py-2">
+                  <div>
+                    <p className="font-bold text-xs text-[#1E4D36]">{patient.name}</p>
+                    <p className="text-xs text-gray-500">ID: {patient.id}</p>
+                    <div className="mt-1">
+                      <Badge className="text-xs bg-gray-100 text-gray-700 border-gray-200">
+                        {patient.primaryDiagnosis}
+                      </Badge>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="py-2">
+                  <div className="text-xs text-gray-600">
+                    <p>{calculateAge(patient.dateOfBirth)}y</p>
+                    <p>{patient.gender}</p>
+                  </div>
+                </TableCell>
+                <TableCell className="py-2">
+                  <Badge className={`text-xs ${getSeverityColor(patient.severity)}`}>
+                    {patient.severity}
+                  </Badge>
+                </TableCell>
+                <TableCell className="py-2">
+                  <div className="text-xs text-gray-600">
+                    <p>{new Date(patient.lastVisit).toLocaleDateString()}</p>
+                    {patient.nextAppointment && (
+                      <p className="text-blue-600">
+                        Next: {new Date(patient.nextAppointment).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="py-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="h-6 px-2 text-xs flex items-center gap-1"
+                    onClick={() => handleViewProfile(patient)}
+                  >
+                    <Eye size={10} />
+                    View Profile
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
 
-      {/* Conditional rendering based on view mode */}
-      {viewMode === 'grid' ? (
-        <PatientPopulationGrid 
-          patients={filteredPatients} 
-          onPatientClick={onOpenPatient}
-        />
-      ) : (
-        <>
-          <div className="border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="text-xs font-medium">Patient</TableHead>
-                  <TableHead className="text-xs font-medium">Age/Gender</TableHead>
-                  <TableHead className="text-xs font-medium">Severity</TableHead>
-                  <TableHead className="text-xs font-medium">Last Visit</TableHead>
-                  <TableHead className="text-xs font-medium">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredPatients.map(patient => (
-                  <TableRow key={patient.id} className="hover:bg-gray-50">
-                    <TableCell className="py-2">
-                      <div>
-                        <p className="font-bold text-xs text-[#1E4D36]">{patient.name}</p>
-                        <p className="text-xs text-gray-500">ID: {patient.id}</p>
-                        <div className="mt-1">
-                          <Badge className="text-xs bg-gray-100 text-gray-700 border-gray-200">
-                            {patient.primaryDiagnosis}
-                          </Badge>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      <div className="text-xs text-gray-600">
-                        <p>{calculateAge(patient.dateOfBirth)}y</p>
-                        <p>{patient.gender}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      <Badge className={`text-xs ${getSeverityColor(patient.severity)}`}>
-                        {patient.severity}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      <div className="text-xs text-gray-600">
-                        <p>{new Date(patient.lastVisit).toLocaleDateString()}</p>
-                        {patient.nextAppointment && (
-                          <p className="text-blue-600">
-                            Next: {new Date(patient.nextAppointment).toLocaleDateString()}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="h-6 px-2 text-xs flex items-center gap-1"
-                        onClick={() => handleViewProfile(patient)}
-                      >
-                        <Eye size={10} />
-                        View Profile
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {filteredPatients.length === 0 && (
-            <div className="text-center py-4 text-gray-500 text-sm">
-              No patients found matching your search criteria.
-            </div>
-          )}
-        </>
+      {filteredPatients.length === 0 && (
+        <div className="text-center py-4 text-gray-500 text-sm">
+          No patients found matching your search criteria.
+        </div>
       )}
     </div>
   );
