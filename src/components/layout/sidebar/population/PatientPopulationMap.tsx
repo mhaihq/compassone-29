@@ -31,10 +31,8 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   
-  // Increased dimensions to extend the map for the whole section
   const width = 500;
   const height = 320;
-  const hexRadius = 6; // Increased from 4 to 6
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -53,9 +51,21 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       return matchesSearch && matchesSeverity;
     });
 
+    if (filteredPatients.length === 0) {
+      // Show empty state
+      const g = svg.append('g');
+      g.append('text')
+        .attr('x', width / 2)
+        .attr('y', height / 2)
+        .attr('text-anchor', 'middle')
+        .attr('class', 'fill-gray-500 text-sm')
+        .text('No patients match the current filters');
+      return;
+    }
+
     // Transform patient data to map points
     const mapPoints = transformPatientsToMapPoints(filteredPatients);
-    const hexbinData = createHexbinData(mapPoints, width, height, hexRadius);
+    const hexbinData = createHexbinData(mapPoints, width, height);
 
     // Create main group with zoom transform
     const g = svg.append('g')
@@ -68,6 +78,9 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
       .append('g')
       .attr('class', 'hexagon')
       .attr('transform', d => `translate(${d.x},${d.y})`);
+
+    // Calculate hex radius based on the data
+    const hexRadius = Math.min(12, Math.max(6, 200 / Math.sqrt(filteredPatients.length)));
 
     // Create hexagon path
     const hexPath = d3.geoPath(d3.geoIdentity());
@@ -87,17 +100,14 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
     hexagons.append('path')
       .attr('d', hexagonPath)
       .attr('fill', d => d.solidColor)
-      .attr('fill-opacity', 0.7) // Uniform opacity for all hexagons
+      .attr('fill-opacity', 0.8)
       .attr('stroke', '#ffffff')
-      .attr('stroke-width', 0.5)
-      .style('cursor', d => d.isRealPatient ? 'pointer' : 'default')
+      .attr('stroke-width', 1)
+      .style('cursor', 'pointer')
       .on('mouseenter', function(event, d) {
-        // Only show hover effects for real patients
-        if (!d.isRealPatient) return;
-        
         d3.select(this)
           .attr('stroke-width', 2)
-          .attr('fill-opacity', 0.9)
+          .attr('fill-opacity', 1)
           .attr('stroke', '#333333');
         
         setHoveredHex(d);
@@ -111,17 +121,15 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         }
       })
       .on('mouseleave', function(event, d) {
-        if (!d.isRealPatient) return;
-        
         d3.select(this)
-          .attr('stroke-width', 0.5)
-          .attr('fill-opacity', 0.7)
+          .attr('stroke-width', 1)
+          .attr('fill-opacity', 0.8)
           .attr('stroke', '#ffffff');
         
         setHoveredHex(null);
       })
       .on('mousemove', function(event, d) {
-        if (!d.isRealPatient || !hoveredHex) return;
+        if (!hoveredHex) return;
         
         const svgRect = svgRef.current?.getBoundingClientRect();
         if (svgRect) {
@@ -132,7 +140,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         }
       })
       .on('click', function(event, d) {
-        if (d.isRealPatient && onPatientSelect) {
+        if (onPatientSelect) {
           onPatientSelect(d.id);
         }
       });
@@ -202,8 +210,8 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           style={{ overflow: 'visible' }}
         />
         
-        {/* Hover tooltip - only for real patients */}
-        {hoveredHex && hoveredHex.isRealPatient && (
+        {/* Hover tooltip */}
+        {hoveredHex && (
           <div 
             className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-3 pointer-events-none min-w-[200px]"
             style={{
@@ -250,7 +258,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
         )}
       </div>
 
-      {/* Legend - Updated colors and order */}
+      {/* Legend */}
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
@@ -267,7 +275,7 @@ export const PatientPopulationMap: React.FC<PatientPopulationMapProps> = ({
           </div>
         </div>
         <div className="text-gray-500">
-          Hover over hexagons to see patient details
+          Each hexagon represents one patient
         </div>
       </div>
     </div>
