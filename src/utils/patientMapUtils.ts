@@ -28,7 +28,14 @@ const generateSyntheticPatients = (startId: number, count: number): PatientSumma
     'Asthma', 'Migraine', 'Obesity', 'Sleep Apnea', 'Fibromyalgia'
   ];
   
+  const diagnosisCodes = [
+    'I10', 'E11', 'F41.9', 'F32.9', 
+    'N18.9', 'J44.9', 'M19.9', 'I25.9',
+    'J45.9', 'G43.9', 'E66.9', 'G47.30', 'M79.3'
+  ];
+  
   const severities = ['Mild', 'Moderate', 'Severe'] as const;
+  const genders = ['Male', 'Female'] as const;
   const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Lisa', 'Robert', 'Emily', 'James', 'Ashley'];
   const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
   
@@ -41,7 +48,10 @@ const generateSyntheticPatients = (startId: number, count: number): PatientSumma
     const age = Math.floor(Math.random() * 60) + 18; // Age between 18-78
     const birthYear = new Date().getFullYear() - age;
     const severity = severities[Math.floor(Math.random() * severities.length)];
-    const diagnosis = diagnoses[Math.floor(Math.random() * diagnoses.length)];
+    const diagnosisIndex = Math.floor(Math.random() * diagnoses.length);
+    const diagnosis = diagnoses[diagnosisIndex];
+    const diagnosisCode = diagnosisCodes[diagnosisIndex];
+    const gender = genders[Math.floor(Math.random() * genders.length)];
     
     // Generate a recent date for last visit (within last 6 months)
     const lastVisitDate = new Date();
@@ -51,9 +61,13 @@ const generateSyntheticPatients = (startId: number, count: number): PatientSumma
       id: patientId,
       name: `${firstName} ${lastName}`,
       dateOfBirth: `${birthYear}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
-      severity,
+      gender,
       primaryDiagnosis: diagnosis,
-      lastVisit: lastVisitDate.toISOString().split('T')[0]
+      diagnosisCode,
+      severity,
+      lastVisit: lastVisitDate.toISOString().split('T')[0],
+      status: 'Active',
+      isClickable: false
     });
   }
   
