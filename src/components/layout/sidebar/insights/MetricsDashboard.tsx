@@ -30,16 +30,16 @@ export const MetricsDashboard: React.FC<MetricsDashboardProps> = ({ metrics }) =
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {metrics.map((metric) => (
-        <Card key={metric.id} className="bg-[#EBF4F0] border-[#1E4D36]/20">
+        <Card key={metric.id} className="bg-[#f5f5f5] border-[#1a1a1a]/20">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[#1E4D36]">{metric.label}</span>
+              <span className="text-sm text-[#1a1a1a]">{metric.label}</span>
               {getTrendIcon(metric.trend)}
             </div>
             <div className={`text-2xl font-bold ${getColorClass(metric.color)} mb-1`}>
               {metric.value}
             </div>
-            <div className="text-xs text-[#2A6349]">
+            <div className="text-xs text-[#333333]">
               {metric.change}
             </div>
           </CardContent>

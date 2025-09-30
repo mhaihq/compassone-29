@@ -29,11 +29,11 @@ export const WeeklySummary: React.FC<WeeklySummaryProps> = ({
   };
 
   return (
-    <Card className="bg-gradient-to-br from-[#EBF4F0] to-white border-[#1E4D36]/20">
+    <Card className="bg-gradient-to-br from-[#f5f5f5] to-white border-[#1a1a1a]/20">
       <CardContent className="p-6">
         <div className="flex items-center gap-2 mb-4">
-          <CheckCircle2 className="w-6 h-6 text-[#1E4D36]" />
-          <h3 className="text-lg font-semibold text-[#1E4D36]">Week Summary</h3>
+          <CheckCircle2 className="w-6 h-6 text-[#1a1a1a]" />
+          <h3 className="text-lg font-semibold text-[#1a1a1a]">Week Summary</h3>
           <Badge className="bg-green-100 text-green-800">
             Excellent
           </Badge>
@@ -60,7 +60,7 @@ export const WeeklySummary: React.FC<WeeklySummaryProps> = ({
         </div>
 
         <div className="flex gap-2">
-          <Button size="sm" className="bg-[#1E4D36] hover:bg-[#2A6349] text-white flex-1">
+          <Button size="sm" className="bg-[#1a1a1a] hover:bg-[#333333] text-white flex-1">
             <Target className="w-4 h-4 mr-1" />
             Start Priority Tasks
           </Button>

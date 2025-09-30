@@ -53,7 +53,7 @@ export const GoalGapsTracker: React.FC<GoalGapsTrackerProps> = ({ goals }) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-[#1E4D36] flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-[#1a1a1a] flex items-center gap-2">
           <Target className="w-5 h-5" />
           Goal Gaps & Overdue Items
         </h3>

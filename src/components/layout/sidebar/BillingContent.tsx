@@ -15,7 +15,7 @@ export const BillingContent: React.FC = () => {
   return (
     <div>
       <h3 className="font-medium text-xl text-gray-900 mb-4">
-        <FileText className="mr-2 text-[#1E4D36]" size={20} />
+        <FileText className="mr-2 text-[#1a1a1a]" size={20} />
         Billing
       </h3>
       

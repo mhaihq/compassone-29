@@ -14,7 +14,7 @@ interface PopulationBillingAnalyticsProps {
 const chartConfig = {
   totalMinutes: {
     label: "Total Minutes",
-    color: "#1E4D36",
+    color: "#1a1a1a",
   },
   documentation: {
     label: "Documentation",
@@ -61,7 +61,7 @@ export const PopulationBillingAnalytics: React.FC<PopulationBillingAnalyticsProp
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-xl font-semibold text-[#1E4D36] mb-2">Population Billing Analytics</h2>
+        <h2 className="text-xl font-semibold text-[#1a1a1a] mb-2">Population Billing Analytics</h2>
         <p className="text-sm text-gray-600">
           Time allocation analysis across all patient care activities
         </p>
@@ -76,8 +76,8 @@ export const PopulationBillingAnalytics: React.FC<PopulationBillingAnalyticsProp
                 <p className="text-xs text-gray-600 mb-1">Total Minutes Logged</p>
                 <p className="text-lg font-bold text-gray-900">{analytics.totalMinutesLogged}</p>
               </div>
-              <div className="p-2 rounded-lg bg-[#EBF4F0]">
-                <Clock className="h-4 w-4 text-[#1E4D36]" />
+              <div className="p-2 rounded-lg bg-[#f5f5f5]">
+                <Clock className="h-4 w-4 text-[#1a1a1a]" />
               </div>
             </div>
           </CardContent>
@@ -131,7 +131,7 @@ export const PopulationBillingAnalytics: React.FC<PopulationBillingAnalyticsProp
         {/* Action Breakdown Pie Chart */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg text-[#1E4D36]">Action Time Distribution</CardTitle>
+            <CardTitle className="text-lg text-[#1a1a1a]">Action Time Distribution</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-64">
@@ -174,7 +174,7 @@ export const PopulationBillingAnalytics: React.FC<PopulationBillingAnalyticsProp
         {/* Weekly Trends Bar Chart */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg text-[#1E4D36]">Weekly Time Trends</CardTitle>
+            <CardTitle className="text-lg text-[#1a1a1a]">Weekly Time Trends</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-64">
@@ -183,7 +183,7 @@ export const PopulationBillingAnalytics: React.FC<PopulationBillingAnalyticsProp
                   <XAxis dataKey="week" tick={{ fontSize: 10 }} />
                   <YAxis tick={{ fontSize: 10 }} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="totalMinutes" fill="#1E4D36" />
+                  <Bar dataKey="totalMinutes" fill="#1a1a1a" />
                 </BarChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -192,9 +192,9 @@ export const PopulationBillingAnalytics: React.FC<PopulationBillingAnalyticsProp
       </div>
 
       {/* Efficiency Insights */}
-      <Card className="bg-[#EBF4F0] border-[#1E4D36]/20">
+      <Card className="bg-[#f5f5f5] border-[#1a1a1a]/20">
         <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-[#1E4D36] mb-4">Efficiency Insights</h3>
+          <h3 className="text-lg font-semibold text-[#1a1a1a] mb-4">Efficiency Insights</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h4 className="font-medium text-gray-900 mb-2">Most Time-Consuming Action</h4>

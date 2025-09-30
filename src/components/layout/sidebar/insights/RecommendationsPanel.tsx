@@ -34,10 +34,10 @@ export const RecommendationsPanel: React.FC<RecommendationsPanelProps> = ({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-[#1E4D36]">
+        <h3 className="text-lg font-semibold text-[#1a1a1a]">
           Priority Actions
         </h3>
-        <Badge className="bg-[#1E4D36] text-white">
+        <Badge className="bg-[#1a1a1a] text-white">
           {recommendations.length} items
         </Badge>
       </div>

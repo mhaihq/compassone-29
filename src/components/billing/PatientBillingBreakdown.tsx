@@ -65,7 +65,7 @@ export const PatientBillingBreakdown: React.FC<PatientBillingBreakdownProps> = (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Clock className="h-5 w-5 text-[#1E4D36]" />
+          <Clock className="h-5 w-5 text-[#1a1a1a]" />
           Billing Time Breakdown - {breakdown.cptCode}
         </CardTitle>
         <div className="space-y-2">

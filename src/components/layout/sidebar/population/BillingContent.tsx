@@ -41,8 +41,8 @@ export const BillingContent: React.FC = () => {
       title: 'Enrolled Patients',
       value: '247',
       icon: Users,
-      color: 'text-[#1E4D36]',
-      bgColor: 'bg-[#EBF4F0]'
+      color: 'text-[#1a1a1a]',
+      bgColor: 'bg-[#f5f5f5]'
     },
     {
       title: 'Ready to Bill',
@@ -293,7 +293,7 @@ export const BillingContent: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center py-4">
-        <h2 className="text-xl font-semibold text-[#1E4D36] mb-2">Billing Management</h2>
+        <h2 className="text-xl font-semibold text-[#1a1a1a] mb-2">Billing Management</h2>
         <p className="text-sm text-gray-600">
           Track billing cycles, CPT codes, and revenue optimization across your patient population.
         </p>
@@ -324,7 +324,7 @@ export const BillingContent: React.FC = () => {
       {/* Main Billing Table */}
       <Card className="shadow-md">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg text-[#1E4D36] mb-4">Patient Billing Status</CardTitle>
+          <CardTitle className="text-lg text-[#1a1a1a] mb-4">Patient Billing Status</CardTitle>
           
           {/* Primary Filter Toggle */}
           <div className="flex items-center p-1 bg-gray-100 rounded-lg w-fit">
@@ -333,7 +333,7 @@ export const BillingContent: React.FC = () => {
               size="sm"
               className={`${
                 activeFilter === 'ready' 
-                  ? 'bg-[#1E4D36] hover:bg-[#2A6349] text-white shadow-sm' 
+                  ? 'bg-[#1a1a1a] hover:bg-[#333333] text-white shadow-sm'
                   : 'hover:bg-gray-50 text-gray-600'
               } rounded-md px-4 py-2 transition-all`}
               onClick={() => setActiveFilter('ready')}
@@ -350,7 +350,7 @@ export const BillingContent: React.FC = () => {
               size="sm"
               className={`${
                 activeFilter === 'at-risk' 
-                  ? 'bg-[#1E4D36] hover:bg-[#2A6349] text-white shadow-sm' 
+                  ? 'bg-[#1a1a1a] hover:bg-[#333333] text-white shadow-sm'
                   : 'hover:bg-gray-50 text-gray-600'
               } rounded-md px-4 py-2 transition-all ml-1`}
               onClick={() => setActiveFilter('at-risk')}
@@ -466,7 +466,7 @@ export const BillingContent: React.FC = () => {
                           <FileText className="h-3 w-3" />
                         </Button>
                         {activeFilter === 'ready' && (
-                          <Button size="sm" className="h-8 px-3 bg-[#1E4D36] hover:bg-[#2A6349] text-xs">
+                          <Button size="sm" className="h-8 px-3 bg-[#1a1a1a] hover:bg-[#333333] text-xs">
                             Bill Now
                           </Button>
                         )}

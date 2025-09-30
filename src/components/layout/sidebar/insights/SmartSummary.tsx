@@ -46,11 +46,11 @@ export const SmartSummary: React.FC<SmartSummaryProps> = ({
   const StatusIcon = status.icon;
 
   return (
-    <Card className="bg-gradient-to-br from-[#EBF4F0] to-white border-[#1E4D36]/20">
+    <Card className="bg-gradient-to-br from-[#f5f5f5] to-white border-[#1a1a1a]/20">
       <CardContent className="p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Brain className="w-6 h-6 text-[#1E4D36]" />
-          <h3 className="text-lg font-semibold text-[#1E4D36]">AI Care Intelligence Summary</h3>
+          <Brain className="w-6 h-6 text-[#1a1a1a]" />
+          <h3 className="text-lg font-semibold text-[#1a1a1a]">AI Care Intelligence Summary</h3>
           <Badge className={status.color}>
             <StatusIcon className="w-3 h-3 mr-1" />
             {status.label}
@@ -95,7 +95,7 @@ export const SmartSummary: React.FC<SmartSummaryProps> = ({
         {/* AI Insight */}
         <div className="bg-white rounded-lg p-4 border border-gray-100 mb-4">
           <h4 className="text-sm font-medium text-gray-900 mb-2 flex items-center gap-2">
-            <Brain className="w-4 h-4 text-[#1E4D36]" />
+            <Brain className="w-4 h-4 text-[#1a1a1a]" />
             Weekly Insight
           </h4>
           <p className="text-sm text-gray-700">{weeklyHighlight}</p>
@@ -122,7 +122,7 @@ export const SmartSummary: React.FC<SmartSummaryProps> = ({
 
         {/* Action Buttons */}
         <div className="flex gap-2">
-          <Button size="sm" className="bg-[#1E4D36] hover:bg-[#2A6349] text-white flex-1">
+          <Button size="sm" className="bg-[#1a1a1a] hover:bg-[#333333] text-white flex-1">
             <Target className="w-4 h-4 mr-1" />
             Start Priority Tasks
           </Button>

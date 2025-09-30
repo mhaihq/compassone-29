@@ -24,7 +24,7 @@ export const GoalsTracker: React.FC<GoalsTrackerProps> = ({ goals }) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-[#1E4D36]">
+        <h3 className="text-lg font-semibold text-[#1a1a1a]">
           Goal Progress
         </h3>
         <Badge className="bg-red-100 text-red-800">
