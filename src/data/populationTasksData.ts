@@ -580,5 +580,206 @@ export const populationTasksData: PopulationTask[] = [
         notes: 'Patient no-show, engagement concern'
       }
     ]
+  },
+
+  // Monitoring Tasks
+  {
+    id: 'T-MON-001',
+    title: 'High-Risk Patient Review',
+    patientName: 'Michael Anderson',
+    patientId: 'P100601',
+    description: 'Patient flagged for elevated suicide risk based on recent PHQ-9 scores and behavioral changes',
+    priority: 'High',
+    estimatedTime: '25 min',
+    status: 'needs-review',
+    dueDate: '2025-05-27',
+    taskType: 'Risk Assessment',
+    triggeredBy: 'AI Monitoring Agent',
+    module: 'Monitoring',
+    channel: 'Call',
+    assignedToAI: false,
+    aiStatus: 'completed',
+    auditLog: [
+      {
+        id: 'audit-mon-001-1',
+        timestamp: '2025-05-26T08:00:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Analyzed PHQ-9 results showing score increase from 12 to 21',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-001-2',
+        timestamp: '2025-05-26T08:15:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Cross-referenced with medication adherence data - 3 missed doses detected',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-001-3',
+        timestamp: '2025-05-26T08:30:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Flagged for urgent clinical review based on risk protocol',
+        outcome: 'success',
+        details: 'Multiple risk factors present: elevated depression scores, medication non-adherence, recent life stressor'
+      }
+    ]
+  },
+  {
+    id: 'T-MON-002',
+    title: 'Monthly Stability Review – Overdue',
+    patientName: 'Lisa Chen',
+    patientId: 'P100602',
+    description: 'Required monthly stability check is 3 days overdue, needs immediate completion for billing compliance',
+    priority: 'High',
+    estimatedTime: '20 min',
+    status: 'needs-review',
+    dueDate: '2025-05-27',
+    taskType: 'Monthly Review',
+    triggeredBy: 'AI Monitoring Agent',
+    module: 'Monitoring',
+    channel: 'Call',
+    assignedToAI: false,
+    aiStatus: 'in-progress',
+    auditLog: [
+      {
+        id: 'audit-mon-002-1',
+        timestamp: '2025-05-23T00:00:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'Monthly stability review due date reached',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-002-2',
+        timestamp: '2025-05-24T09:00:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Attempted automated outreach for review scheduling',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-002-3',
+        timestamp: '2025-05-25T14:00:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Patient responded, call scheduled for today',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-002-4',
+        timestamp: '2025-05-26T09:00:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'Escalated to staff - overdue by 3 days, billing window at risk',
+        outcome: 'success'
+      }
+    ]
+  },
+  {
+    id: 'T-MON-003',
+    title: 'Medication Adherence Alert',
+    patientName: 'Jennifer Brooks',
+    patientId: 'P100603',
+    description: 'Patient missed 5 consecutive medication doses, intervention required per care protocol',
+    priority: 'High',
+    estimatedTime: '15 min',
+    status: 'needs-review',
+    dueDate: '2025-05-28',
+    taskType: 'Medication Management',
+    triggeredBy: 'AI Monitoring Agent',
+    module: 'Monitoring',
+    channel: 'SMS',
+    assignedToAI: false,
+    aiStatus: 'failed',
+    auditLog: [
+      {
+        id: 'audit-mon-003-1',
+        timestamp: '2025-05-22T08:00:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'First missed dose detected',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-003-2',
+        timestamp: '2025-05-23T08:00:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Sent automated medication reminder',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-003-3',
+        timestamp: '2025-05-26T08:00:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Detected 5 consecutive missed doses - critical threshold reached',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-003-4',
+        timestamp: '2025-05-26T08:30:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Attempted phone outreach to discuss barriers',
+        outcome: 'failure',
+        details: 'Patient did not answer, voicemail left'
+      }
+    ]
+  },
+  {
+    id: 'T-MON-004',
+    title: 'Crisis Plan Review Needed',
+    patientName: 'Thomas Wright',
+    patientId: 'P100604',
+    description: 'Patient crisis triggers detected, safety plan requires immediate review and update',
+    priority: 'High',
+    estimatedTime: '30 min',
+    status: 'needs-review',
+    dueDate: '2025-05-27',
+    taskType: 'Safety Planning',
+    triggeredBy: 'AI Monitoring Agent',
+    module: 'Monitoring',
+    channel: 'Call',
+    assignedToAI: false,
+    aiStatus: 'completed',
+    auditLog: [
+      {
+        id: 'audit-mon-004-1',
+        timestamp: '2025-05-26T07:00:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Analyzed recent patient communications for distress indicators',
+        outcome: 'success',
+        details: 'Multiple crisis-related keywords detected in patient portal messages'
+      },
+      {
+        id: 'audit-mon-004-2',
+        timestamp: '2025-05-26T07:15:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Cross-referenced current crisis plan last updated 6 months ago',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-004-3',
+        timestamp: '2025-05-26T07:30:00Z',
+        actor: 'AI Monitoring Agent',
+        actorType: 'AI',
+        action: 'Flagged for urgent clinical intervention - crisis plan outdated',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-mon-004-4',
+        timestamp: '2025-05-26T07:45:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'Escalated to clinical supervisor - immediate safety assessment required',
+        outcome: 'success'
+      }
+    ]
   }
 ];
