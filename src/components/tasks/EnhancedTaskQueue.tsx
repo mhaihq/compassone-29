@@ -146,13 +146,6 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
               )}
             </div>
             <p className="text-xs text-muted-foreground line-clamp-1">{task.description}</p>
-            
-            {/* Revenue Opportunity Summary */}
-            {task.billingOpportunities && task.billingOpportunities.length > 0 && (
-              <p className="text-xs text-muted-foreground mt-1">
-                💰 Revenue Opportunity: {task.billingOpportunities.length} cash-pay service{task.billingOpportunities.length > 1 ? 's' : ''} available (Est. ${task.billingOpportunities.reduce((sum, opp) => sum + opp.estimatedRevenue, 0).toLocaleString()})
-              </p>
-            )}
           </div>
 
           {/* Actions */}
