@@ -6,19 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { NewTaskModal } from './NewTaskModal';
-import { IntakeDrawer } from './IntakeDrawer';
-import { CoordinationDrawer } from './CoordinationDrawer';
 import { TaskMetricsFooter } from './TaskMetricsFooter';
-import { useNavigate } from 'react-router-dom';
 
 interface EnhancedTaskQueueProps {
   tasks: EnhancedPopulationTask[];
+  onOpenTask?: (taskId: string) => void;
 }
 
-export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) => {
-  const navigate = useNavigate();
+export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onOpenTask }) => {
   const [filters, setFilters] = useState<TaskFilters>({
     module: 'All',
     priority: 'All',
@@ -29,8 +25,6 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
   const [showFilters, setShowFilters] = useState(false);
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<EnhancedPopulationTask | null>(null);
-  const [sheetOpen, setSheetOpen] = useState(false);
 
   // Filter tasks
   const filteredTasks = tasks.filter(task => {
@@ -73,17 +67,9 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
   };
 
   const handleTaskClick = (task: EnhancedPopulationTask) => {
-    setSelectedTask(task);
-    if (task.module === 'Monitoring') {
-      navigate(`/care-task/${task.id}`);
-    } else {
-      setSheetOpen(true);
+    if (onOpenTask) {
+      onOpenTask(task.id);
     }
-  };
-
-  const handleCloseSheet = () => {
-    setSheetOpen(false);
-    setSelectedTask(null);
   };
 
   const renderTaskRow = (task: EnhancedPopulationTask) => (
@@ -268,23 +254,11 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
       </div>
 
       {/* New Task Modal */}
-      <NewTaskModal
-        open={showNewTaskModal}
-        onClose={() => setShowNewTaskModal(false)}
+      <NewTaskModal 
+        open={showNewTaskModal} 
+        onClose={() => setShowNewTaskModal(false)} 
         onSubmit={(data) => console.log('New task:', data)}
       />
-
-      {/* Module-Specific Detail View */}
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-2xl p-0 overflow-hidden">
-          {selectedTask && selectedTask.module === 'Intake' && (
-            <IntakeDrawer task={selectedTask} onClose={handleCloseSheet} />
-          )}
-          {selectedTask && selectedTask.module === 'Coordination' && (
-            <CoordinationDrawer task={selectedTask} onClose={handleCloseSheet} />
-          )}
-        </SheetContent>
-      </Sheet>
     </div>
   );
 };

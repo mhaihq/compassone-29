@@ -12,9 +12,12 @@ import { InsightsContent } from './sidebar/population/InsightsContent';
 import { CareTaskContent } from '@/components/care-task/CareTaskContent';
 import { PatientDetailContent } from './sidebar/population/PatientDetailContent';
 import { PatientInfoCard } from './sidebar/PatientInfoCard';
+import { IntakeDrawer } from '@/components/tasks/IntakeDrawer';
+import { CoordinationDrawer } from '@/components/tasks/CoordinationDrawer';
 import { useLocation } from 'react-router-dom';
 import { patientData } from '@/data/patientData';
 import { getPatientDataSummary } from '@/services/patientService';
+import { populationTasksData } from '@/data/populationTasksData';
 
 export const PopulationSidebar = () => {
   const [activeTab, setActiveTab] = useState<'taskQueue' | 'patients' | 'campaigns' | 'billing' | 'insights'>('taskQueue');
@@ -43,6 +46,11 @@ export const PopulationSidebar = () => {
     setIsViewingTask(false);
     setSelectedTaskId(null);
   };
+
+  // Get the selected task data
+  const selectedTask = selectedTaskId 
+    ? populationTasksData.find(task => task.id === selectedTaskId)
+    : null;
   
   const handleBackToPatients = () => {
     setIsViewingPatient(false);
@@ -139,10 +147,16 @@ export const PopulationSidebar = () => {
           
           {/* Tab Content - Full width for task view */}
           <div className={`flex-grow overflow-y-auto ${isViewingTask ? 'p-0' : 'p-4'}`}>
-            {isViewingTask && selectedTaskId ? (
-              <div className="h-full p-4">
-                <CareTaskContent taskId={selectedTaskId} onComplete={handleTaskComplete} />
-              </div>
+            {isViewingTask && selectedTask ? (
+              selectedTask.module === 'Monitoring' ? (
+                <div className="h-full p-4">
+                  <CareTaskContent taskId={selectedTaskId!} onComplete={handleTaskComplete} />
+                </div>
+              ) : selectedTask.module === 'Intake' ? (
+                <IntakeDrawer task={selectedTask} onClose={handleBackToTasks} />
+              ) : selectedTask.module === 'Coordination' ? (
+                <CoordinationDrawer task={selectedTask} onClose={handleBackToTasks} />
+              ) : null
             ) : isViewingPatient && selectedPatientId ? (
               <PatientDetailContent patientId={selectedPatientId} />
             ) : (
