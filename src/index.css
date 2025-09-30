@@ -171,3 +171,31 @@
 .task-priority.low {
   @apply bg-severity-low;
 }
+
+
+/* Hero Theme Utility Classes */
+@layer components {
+  .hero-surface {
+    background-color: hsl(var(--hero-surface));
+    color: hsl(var(--hero-foreground));
+  }
+
+  .hero-card {
+    background-color: hsl(var(--hero-card));
+    border-color: hsl(var(--hero-border));
+    backdrop-filter: blur(24px);
+  }
+
+  .hero-accent {
+    background-color: hsl(var(--hero-accent));
+  }
+
+  .hero-gradient-subtle {
+    background: radial-gradient(circle at 50% 0%, hsl(var(--hero-surface) / var(--hero-glow-opacity)), transparent 50%);
+  }
+
+  .hero-dot-pattern {
+    background-image: var(--hero-dot-pattern);
+    background-size: 32px 32px;
+  }
+}
