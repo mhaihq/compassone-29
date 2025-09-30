@@ -14,6 +14,8 @@ import { CarePlanStep } from '@/components/care-task/CarePlanStep';
 import { FollowUpStep } from '@/components/care-task/FollowUpStep';
 import { FinalizeStep } from '@/components/care-task/FinalizeStep';
 import { MonthlyStabilityReview } from '@/components/care-task/MonthlyStabilityReview';
+import { AssessmentReviewStep } from '@/components/care-task/assessment-review/AssessmentReviewStep';
+import { EHRIntegration } from '@/components/care-task/call-integration/EHRIntegration';
 import { useNavigate } from 'react-router-dom';
 import { careTasksData as careTasksByCptCode, cptCodeInfo } from '@/components/layout/sidebar/care-tasks/careTasksData';
 import type { CareTask as ImportedCareTask } from '@/components/layout/sidebar/care-tasks/types';
@@ -35,7 +37,13 @@ interface CareTask {
   patientId: string;
   patientName: string;
   taskType?: string;
+  type?: string;
+  subtype?: string;
   flagReason?: string;
+  patient?: {
+    name: string;
+    id: string;
+  };
   evidenceFromCall?: Array<{
     text: string;
     timestamp: string;
@@ -116,6 +124,8 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
     assessment: '',
     plan: ''
   });
+  const [assessmentApproved, setAssessmentApproved] = useState(false);
+  const [showEHRIntegration, setShowEHRIntegration] = useState(false);
 
   // Mock data fetching
   useEffect(() => {
@@ -293,6 +303,34 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
     }, 1500);
   };
 
+  const handleAssessmentApprove = (notes: string) => {
+    console.log('Assessment approved with notes:', notes);
+    setAssessmentApproved(true);
+    setShowEHRIntegration(true);
+  };
+
+  const handleAssessmentReject = (reason: string) => {
+    console.log('Assessment rejected:', reason);
+    toast({
+      title: "Assessment Rejected",
+      description: "The assessment has been sent back for revision.",
+    });
+    setTimeout(() => {
+      onComplete?.();
+    }, 500);
+  };
+
+  const handleEHRSubmit = (ehrData: any) => {
+    console.log('Submitting to EHR:', ehrData);
+    toast({
+      title: "Success",
+      description: "Assessment has been submitted to EHR",
+    });
+    setTimeout(() => {
+      onComplete?.();
+    }, 1000);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -307,6 +345,52 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
         <AlertTriangle className="mx-auto text-amber-500" size={48} />
         <h2 className="text-xl font-semibold mt-4 text-gray-900">Task Not Found</h2>
         <p className="text-gray-600 mt-2">The care task you're looking for could not be found.</p>
+      </div>
+    );
+  }
+
+  // Check if this is an Assessment Review task
+  if (task?.type === 'assessment-review') {
+    if (showEHRIntegration) {
+      return (
+        <div className="space-y-4">
+          <EHRIntegration
+            callSummary={{
+              id: `summary-${taskId}`,
+              patientId: task.patientId,
+              callId: `call-${taskId}`,
+              duration: '20:00',
+              outcome: 'Assessment completed and approved',
+              keyFindings: ['Assessment reviewed', 'Clinical findings documented', 'Ready for EHR submission'],
+              actionItems: [
+                {
+                  id: 'action-1',
+                  text: 'Submit assessment to EHR',
+                  priority: 'high' as 'high'
+                }
+              ],
+              riskAssessment: {
+                overall: 'low' as 'low',
+                factors: ['Assessment completed'],
+                recommendations: ['Submit to EHR for documentation']
+              },
+              nextSteps: ['Submit to EHR', 'Schedule follow-up'],
+              citations: []
+            }}
+            taskId={taskId}
+            onEHRSubmit={handleEHRSubmit}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        <AssessmentReviewStep
+          assessmentType={task.subtype as 'adhd' | 'alzheimer'}
+          onApprove={handleAssessmentApprove}
+          onReject={handleAssessmentReject}
+        />
       </div>
     );
   }

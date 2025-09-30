@@ -4,6 +4,103 @@ import { EnhancedPopulationTask } from '@/types/enhancedTask';
 export type PopulationTask = EnhancedPopulationTask;
 
 export const populationTasksData: PopulationTask[] = [
+  // Assessment Review Tasks
+  {
+    id: 'T-ADHD-001',
+    title: 'ADHD Assessment Review',
+    patientName: 'Sarah Martinez',
+    patientId: 'P-12345',
+    description: 'Review completed ADHD assessment and approve for EHR submission',
+    priority: 'Medium',
+    estimatedTime: '10 min',
+    status: 'needs-review',
+    dueDate: '2025-09-30',
+    taskType: 'Assessment Review',
+    triggeredBy: 'Assessment Completion',
+    callDate: 'N/A',
+    module: 'Monitoring',
+    channel: 'Call',
+    assignedToAI: false,
+    aiStatus: null,
+    type: 'assessment-review',
+    subtype: 'adhd',
+    auditLog: [
+      {
+        id: 'audit-adhd-001',
+        timestamp: '2025-09-28T14:30:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'ADHD assessment completed',
+        outcome: 'success'
+      }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-adhd-001',
+        title: 'Psychological Testing Evaluation',
+        description: 'CPT 96130 - Psychological testing evaluation services',
+        category: 'specialized-wellness',
+        priority: 'high',
+        estimatedRevenue: 285,
+        pricingModel: 'one-time',
+        conversionLikelihood: 'high',
+        reasoning: 'Comprehensive ADHD assessment completed, ready for billing submission',
+        suggestedActions: [
+          'Review and approve assessment',
+          'Submit to EHR for documentation',
+          'Schedule follow-up for treatment initiation'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'T-ALZ-001',
+    title: "Alzheimer's Assessment Review",
+    patientName: 'Robert Thompson',
+    patientId: 'P-67890',
+    description: "Review completed Alzheimer's cognitive assessment and approve for EHR submission",
+    priority: 'High',
+    estimatedTime: '12 min',
+    status: 'needs-review',
+    dueDate: '2025-09-29',
+    taskType: 'Assessment Review',
+    triggeredBy: 'Assessment Completion',
+    callDate: 'N/A',
+    module: 'Monitoring',
+    channel: 'Call',
+    assignedToAI: false,
+    aiStatus: null,
+    type: 'assessment-review',
+    subtype: 'alzheimer',
+    auditLog: [
+      {
+        id: 'audit-alz-001',
+        timestamp: '2025-09-28T10:15:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: "Alzheimer's assessment completed",
+        outcome: 'success'
+      }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-alz-001',
+        title: 'Neurobehavioral Status Exam',
+        description: 'CPT 96116 - Comprehensive cognitive assessment',
+        category: 'specialized-wellness',
+        priority: 'high',
+        estimatedRevenue: 340,
+        pricingModel: 'one-time',
+        conversionLikelihood: 'high',
+        reasoning: 'Complete cognitive assessment for Alzheimer\'s evaluation, ready for billing',
+        suggestedActions: [
+          'Review cognitive assessment results',
+          'Approve and submit to EHR',
+          'Coordinate with memory care specialist'
+        ]
+      }
+    ]
+  },
   // Matteo Grassi - High Priority Hana-triggered insights matching his hypertension and depression
   {
     id: 'T-1001',

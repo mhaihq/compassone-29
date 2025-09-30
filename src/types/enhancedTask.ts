@@ -48,6 +48,8 @@ export interface EnhancedPopulationTask {
   taskType: string;
   triggeredBy?: string;
   callDate?: string;
+  type?: string;
+  subtype?: string;
   
   // Enhanced fields
   module: TaskModule;
