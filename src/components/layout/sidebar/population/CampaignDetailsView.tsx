@@ -57,9 +57,9 @@ export const CampaignDetailsView: React.FC<CampaignDetailsViewProps> = ({ campai
   };
 
   return (
-    <Card className="mt-2 bg-gray-50 border-l-4 border-l-[#1E4D36]">
+    <Card className="mt-2 bg-gray-50 border-l-4 border-l-[#1a1a1a]">
       <CardHeader>
-        <CardTitle className="text-[#1E4D36] text-lg">CCM Enrollment Outreach - Campaign Details</CardTitle>
+        <CardTitle className="text-[#1a1a1a] text-lg">CCM Enrollment Outreach - Campaign Details</CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <Tabs defaultValue="overview" className="w-full">
@@ -91,7 +91,7 @@ export const CampaignDetailsView: React.FC<CampaignDetailsViewProps> = ({ campai
                   <span>{campaign.metrics.contacted} of {campaign.metrics.totalPatients} ({campaign.completion}%)</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div className="bg-[#1E4D36] h-3 rounded-full transition-all duration-300" style={{ width: `${campaign.completion}%` }}></div>
+                  <div className="bg-[#1a1a1a] h-3 rounded-full transition-all duration-300" style={{ width: `${campaign.completion}%` }}></div>
                 </div>
               </div>
             </div>
@@ -246,7 +246,7 @@ export const CampaignDetailsView: React.FC<CampaignDetailsViewProps> = ({ campai
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <Card className="p-3">
                 <div className="flex items-center gap-2">
-                  <Users size={16} className="text-[#1E4D36]" />
+                  <Users size={16} className="text-[#1a1a1a]" />
                   <div>
                     <p className="text-xs text-gray-500">Total Patients</p>
                     <p className="text-lg font-bold">{campaign.metrics.totalPatients}</p>
@@ -320,7 +320,7 @@ export const CampaignDetailsView: React.FC<CampaignDetailsViewProps> = ({ campai
             <div className="grid grid-cols-2 gap-4">
               <Card className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <DollarSign size={16} className="text-[#1E4D36]" />
+                  <DollarSign size={16} className="text-[#1a1a1a]" />
                   <h5 className="font-medium">Revenue Tracking</h5>
                 </div>
                 <div className="space-y-2 text-sm">

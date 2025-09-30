@@ -74,28 +74,28 @@ export const CampaignsContent: React.FC = () => {
       value: '4',
       subtitle: 'this month',
       icon: Megaphone,
-      color: 'text-[#1E4D36]'
+      color: 'text-[#1a1a1a]'
     },
     {
       title: 'Patients Reached',
       value: '1,230',
       subtitle: 'this month',
       icon: Users,
-      color: 'text-[#1E4D36]'
+      color: 'text-[#1a1a1a]'
     },
     {
       title: 'Tasks Created',
       value: '148',
       subtitle: 'this month',
       icon: CheckCircle,
-      color: 'text-[#1E4D36]'
+      color: 'text-[#1a1a1a]'
     },
     {
       title: 'Completion',
       value: '87%',
       subtitle: 'average rate',
       icon: CheckCircle,
-      color: 'text-[#1E4D36]'
+      color: 'text-[#1a1a1a]'
     }
   ];
 
@@ -181,12 +181,12 @@ export const CampaignsContent: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Megaphone size={20} className="text-[#1E4D36]" />
-          <h1 className="text-lg font-semibold text-[#1E4D36]">Campaigns</h1>
+          <Megaphone size={20} className="text-[#1a1a1a]" />
+          <h1 className="text-lg font-semibold text-[#1a1a1a]">Campaigns</h1>
         </div>
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
-            <Button className="bg-[#1E4D36] hover:bg-[#1E4D36]/90 text-white w-full sm:w-auto">
+            <Button className="bg-[#1a1a1a] hover:bg-[#1a1a1a]/90 text-white w-full sm:w-auto">
               <Plus size={16} />
               New Campaign
             </Button>
@@ -199,7 +199,7 @@ export const CampaignsContent: React.FC = () => {
             <div className="space-y-6">
               {/* Campaign Builder */}
               <div className="bg-gray-50 p-6 rounded-lg border shadow-sm">
-                <h3 className="text-lg font-semibold text-[#1E4D36] mb-2">Campaign Builder</h3>
+                <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">Campaign Builder</h3>
                 <p className="text-gray-600 text-sm mb-6">
                   Create and customize your campaign with AI assistance.
                 </p>
@@ -307,7 +307,7 @@ export const CampaignsContent: React.FC = () => {
                   </div>
 
                   <Button 
-                    className="w-full bg-[#1E4D36] hover:bg-[#1E4D36]/90 text-white py-3"
+                    className="w-full bg-[#1a1a1a] hover:bg-[#1a1a1a]/90 text-white py-3"
                     onClick={generateCampaign}
                     disabled={!newCampaignForm.name || !newCampaignForm.message}
                   >
@@ -356,7 +356,7 @@ export const CampaignsContent: React.FC = () => {
               <CardContent className="p-4">
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge className="text-xs bg-[#EBF4F0] text-[#1E4D36]">{campaign.category}</Badge>
+                    <Badge className="text-xs bg-[#f5f5f5] text-[#1a1a1a]">{campaign.category}</Badge>
                     <Badge className="text-xs bg-yellow-100 text-yellow-800">Recommended</Badge>
                   </div>
                   
@@ -385,7 +385,7 @@ export const CampaignsContent: React.FC = () => {
                   </div>
                   
                   <Button 
-                    className="w-full text-white bg-[#1E4D36] hover:bg-[#1E4D36]/90"
+                    className="w-full text-white bg-[#1a1a1a] hover:bg-[#1a1a1a]/90"
                     onClick={() => launchCampaign(campaign.id)}
                   >
                     <Plus size={14} />
@@ -416,7 +416,7 @@ export const CampaignsContent: React.FC = () => {
                 <CardContent className="p-4">
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge className="text-xs bg-[#EBF4F0] text-[#1E4D36]">{campaign.category}</Badge>
+                      <Badge className="text-xs bg-[#f5f5f5] text-[#1a1a1a]">{campaign.category}</Badge>
                       <Badge className={`text-xs ${campaign.statusColor}`}>
                         {campaign.status}
                       </Badge>
@@ -453,7 +453,7 @@ export const CampaignsContent: React.FC = () => {
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
-                          className="bg-[#1E4D36] h-2 rounded-full transition-all duration-300"
+                          className="bg-[#1a1a1a] h-2 rounded-full transition-all duration-300"
                           style={{ width: `${campaign.completion}%` }}
                         ></div>
                       </div>
