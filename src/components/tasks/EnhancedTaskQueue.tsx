@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { EnhancedPopulationTask, TaskFilters, TaskMetrics } from '@/types/enhancedTask';
-import { Search, Plus, Filter, List, LayoutGrid, ChevronRight, Bot } from 'lucide-react';
+import { Search, Plus, Filter, List, LayoutGrid, Table as TableIcon, Kanban, ChevronRight, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { NewTaskModal } from './NewTaskModal';
 import { TaskMetricsFooter } from './TaskMetricsFooter';
+import { TaskBoardView } from './TaskBoardView';
+import { TaskTableView } from './TaskTableView';
+import { TaskDetailDrawer } from './TaskDetailDrawer';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface EnhancedTaskQueueProps {
   tasks: EnhancedPopulationTask[];
@@ -22,9 +26,11 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
     assignee: 'All',
     searchTerm: ''
   });
-  const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'board' | 'table'>('list');
   const [showFilters, setShowFilters] = useState(false);
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<EnhancedPopulationTask | null>(null);
+  const [groupBy, setGroupBy] = useState<'none' | 'status' | 'priority' | 'module'>('none');
 
   // Filter tasks
   const filteredTasks = tasks.filter(task => {
@@ -67,10 +73,42 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
   };
 
   const handleTaskClick = (task: EnhancedPopulationTask) => {
+    setSelectedTask(task);
     if (onOpenTask) {
       onOpenTask(task.id);
     }
   };
+
+  const handleTaskUpdate = (taskId: string, updates: Partial<EnhancedPopulationTask>) => {
+    // In a real app, this would update the task in state/backend
+    console.log('Update task:', taskId, updates);
+  };
+
+  const groupTasks = (tasks: EnhancedPopulationTask[]) => {
+    if (groupBy === 'none') return { 'All Tasks': tasks };
+
+    return tasks.reduce((groups, task) => {
+      let key: string;
+      switch (groupBy) {
+        case 'status':
+          key = task.status;
+          break;
+        case 'priority':
+          key = task.priority;
+          break;
+        case 'module':
+          key = task.module;
+          break;
+        default:
+          key = 'All Tasks';
+      }
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(task);
+      return groups;
+    }, {} as Record<string, EnhancedPopulationTask[]>);
+  };
+
+  const groupedTasks = groupTasks(filteredTasks);
 
   const renderTaskRow = (task: EnhancedPopulationTask) => (
     <Card 
@@ -134,15 +172,22 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setViewMode(viewMode === 'list' ? 'kanban' : 'list')}
-              className="gap-1 h-8 px-2 text-xs"
-            >
-              {viewMode === 'list' ? <LayoutGrid className="w-3 h-3" /> : <List className="w-3 h-3" />}
-              {viewMode === 'list' ? 'Kanban' : 'List'}
-            </Button>
+            <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)}>
+              <TabsList className="h-8">
+                <TabsTrigger value="list" className="text-xs h-7 px-2 gap-1">
+                  <List className="w-3 h-3" />
+                  List
+                </TabsTrigger>
+                <TabsTrigger value="board" className="text-xs h-7 px-2 gap-1">
+                  <Kanban className="w-3 h-3" />
+                  Board
+                </TabsTrigger>
+                <TabsTrigger value="table" className="text-xs h-7 px-2 gap-1">
+                  <TableIcon className="w-3 h-3" />
+                  Table
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
             <Button onClick={() => setShowNewTaskModal(true)} className="gap-1 h-8 px-2 text-xs">
               <Plus className="w-3 h-3" />
               New Task
@@ -175,6 +220,20 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
         {/* Filter Controls */}
         {showFilters && (
           <div className="grid grid-cols-2 gap-2 mt-3 p-3 bg-muted/50 rounded-md">
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Group By</label>
+              <Select value={groupBy} onValueChange={(v: any) => setGroupBy(v)}>
+                <SelectTrigger className="h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-popover z-50">
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="status">Status</SelectItem>
+                  <SelectItem value="priority">Priority</SelectItem>
+                  <SelectItem value="module">Module</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Module</label>
               <Select value={filters.module} onValueChange={(v: any) => setFilters({ ...filters, module: v })}>
@@ -235,15 +294,34 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
         )}
       </div>
 
-      {/* Task List - Scrollable */}
+      {/* Task Views - Scrollable */}
       <div className="flex-1 overflow-y-auto p-4">
         {filteredTasks.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-sm text-muted-foreground">No tasks found</p>
           </div>
+        ) : viewMode === 'board' ? (
+          <TaskBoardView tasks={filteredTasks} onTaskClick={handleTaskClick} />
+        ) : viewMode === 'table' ? (
+          <TaskTableView 
+            tasks={filteredTasks} 
+            onTaskClick={handleTaskClick}
+            onUpdate={handleTaskUpdate}
+          />
         ) : (
-          <div className="space-y-2">
-            {filteredTasks.map(renderTaskRow)}
+          <div className="space-y-4">
+            {Object.entries(groupedTasks).map(([groupName, groupTasks]) => (
+              <div key={groupName}>
+                {groupBy !== 'none' && (
+                  <h3 className="text-sm font-semibold text-foreground mb-2 sticky top-0 bg-background py-2">
+                    {groupName} ({groupTasks.length})
+                  </h3>
+                )}
+                <div className="space-y-2">
+                  {groupTasks.map(renderTaskRow)}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -258,6 +336,14 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
         open={showNewTaskModal} 
         onClose={() => setShowNewTaskModal(false)} 
         onSubmit={(data) => console.log('New task:', data)}
+      />
+
+      {/* Task Detail Drawer */}
+      <TaskDetailDrawer
+        task={selectedTask}
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        onUpdate={handleTaskUpdate}
       />
     </div>
   );
