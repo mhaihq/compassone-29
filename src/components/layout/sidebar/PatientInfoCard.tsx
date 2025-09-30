@@ -19,32 +19,30 @@ export const PatientInfoCard: React.FC<PatientInfoCardProps> = ({
 
   if (variant === 'compact') {
     return (
-      <div className="p-3 bg-white">
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-          <CardContent className="p-3">
-            <div className="flex items-start gap-2">
-              <div className="bg-blue-100 p-1.5 rounded-full">
-                <User className="h-4 w-4 text-blue-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate text-sm">
-                  {patientData.name}
-                </h3>
-                <div className="flex items-center gap-3 mt-1 text-xs text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>{patientAge}y</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    <span>{lastContactedFormatted}</span>
-                  </div>
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <CardContent className="p-3">
+          <div className="flex items-start gap-2">
+            <div className="bg-blue-100 p-1.5 rounded-full">
+              <User className="h-4 w-4 text-blue-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-medium text-gray-900 truncate text-sm">
+                {patientData.name}
+              </h3>
+              <div className="flex items-center gap-3 mt-1 text-xs text-gray-600">
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  <span>{patientAge}y</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  <span>{lastContactedFormatted}</span>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
