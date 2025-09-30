@@ -301,6 +301,68 @@ export default {
                         transform: 'translate(0px, 0px) scale(1)',
                     },
                 },
+                // Hero component animations
+                'hero-intro': {
+                    '0%': { 
+                        opacity: '0', 
+                        transform: 'translate3d(0, 64px, 0) scale(0.98)', 
+                        filter: 'blur(12px)' 
+                    },
+                    '60%': { filter: 'blur(0)' },
+                    '100%': { 
+                        opacity: '1', 
+                        transform: 'translate3d(0, 0, 0) scale(1)', 
+                        filter: 'blur(0)' 
+                    }
+                },
+                'hero-orbit': {
+                    '0%': { 
+                        strokeDashoffset: '0', 
+                        transform: 'rotate(0deg)' 
+                    },
+                    '100%': { 
+                        strokeDashoffset: '-64', 
+                        transform: 'rotate(360deg)' 
+                    }
+                },
+                'hero-grid': {
+                    '0%, 100%': { 
+                        transform: 'rotate(-2deg)', 
+                        opacity: '0.7' 
+                    },
+                    '50%': { 
+                        transform: 'rotate(2deg)', 
+                        opacity: '1' 
+                    }
+                },
+                'hero-pulse': {
+                    '0%, 100%': { 
+                        strokeDasharray: '0 200', 
+                        opacity: '0.2' 
+                    },
+                    '45%, 60%': { 
+                        strokeDasharray: '200 0', 
+                        opacity: '1' 
+                    }
+                },
+                'hero-glow': {
+                    '0%, 100%': { 
+                        opacity: '0.45', 
+                        transform: 'translate3d(0,0,0)' 
+                    },
+                    '50%': { 
+                        opacity: '0.9', 
+                        transform: 'translate3d(0,-8px,0)' 
+                    }
+                },
+                'hero-drift': {
+                    '0%, 100%': { 
+                        transform: 'translate3d(0,0,0) rotate(-3deg)' 
+                    },
+                    '50%': { 
+                        transform: 'translate3d(0,-12px,0) rotate(3deg)' 
+                    }
+                },
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -309,6 +371,13 @@ export default {
                 'fade-in': 'fade-in 0.3s ease-out',
                 'bounce-slow': 'bounce 3s infinite',
                 blob: 'blob 7s infinite',
+                // Hero component animations
+                'hero-intro': 'hero-intro 1s cubic-bezier(.22,.68,0,1) forwards',
+                'hero-orbit': 'hero-orbit 8.5s linear infinite',
+                'hero-grid': 'hero-grid 5.4s ease-in-out infinite',
+                'hero-pulse': 'hero-pulse 6s ease-in-out infinite',
+                'hero-glow': 'hero-glow 9s ease-in-out infinite',
+                'hero-drift': 'hero-drift 12s ease-in-out infinite',
 			},
             fontFamily: {
                 sans: ['Inter', 'poppins', 'sans-serif'],

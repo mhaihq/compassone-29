@@ -34,6 +34,19 @@
     --ring: 196 100% 47%;
 
     --radius: 0.5rem;
+
+    /* Hero monochrome theme variables */
+    --hero-surface: 0 0% 96%;
+    --hero-surface-rgb: 245 245 244;
+    --hero-foreground: 0 0% 7%;
+    --hero-subtle: 0 0% 40%;
+    --hero-border: 0 0% 85%;
+    --hero-card: 0 0% 95%;
+    --hero-accent: 0 0% 92%;
+    --hero-glow-opacity: 0.08;
+    --hero-bg-overlay-1: radial-gradient(ellipse 80% 60% at 10% -10%, rgba(15,15,15,0.12), transparent 60%);
+    --hero-bg-overlay-2: radial-gradient(ellipse 90% 70% at 90% -20%, rgba(15,15,15,0.08), transparent 70%);
+    --hero-dot-pattern: radial-gradient(circle at 25% 25%, rgba(17,17,17,0.12) 0.7px, transparent 1px), radial-gradient(circle at 75% 75%, rgba(17,17,17,0.08) 0.7px, transparent 1px);
   }
 
   .dark {
@@ -64,6 +77,19 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    /* Hero monochrome theme variables - dark mode */
+    --hero-surface: 0 0% 2%;
+    --hero-surface-rgb: 4 4 4;
+    --hero-foreground: 0 0% 98%;
+    --hero-subtle: 0 0% 60%;
+    --hero-border: 0 0% 18%;
+    --hero-card: 0 0% 8%;
+    --hero-accent: 0 0% 12%;
+    --hero-glow-opacity: 0.14;
+    --hero-bg-overlay-1: radial-gradient(ellipse 80% 60% at 10% -10%, rgba(255,255,255,0.15), transparent 60%);
+    --hero-bg-overlay-2: radial-gradient(ellipse 90% 70% at 90% -20%, rgba(120,120,120,0.12), transparent 70%);
+    --hero-dot-pattern: radial-gradient(circle at 25% 25%, rgba(250,250,250,0.08) 0.7px, transparent 1px), radial-gradient(circle at 75% 75%, rgba(250,250,250,0.08) 0.7px, transparent 1px);
   }
 }
 
