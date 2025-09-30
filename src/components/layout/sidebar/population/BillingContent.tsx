@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   DollarSign, 
   Users, 
@@ -16,8 +17,11 @@ import {
   Calendar,
   ClipboardX,
   MessageCircleX,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
+import { RevenueOpportunitiesAnalytics } from '@/components/billing/RevenueOpportunitiesAnalytics';
+import { getAllBillingOpportunities } from '@/services/billingOpportunitiesService';
 
 interface Patient {
   id: string;
@@ -33,8 +37,11 @@ interface Patient {
 }
 
 export const BillingContent: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'traditional' | 'revenue-opportunities'>('traditional');
   const [activeFilter, setActiveFilter] = useState<'ready' | 'at-risk'>('ready');
   const [isOtherFiltersOpen, setIsOtherFiltersOpen] = useState(false);
+  
+  const allOpportunities = getAllBillingOpportunities();
 
   const metrics = [
     {
@@ -299,6 +306,26 @@ export const BillingContent: React.FC = () => {
         </p>
       </div>
 
+      {/* Tabs for Traditional vs Cash-Pay */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'traditional' | 'revenue-opportunities')} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="traditional" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Traditional Billing
+          </TabsTrigger>
+          <TabsTrigger value="revenue-opportunities" className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4" />
+            Cash-Pay Opportunities
+            {allOpportunities.length > 0 && (
+              <Badge variant="secondary" className="ml-1 bg-green-100 text-green-700">
+                {allOpportunities.length}
+              </Badge>
+            )}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="traditional" className="space-y-6 mt-6">
+
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {metrics.map((metric, index) => {
@@ -484,6 +511,16 @@ export const BillingContent: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="revenue-opportunities" className="mt-6">
+          <RevenueOpportunitiesAnalytics 
+            opportunities={allOpportunities}
+            conversionRate={42}
+            actualRevenue={3200}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
