@@ -4,6 +4,174 @@ import { EnhancedPopulationTask } from '@/types/enhancedTask';
 export type PopulationTask = EnhancedPopulationTask;
 
 export const populationTasksData: PopulationTask[] = [
+  // Assessment Intake Tasks
+  {
+    id: 'T-ADHD-INTAKE-001',
+    title: 'ADHD Assessment Intake',
+    patientName: 'Sarah Martinez',
+    patientId: 'P-12345',
+    description: 'Collect screening forms, consent, and baseline data for ADHD assessment',
+    priority: 'High',
+    estimatedTime: '15 min',
+    status: 'needs-review',
+    dueDate: '2025-09-25',
+    taskType: 'Assessment Intake',
+    triggeredBy: 'Intake Process',
+    callDate: 'N/A',
+    module: 'Intake',
+    channel: 'Email',
+    assignedToAI: true,
+    aiStatus: 'pending',
+    type: 'intake',
+    subtype: 'adhd-assessment',
+    auditLog: [
+      {
+        id: 'audit-adhd-intake-001',
+        timestamp: '2025-09-24T09:00:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'ADHD assessment intake initiated',
+        outcome: 'success'
+      }
+    ],
+    intakeDocuments: [
+      {
+        id: 'doc-adhd-001',
+        name: 'ADHD Screening Questionnaire',
+        type: 'medical-history',
+        status: 'pending'
+      },
+      {
+        id: 'doc-adhd-002',
+        name: 'Assessment Consent Form',
+        type: 'consent',
+        status: 'pending'
+      },
+      {
+        id: 'doc-adhd-003',
+        name: 'Insurance Verification',
+        type: 'insurance',
+        status: 'completed',
+        uploadedDate: '2025-09-24'
+      },
+      {
+        id: 'doc-adhd-004',
+        name: 'Baseline Behavioral Assessment',
+        type: 'medical-history',
+        status: 'missing'
+      }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-adhd-intake-001',
+        title: 'ADHD Screening & Evaluation Package',
+        description: 'Comprehensive ADHD assessment including intake, screening, and follow-up consultation',
+        category: 'specialized-wellness',
+        priority: 'high',
+        estimatedRevenue: 450,
+        pricingModel: 'package',
+        conversionLikelihood: 'high',
+        reasoning: 'Patient seeking ADHD assessment with insurance coverage, high likelihood of completing full evaluation package',
+        suggestedActions: [
+          'Complete intake documentation',
+          'Schedule assessment appointment',
+          'Verify insurance coverage for psychological testing'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'T-ALZ-INTAKE-001',
+    title: "Alzheimer's Assessment Intake",
+    patientName: 'Robert Thompson',
+    patientId: 'P-67890',
+    description: "Gather baseline cognitive screening and family history for Alzheimer's assessment",
+    priority: 'High',
+    estimatedTime: '18 min',
+    status: 'in-progress',
+    dueDate: '2025-09-26',
+    taskType: 'Assessment Intake',
+    triggeredBy: 'Intake Process',
+    callDate: 'N/A',
+    module: 'Intake',
+    channel: 'Call',
+    assignedToAI: false,
+    aiStatus: null,
+    type: 'intake',
+    subtype: 'alzheimer-assessment',
+    auditLog: [
+      {
+        id: 'audit-alz-intake-001',
+        timestamp: '2025-09-24T10:30:00Z',
+        actor: 'Intake Coordinator',
+        actorType: 'Staff',
+        action: "Alzheimer's assessment intake initiated",
+        outcome: 'success'
+      },
+      {
+        id: 'audit-alz-intake-002',
+        timestamp: '2025-09-25T14:00:00Z',
+        actor: 'Intake Coordinator',
+        actorType: 'Staff',
+        action: 'Family contacted for medical history',
+        details: 'Spoke with daughter regarding patient history',
+        outcome: 'success'
+      }
+    ],
+    intakeDocuments: [
+      {
+        id: 'doc-alz-001',
+        name: 'Mini-Mental State Examination (MMSE)',
+        type: 'medical-history',
+        status: 'completed',
+        uploadedDate: '2025-09-25'
+      },
+      {
+        id: 'doc-alz-002',
+        name: 'Cognitive Assessment Consent',
+        type: 'consent',
+        status: 'completed',
+        uploadedDate: '2025-09-24'
+      },
+      {
+        id: 'doc-alz-003',
+        name: 'Family Medical History',
+        type: 'medical-history',
+        status: 'pending'
+      },
+      {
+        id: 'doc-alz-004',
+        name: 'Medicare Coverage Verification',
+        type: 'insurance',
+        status: 'completed',
+        uploadedDate: '2025-09-24'
+      },
+      {
+        id: 'doc-alz-005',
+        name: 'Caregiver Information Form',
+        type: 'other',
+        status: 'pending'
+      }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-alz-intake-001',
+        title: 'Comprehensive Memory Care Evaluation',
+        description: 'Complete cognitive assessment package with follow-up care coordination',
+        category: 'specialized-wellness',
+        priority: 'high',
+        estimatedRevenue: 580,
+        pricingModel: 'package',
+        conversionLikelihood: 'high',
+        reasoning: 'Family is actively engaged and seeking comprehensive evaluation, Medicare coverage confirmed',
+        suggestedActions: [
+          'Complete family history documentation',
+          'Schedule comprehensive cognitive testing',
+          'Coordinate with memory care specialist'
+        ]
+      }
+    ]
+  },
   // Assessment Review Tasks
   {
     id: 'T-ADHD-001',
