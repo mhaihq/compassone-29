@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -8,11 +9,11 @@ import { PatientsListContent } from './sidebar/population/PatientsListContent';
 import { CampaignsContent } from './sidebar/population/CampaignsContent';
 import { BillingContent } from './sidebar/population/BillingContent';
 import { InsightsContent } from './sidebar/population/InsightsContent';
+import { CareTaskContent } from '@/components/care-task/CareTaskContent';
 import { PatientDetailContent } from './sidebar/population/PatientDetailContent';
 import { PatientInfoCard } from './sidebar/PatientInfoCard';
 import { IntakeDrawer } from '@/components/tasks/IntakeDrawer';
 import { CoordinationDrawer } from '@/components/tasks/CoordinationDrawer';
-import { MonitoringDrawer } from '@/components/tasks/MonitoringDrawer';
 import { useLocation } from 'react-router-dom';
 import { patientData } from '@/data/patientData';
 import { getPatientDataSummary } from '@/services/patientService';
@@ -148,11 +149,13 @@ export const PopulationSidebar = () => {
           <div className={`flex-grow overflow-y-auto ${isViewingTask ? 'p-0' : 'p-4'}`}>
             {isViewingTask && selectedTask ? (
               selectedTask.module === 'Monitoring' ? (
-                <MonitoringDrawer task={selectedTask} open={true} onClose={handleBackToTasks} />
+                <div className="h-full p-4">
+                  <CareTaskContent taskId={selectedTaskId!} onComplete={handleTaskComplete} />
+                </div>
               ) : selectedTask.module === 'Intake' ? (
-                <IntakeDrawer task={selectedTask} open={true} onClose={handleBackToTasks} />
+                <IntakeDrawer task={selectedTask} onClose={handleBackToTasks} />
               ) : selectedTask.module === 'Coordination' ? (
-                <CoordinationDrawer task={selectedTask} open={true} onClose={handleBackToTasks} />
+                <CoordinationDrawer task={selectedTask} onClose={handleBackToTasks} />
               ) : null
             ) : isViewingPatient && selectedPatientId ? (
               <PatientDetailContent patientId={selectedPatientId} />

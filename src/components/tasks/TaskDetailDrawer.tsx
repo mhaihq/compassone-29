@@ -15,7 +15,6 @@ import { Separator } from '@/components/ui/separator';
 import { Bot, Calendar, Clock, User, FileText, History } from 'lucide-react';
 import { IntakeDrawer } from './IntakeDrawer';
 import { CoordinationDrawer } from './CoordinationDrawer';
-import { MonitoringDrawer } from './MonitoringDrawer';
 import { AuditLogTimeline } from './AuditLogTimeline';
 
 interface TaskDetailDrawerProps {
@@ -33,7 +32,6 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
 }) => {
   const [showIntakeDrawer, setShowIntakeDrawer] = React.useState(false);
   const [showCoordinationDrawer, setShowCoordinationDrawer] = React.useState(false);
-  const [showMonitoringDrawer, setShowMonitoringDrawer] = React.useState(false);
   const [showAuditLog, setShowAuditLog] = React.useState(false);
 
   if (!task) return null;
@@ -188,15 +186,6 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
                       View Appointments
                     </Button>
                   )}
-                  {task.module === 'Monitoring' && (
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setShowMonitoringDrawer(true)}
-                    >
-                      Start Review
-                    </Button>
-                  )}
                   <Button 
                     variant="outline" 
                     size="sm"
@@ -250,7 +239,6 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
             </SheetHeader>
             <IntakeDrawer
               task={task}
-              open={showIntakeDrawer}
               onClose={() => setShowIntakeDrawer(false)}
             />
           </SheetContent>
@@ -265,31 +253,8 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
             </SheetHeader>
             <CoordinationDrawer
               task={task}
-              open={showCoordinationDrawer}
               onClose={() => setShowCoordinationDrawer(false)}
             />
-          </SheetContent>
-        </Sheet>
-      )}
-
-      {task.module === 'Monitoring' && showMonitoringDrawer && (
-        <Sheet open={showMonitoringDrawer} onOpenChange={setShowMonitoringDrawer}>
-          <SheetContent className="w-full sm:max-w-4xl">
-            <SheetHeader>
-              <SheetTitle>Monitoring Review</SheetTitle>
-            </SheetHeader>
-            <ScrollArea className="h-full">
-              <MonitoringDrawer
-                task={task}
-                open={showMonitoringDrawer}
-                onClose={() => {
-                  setShowMonitoringDrawer(false);
-                  if (onUpdate) {
-                    onUpdate(task.id, { status: 'completed' });
-                  }
-                }}
-              />
-            </ScrollArea>
           </SheetContent>
         </Sheet>
       )}
