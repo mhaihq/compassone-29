@@ -1,3 +1,5 @@
+import { BillingOpportunity } from './billingOpportunity';
+
 export type TaskModule = 'Intake' | 'Coordination' | 'Monitoring';
 export type TaskChannel = 'Call' | 'SMS' | 'Email';
 export type TaskStatus = 'needs-review' | 'in-progress' | 'needs-qhp' | 'completed';
@@ -62,6 +64,9 @@ export interface EnhancedPopulationTask {
     timestamp: string;
     importance: string;
   }>;
+  
+  // Billing opportunities
+  billingOpportunities?: BillingOpportunity[];
 }
 
 export interface TaskFilters {

@@ -38,6 +38,39 @@ export const populationTasksData: PopulationTask[] = [
         timestamp: '14:32',
         importance: 'high'
       }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-1001-1',
+        title: 'Premium Mental Health Support Package',
+        description: 'Comprehensive mental health program including weekly check-ins, 24/7 crisis support, and medication optimization.',
+        category: 'mental-health',
+        priority: 'high',
+        estimatedRevenue: 600,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'high',
+        reasoning: 'Patient is experiencing acute depression symptoms and would benefit from intensive support beyond standard care. High engagement history suggests strong conversion potential.',
+        suggestedActions: [
+          'Present during next clinical review appointment',
+          'Emphasize 24/7 crisis support given current symptoms',
+          'Offer first month at 20% discount to encourage enrollment'
+        ]
+      },
+      {
+        id: 'opp-1001-2',
+        title: 'Stress Management Intensive Program',
+        description: 'Personalized 8-week program addressing stress triggers with weekly coaching sessions.',
+        category: 'wellness-prevention',
+        priority: 'medium',
+        estimatedRevenue: 400,
+        pricingModel: 'package',
+        conversionLikelihood: 'medium',
+        reasoning: 'Depression often correlates with stress. Patient has multiple chronic conditions that could benefit from structured stress management.',
+        suggestedActions: [
+          'Bundle with mental health package for better value',
+          'Share success stories from similar patients'
+        ]
+      }
     ]
   },
   {
@@ -93,6 +126,24 @@ export const populationTasksData: PopulationTask[] = [
         actorType: 'AI',
         action: 'Adherence concern identified',
         outcome: 'success'
+      }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-1003-1',
+        title: 'Medication Management Concierge Service',
+        description: 'Home medication delivery, automated reminders, and monthly adherence coaching to ensure optimal medication compliance.',
+        category: 'convenience',
+        priority: 'high',
+        estimatedRevenue: 150,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'high',
+        reasoning: 'Patient is already struggling with adherence. Convenience service would directly address the problem and improve health outcomes.',
+        suggestedActions: [
+          'Emphasize improved health outcomes and convenience',
+          'Offer first month free trial to demonstrate value',
+          'Highlight potential cost savings from preventing complications'
+        ]
       }
     ]
   },
@@ -197,6 +248,39 @@ export const populationTasksData: PopulationTask[] = [
         action: 'Task assigned to clinician for review',
         outcome: 'success'
       }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-2001-1',
+        title: 'Anxiety Mastery Program',
+        description: 'Intensive 12-week anxiety management program with weekly therapy, breathing techniques training, and 24/7 text support.',
+        category: 'mental-health',
+        priority: 'high',
+        estimatedRevenue: 800,
+        pricingModel: 'package',
+        conversionLikelihood: 'high',
+        reasoning: 'Acute anxiety escalation indicates patient needs more intensive support than current care provides. Program directly addresses panic symptoms.',
+        suggestedActions: [
+          'Present immediately given high severity',
+          'Emphasize panic symptom reduction success rates',
+          'Offer payment plan for affordability'
+        ]
+      },
+      {
+        id: 'opp-2001-2',
+        title: 'After-Hours Crisis Access',
+        description: 'Priority access to crisis counselor during evenings and weekends when anxiety symptoms typically peak.',
+        category: 'convenience',
+        priority: 'medium',
+        estimatedRevenue: 200,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'medium',
+        reasoning: 'Panic symptoms often occur outside business hours. Patient would benefit from knowing support is always available.',
+        suggestedActions: [
+          'Bundle with anxiety program for comprehensive care',
+          'Share testimonials from patients with similar profiles'
+        ]
+      }
     ]
   },
   {
@@ -269,6 +353,39 @@ export const populationTasksData: PopulationTask[] = [
         actorType: 'System',
         action: 'Escalated to QHP for medication review',
         outcome: 'success'
+      }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-3001-1',
+        title: 'Medication Optimization & Genetic Testing',
+        description: 'Comprehensive medication review with pharmacogenomic testing to identify optimal medications with minimal side effects.',
+        category: 'specialized-wellness',
+        priority: 'high',
+        estimatedRevenue: 500,
+        pricingModel: 'one-time',
+        conversionLikelihood: 'high',
+        reasoning: 'Patient experiencing significant side effects from current medication. Genetic testing would provide personalized insights to find better alternatives.',
+        suggestedActions: [
+          'Present as solution to current side effect problems',
+          'Explain how testing prevents future medication trials',
+          'Emphasize one-time cost with long-term benefits'
+        ]
+      },
+      {
+        id: 'opp-3001-2',
+        title: 'Premium Medication Monitoring',
+        description: 'Weekly medication check-ins with rapid adjustments and expedited provider access for side effect management.',
+        category: 'specialized-wellness',
+        priority: 'medium',
+        estimatedRevenue: 250,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'medium',
+        reasoning: 'Close monitoring during medication changes could prevent prolonged side effects and improve outcomes.',
+        suggestedActions: [
+          'Position as safety net during medication adjustments',
+          'Offer until stable on new medication'
+        ]
       }
     ]
   },

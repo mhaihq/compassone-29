@@ -16,6 +16,8 @@ import { Bot, Calendar, Clock, User, FileText, History } from 'lucide-react';
 import { IntakeDrawer } from './IntakeDrawer';
 import { CoordinationDrawer } from './CoordinationDrawer';
 import { AuditLogTimeline } from './AuditLogTimeline';
+import { BillingOpportunitiesSection } from './BillingOpportunitiesSection';
+import { toast } from 'sonner';
 
 interface TaskDetailDrawerProps {
   task: EnhancedPopulationTask | null;
@@ -33,6 +35,15 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
   const [showIntakeDrawer, setShowIntakeDrawer] = React.useState(false);
   const [showCoordinationDrawer, setShowCoordinationDrawer] = React.useState(false);
   const [showAuditLog, setShowAuditLog] = React.useState(false);
+
+  const handleDiscussService = (opportunityId: string) => {
+    const opportunity = task?.billingOpportunities?.find(opp => opp.id === opportunityId);
+    if (opportunity) {
+      toast.success(`Initiated discussion for: ${opportunity.title}`, {
+        description: 'This action would typically create a follow-up task or add to call script.'
+      });
+    }
+  };
 
   if (!task) return null;
 
@@ -216,6 +227,19 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
                         </div>
                       ))}
                     </div>
+                  </div>
+                </>
+              )}
+
+              {/* Billing Opportunities */}
+              {task.billingOpportunities && task.billingOpportunities.length > 0 && (
+                <>
+                  <Separator />
+                  <div className="my-6">
+                    <BillingOpportunitiesSection 
+                      opportunities={task.billingOpportunities}
+                      onDiscussService={handleDiscussService}
+                    />
                   </div>
                 </>
               )}
