@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  AlertTriangle, Clock, Play, Pause
+  AlertTriangle, Clock, Play, Pause, DollarSign
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ import { MonthlyStabilityReview } from '@/components/care-task/MonthlyStabilityR
 import { useNavigate } from 'react-router-dom';
 import { careTasksData as careTasksByCptCode, cptCodeInfo } from '@/components/layout/sidebar/care-tasks/careTasksData';
 import type { CareTask as ImportedCareTask } from '@/components/layout/sidebar/care-tasks/types';
+import type { BillingOpportunity } from '@/types/billingOpportunity';
 
 // Define consistent task interface
 interface CareTask {
@@ -46,6 +47,7 @@ interface CareTask {
     text: string;
     default: boolean;
   }>;
+  billingOpportunities?: BillingOpportunity[];
 }
 
 // Convert CPT-grouped tasks to flat task lookup
@@ -319,6 +321,29 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
           <div className="flex-1">
             <p className="text-xs font-semibold text-amber-900 mb-1">Why this was flagged:</p>
             <p className="text-xs text-amber-800">{task.flagReason}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Revenue Opportunities */}
+      {task.billingOpportunities && task.billingOpportunities.length > 0 && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-4">
+          <div className="flex items-start gap-2 mb-2">
+            <DollarSign className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+            <p className="text-xs font-semibold text-emerald-900">Revenue Opportunities:</p>
+          </div>
+          <div className="space-y-2 ml-6">
+            {task.billingOpportunities.map((opp) => (
+              <div key={opp.id} className="flex items-start justify-between gap-2">
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-emerald-800">{opp.title}</p>
+                  <p className="text-xs text-emerald-700 mt-0.5">{opp.description}</p>
+                </div>
+                <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-xs whitespace-nowrap">
+                  ${opp.estimatedRevenue}
+                </Badge>
+              </div>
+            ))}
           </div>
         </div>
       )}
