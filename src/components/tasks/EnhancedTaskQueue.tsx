@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { EnhancedPopulationTask, TaskFilters, TaskMetrics } from '@/types/enhancedTask';
-import { Search, Plus, Filter, List, LayoutGrid, Table as TableIcon, Kanban, ChevronRight, Bot } from 'lucide-react';
+import { Search, Plus, Filter, List, LayoutGrid, Table as TableIcon, Kanban, ChevronRight, Bot, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -141,6 +141,15 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
                   <Badge className="bg-violet-50 text-violet-700 border-violet-200 gap-1 text-xs px-1.5 py-0">
                     <Bot className="w-2.5 h-2.5" />
                     AI
+                  </Badge>
+                </>
+              )}
+              {task.billingOpportunities && task.billingOpportunities.length > 0 && (
+                <>
+                  <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                  <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 gap-1 text-xs px-1.5 py-0">
+                    <DollarSign className="w-2.5 h-2.5" />
+                    ${task.billingOpportunities.length}
                   </Badge>
                 </>
               )}

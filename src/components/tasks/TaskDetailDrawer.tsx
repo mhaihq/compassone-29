@@ -46,6 +46,20 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
     }
   };
 
+  // DEBUG: Log task data to verify billingOpportunities
+  React.useEffect(() => {
+    if (task) {
+      console.log('=== TASK DETAIL DRAWER DEBUG ===');
+      console.log('Task ID:', task.id);
+      console.log('Task Title:', task.title);
+      console.log('Has billingOpportunities?', !!task.billingOpportunities);
+      console.log('billingOpportunities length:', task.billingOpportunities?.length || 0);
+      console.log('billingOpportunities data:', task.billingOpportunities);
+      console.log('Full task object:', task);
+      console.log('================================');
+    }
+  }, [task]);
+
   if (!task) return null;
 
   const getModuleColor = (module: string) => {
