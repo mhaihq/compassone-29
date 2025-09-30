@@ -144,15 +144,6 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
                   </Badge>
                 </>
               )}
-              {task.billingOpportunities && task.billingOpportunities.length > 0 && (
-                <>
-                  <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                  <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 gap-1 text-xs px-1.5 py-0">
-                    <DollarSign className="w-2.5 h-2.5" />
-                    ${task.billingOpportunities.length}
-                  </Badge>
-                </>
-              )}
             </div>
             <p className="text-xs text-muted-foreground line-clamp-1">{task.description}</p>
           </div>
