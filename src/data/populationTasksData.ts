@@ -99,6 +99,24 @@ export const populationTasksData: PopulationTask[] = [
         action: 'Elevated BP reading captured',
         outcome: 'success'
       }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-1002-1',
+        title: 'Home Blood Pressure Monitoring Program',
+        description: 'Connected blood pressure monitor with daily tracking, trend analysis, and automated alerts to your care team.',
+        category: 'specialized-wellness',
+        priority: 'high',
+        estimatedRevenue: 180,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'high',
+        reasoning: 'Patient has elevated BP requiring close monitoring. Home monitoring program would provide better data for treatment optimization.',
+        suggestedActions: [
+          'Present as proactive solution to prevent complications',
+          'Emphasize convenience of home monitoring',
+          'Highlight potential to reduce in-person visits'
+        ]
+      }
     ]
   },
   {
@@ -180,6 +198,24 @@ export const populationTasksData: PopulationTask[] = [
         actorType: 'AI',
         action: 'Motivational SMS sent to patient',
         outcome: 'success'
+      }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-1004-1',
+        title: 'Personal Fitness Coaching Package',
+        description: 'Virtual personal trainer with customized workout plans, weekly video sessions, and progress tracking to help reach exercise goals.',
+        category: 'wellness-prevention',
+        priority: 'medium',
+        estimatedRevenue: 300,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'medium',
+        reasoning: 'Patient struggling to meet exercise goals. Personalized coaching would provide accountability and structure.',
+        suggestedActions: [
+          'Frame as investment in long-term health',
+          'Offer 2-week trial to build engagement',
+          'Share success stories from similar patients'
+        ]
       }
     ]
   },
@@ -318,6 +354,24 @@ export const populationTasksData: PopulationTask[] = [
         status: 'pending',
         notes: 'Schedule therapy session to address social withdrawal'
       }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-2002-1',
+        title: 'Group Therapy & Social Skills Program',
+        description: 'Structured group therapy sessions and social skills training to help overcome isolation patterns and build connections.',
+        category: 'mental-health',
+        priority: 'medium',
+        estimatedRevenue: 350,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'medium',
+        reasoning: 'Social isolation is a key concern. Group therapy provides structured social interaction in a safe, therapeutic environment.',
+        suggestedActions: [
+          'Emphasize safe, supportive environment',
+          'Highlight proven success with social anxiety',
+          'Offer trial session to reduce commitment anxiety'
+        ]
+      }
     ]
   },
   {
@@ -424,6 +478,24 @@ export const populationTasksData: PopulationTask[] = [
         action: 'Began trauma-informed intervention planning',
         outcome: 'success'
       }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-4001-1',
+        title: 'EMDR Therapy Intensive Program',
+        description: 'Specialized EMDR (Eye Movement Desensitization and Reprocessing) therapy for trauma processing with dedicated trauma therapist.',
+        category: 'mental-health',
+        priority: 'high',
+        estimatedRevenue: 900,
+        pricingModel: 'package',
+        conversionLikelihood: 'high',
+        reasoning: 'New PTSD trigger identified requiring specialized intervention. EMDR is evidence-based treatment for trauma processing.',
+        suggestedActions: [
+          'Present as specialized solution for workplace triggers',
+          'Emphasize evidence-based effectiveness for PTSD',
+          'Offer flexible scheduling around work commitments'
+        ]
+      }
     ]
   },
   {
@@ -478,6 +550,24 @@ export const populationTasksData: PopulationTask[] = [
         scheduledDate: '2025-05-25T10:00:00Z',
         status: 'completed',
         notes: 'Patient attended, re-engaged with treatment plan'
+      }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-5001-1',
+        title: 'Flexible Therapy Scheduling Package',
+        description: 'Priority scheduling with extended hours (evenings and weekends) and same-day appointment availability to prevent therapy fatigue.',
+        category: 'convenience',
+        priority: 'medium',
+        estimatedRevenue: 200,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'medium',
+        reasoning: 'Patient experiencing therapy fatigue partially due to scheduling conflicts. Flexible scheduling would improve engagement.',
+        suggestedActions: [
+          'Present as solution to prevent future missed sessions',
+          'Emphasize convenience and flexibility',
+          'Offer trial month to demonstrate value'
+        ]
       }
     ]
   },
@@ -534,6 +624,24 @@ export const populationTasksData: PopulationTask[] = [
         type: 'consent',
         status: 'completed',
         uploadedDate: '2025-05-25'
+      }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-6001-1',
+        title: 'White Glove Onboarding Service',
+        description: 'Dedicated enrollment specialist handles all paperwork, insurance verification, and appointment scheduling for seamless start to care.',
+        category: 'convenience',
+        priority: 'medium',
+        estimatedRevenue: 150,
+        pricingModel: 'one-time',
+        conversionLikelihood: 'medium',
+        reasoning: 'New patient struggling with enrollment paperwork. White glove service would reduce friction and ensure successful onboarding.',
+        suggestedActions: [
+          'Present as solution to current enrollment challenges',
+          'Emphasize time savings and stress reduction',
+          'Offer as one-time fee for hassle-free start'
+        ]
       }
     ]
   },
