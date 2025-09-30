@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Drawer, DrawerContent } from '@/components/ui/drawer';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { NewTaskModal } from './NewTaskModal';
 import { IntakeDrawer } from './IntakeDrawer';
 import { CoordinationDrawer } from './CoordinationDrawer';
@@ -30,7 +30,7 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
   const [showFilters, setShowFilters] = useState(false);
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<EnhancedPopulationTask | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   // Filter tasks
   const filteredTasks = tasks.filter(task => {
@@ -77,12 +77,12 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
     if (task.module === 'Monitoring') {
       navigate(`/care-task/${task.id}`);
     } else {
-      setDrawerOpen(true);
+      setSheetOpen(true);
     }
   };
 
-  const handleCloseDrawer = () => {
-    setDrawerOpen(false);
+  const handleCloseSheet = () => {
+    setSheetOpen(false);
     setSelectedTask(null);
   };
 
@@ -274,17 +274,17 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
         onSubmit={(data) => console.log('New task:', data)}
       />
 
-      {/* Module-Specific Drawers */}
-      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="h-[90vh]">
+      {/* Module-Specific Detail View */}
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-2xl p-0 overflow-hidden">
           {selectedTask && selectedTask.module === 'Intake' && (
-            <IntakeDrawer task={selectedTask} onClose={handleCloseDrawer} />
+            <IntakeDrawer task={selectedTask} onClose={handleCloseSheet} />
           )}
           {selectedTask && selectedTask.module === 'Coordination' && (
-            <CoordinationDrawer task={selectedTask} onClose={handleCloseDrawer} />
+            <CoordinationDrawer task={selectedTask} onClose={handleCloseSheet} />
           )}
-        </DrawerContent>
-      </Drawer>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
