@@ -89,46 +89,46 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
   const renderTaskRow = (task: EnhancedPopulationTask) => (
     <Card 
       key={task.id}
-      className="mb-2 hover:shadow-md transition-all cursor-pointer"
+      className="hover:shadow-sm transition-all cursor-pointer"
       onClick={() => handleTaskClick(task)}
     >
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
+      <CardContent className="p-3">
+        <div className="flex items-center gap-2">
           {/* Priority Indicator */}
-          <div className={`w-1 h-12 rounded-full ${getPriorityColor(task.priority)}`} />
+          <div className={`w-1 h-10 rounded-full flex-shrink-0 ${getPriorityColor(task.priority)}`} />
           
           {/* Task Content */}
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="font-medium text-foreground">{task.patientName}</span>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">{task.title}</span>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              <Badge className={`${getPriorityColor(task.priority)} text-white border-0`}>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1 mb-1 flex-wrap">
+              <span className="font-medium text-sm text-foreground truncate">{task.patientName}</span>
+              <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+              <span className="text-xs text-muted-foreground truncate">{task.title}</span>
+              <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+              <Badge className={`${getPriorityColor(task.priority)} text-white border-0 text-xs px-1.5 py-0`}>
                 {task.priority}
               </Badge>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              <Badge className={getModuleColor(task.module)}>
+              <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+              <Badge className={`${getModuleColor(task.module)} text-xs px-1.5 py-0`}>
                 {task.module}
               </Badge>
               {task.assignedToAI && (
                 <>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                  <Badge className="bg-violet-50 text-violet-700 border-violet-200 gap-1">
-                    <Bot className="w-3 h-3" />
+                  <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                  <Badge className="bg-violet-50 text-violet-700 border-violet-200 gap-1 text-xs px-1.5 py-0">
+                    <Bot className="w-2.5 h-2.5" />
                     AI
                   </Badge>
                 </>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">{task.description}</p>
+            <p className="text-xs text-muted-foreground line-clamp-1">{task.description}</p>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <span className="text-xs text-muted-foreground">{task.estimatedTime}</span>
-            <Button variant="ghost" size="sm" className="text-primary">
-              Take Action
+            <Button variant="ghost" size="sm" className="text-primary h-7 px-2 text-xs">
+              Action
             </Button>
           </div>
         </div>
@@ -137,13 +137,13 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
   );
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="p-6 border-b border-border">
-        <div className="flex items-center justify-between mb-4">
+    <div className="flex flex-col h-full bg-background">
+      {/* Header - Fixed at top */}
+      <div className="flex-shrink-0 p-4 bg-card border-b border-border">
+        <div className="flex items-center justify-between mb-3">
           <div>
-            <h2 className="text-2xl font-semibold text-foreground">Task Queue</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h2 className="text-lg font-semibold text-foreground">Task Queue</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
               {filteredTasks.length} tasks {filters.module !== 'All' && `in ${filters.module}`}
             </p>
           </div>
@@ -152,25 +152,25 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
               variant="outline"
               size="sm"
               onClick={() => setViewMode(viewMode === 'list' ? 'kanban' : 'list')}
-              className="gap-2"
+              className="gap-1 h-8 px-2 text-xs"
             >
-              {viewMode === 'list' ? <LayoutGrid className="w-4 h-4" /> : <List className="w-4 h-4" />}
+              {viewMode === 'list' ? <LayoutGrid className="w-3 h-3" /> : <List className="w-3 h-3" />}
               {viewMode === 'list' ? 'Kanban' : 'List'}
             </Button>
-            <Button onClick={() => setShowNewTaskModal(true)} className="gap-2">
-              <Plus className="w-4 h-4" />
+            <Button onClick={() => setShowNewTaskModal(true)} className="gap-1 h-8 px-2 text-xs">
+              <Plus className="w-3 h-3" />
               New Task
             </Button>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
             <Input
-              placeholder="Search by patient name or task..."
-              className="pl-10"
+              placeholder="Search tasks..."
+              className="pl-7 h-8 text-xs"
               value={filters.searchTerm}
               onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value })}
             />
@@ -179,24 +179,24 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
             variant="outline"
             size="sm"
             onClick={() => setShowFilters(!showFilters)}
-            className="gap-2"
+            className="gap-1 h-8 px-2 text-xs"
           >
-            <Filter className="w-4 h-4" />
+            <Filter className="w-3 h-3" />
             Filters
           </Button>
         </div>
 
         {/* Filter Controls */}
         {showFilters && (
-          <div className="grid grid-cols-4 gap-3 mt-4 p-4 bg-muted/50 rounded-lg">
+          <div className="grid grid-cols-2 gap-2 mt-3 p-3 bg-muted/50 rounded-md">
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Module</label>
               <Select value={filters.module} onValueChange={(v: any) => setFilters({ ...filters, module: v })}>
-                <SelectTrigger>
+                <SelectTrigger className="h-7 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-popover z-50">
-                  <SelectItem value="All">All Modules</SelectItem>
+                  <SelectItem value="All">All</SelectItem>
                   <SelectItem value="Intake">Intake</SelectItem>
                   <SelectItem value="Coordination">Coordination</SelectItem>
                   <SelectItem value="Monitoring">Monitoring</SelectItem>
@@ -206,11 +206,11 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Priority</label>
               <Select value={filters.priority} onValueChange={(v: any) => setFilters({ ...filters, priority: v })}>
-                <SelectTrigger>
+                <SelectTrigger className="h-7 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-popover z-50">
-                  <SelectItem value="All">All Priorities</SelectItem>
+                  <SelectItem value="All">All</SelectItem>
                   <SelectItem value="High">High</SelectItem>
                   <SelectItem value="Medium">Medium</SelectItem>
                   <SelectItem value="Low">Low</SelectItem>
@@ -220,11 +220,11 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Status</label>
               <Select value={filters.status} onValueChange={(v: any) => setFilters({ ...filters, status: v })}>
-                <SelectTrigger>
+                <SelectTrigger className="h-7 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-popover z-50">
-                  <SelectItem value="All">All Statuses</SelectItem>
+                  <SelectItem value="All">All</SelectItem>
                   <SelectItem value="needs-review">Needs Review</SelectItem>
                   <SelectItem value="in-progress">In Progress</SelectItem>
                   <SelectItem value="needs-qhp">Needs QHP</SelectItem>
@@ -235,13 +235,13 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Assignee</label>
               <Select value={filters.assignee} onValueChange={(v: any) => setFilters({ ...filters, assignee: v })}>
-                <SelectTrigger>
+                <SelectTrigger className="h-7 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-popover z-50">
                   <SelectItem value="All">All</SelectItem>
-                  <SelectItem value="AI">AI Only</SelectItem>
-                  <SelectItem value="Staff">Staff Only</SelectItem>
+                  <SelectItem value="AI">AI</SelectItem>
+                  <SelectItem value="Staff">Staff</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -249,11 +249,11 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
         )}
       </div>
 
-      {/* Task List */}
-      <div className="flex-1 overflow-y-auto p-6">
+      {/* Task List - Scrollable */}
+      <div className="flex-1 overflow-y-auto p-4">
         {filteredTasks.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No tasks found matching your filters</p>
+          <div className="text-center py-8">
+            <p className="text-sm text-muted-foreground">No tasks found</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -262,8 +262,10 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks }) =
         )}
       </div>
 
-      {/* Metrics Footer */}
-      <TaskMetricsFooter metrics={metrics} />
+      {/* Metrics Footer - Fixed at bottom */}
+      <div className="flex-shrink-0">
+        <TaskMetricsFooter metrics={metrics} />
+      </div>
 
       {/* New Task Modal */}
       <NewTaskModal
