@@ -153,9 +153,9 @@ export const PopulationSidebar = () => {
                   <CareTaskContent taskId={selectedTaskId!} onComplete={handleTaskComplete} />
                 </div>
               ) : selectedTask.module === 'Intake' ? (
-                <IntakeDrawer task={selectedTask} onClose={handleBackToTasks} />
+                <IntakeDrawer task={selectedTask} open={true} onClose={handleBackToTasks} />
               ) : selectedTask.module === 'Coordination' ? (
-                <CoordinationDrawer task={selectedTask} onClose={handleBackToTasks} />
+                <CoordinationDrawer task={selectedTask} open={true} onClose={handleBackToTasks} />
               ) : null
             ) : isViewingPatient && selectedPatientId ? (
               <PatientDetailContent patientId={selectedPatientId} />

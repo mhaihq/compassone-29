@@ -239,6 +239,7 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
             </SheetHeader>
             <IntakeDrawer
               task={task}
+              open={showIntakeDrawer}
               onClose={() => setShowIntakeDrawer(false)}
             />
           </SheetContent>
@@ -253,6 +254,7 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
             </SheetHeader>
             <CoordinationDrawer
               task={task}
+              open={showCoordinationDrawer}
               onClose={() => setShowCoordinationDrawer(false)}
             />
           </SheetContent>
