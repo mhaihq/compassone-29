@@ -72,14 +72,14 @@ export default {
 				},
 				clinical: {
 					blue: '#0ea5e9',
-					green: '#10b981',
+					green: '#1a1a1a',
 					purple: '#a855f7',
 					orange: '#f97316'
 				},
                 // Hana theme colors
                 hana: {
-                    green: '#1E4D36',
-                    lightGreen: '#EBF4F0',
+                    green: '#1a1a1a',
+                    lightGreen: '#f5f5f5',
                     blue: '#E5F0FF',
                     yellow: '#FFF8E6',
                     red: '#FFEBE6',
@@ -96,14 +96,14 @@ export default {
                     dark: '#FF991F',
                 },
                 positive: {
-                    light: '#EBF4F0',
-                    DEFAULT: '#1E4D36',
-                    dark: '#1E4D36',
+                    light: '#f5f5f5',
+                    DEFAULT: '#1a1a1a',
+                    dark: '#000000',
                 },
                 report: {
                     accent: '#4A90E2',
                     muted: '#F7F9FC',
-                    success: '#2ECC71',
+                    success: '#1a1a1a',
                     warning: '#F1C40F',
                     danger: '#E74C3C',
                     text: {

@@ -84,7 +84,7 @@ export const PopulationSidebar = () => {
   return (
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
       <SheetTrigger asChild>
-        <button className={`flex items-center justify-center w-10 h-10 bg-[#1E4D36] rounded-full shadow-lg hover:bg-[#2A6349] transition-colors pulse-animation fixed ${iconPosition} z-50`} aria-label="Open Population Health sidebar">
+        <button className={`flex items-center justify-center w-10 h-10 bg-[#1a1a1a] rounded-full shadow-lg hover:bg-[#333333] transition-colors pulse-animation fixed ${iconPosition} z-50`} aria-label="Open Population Health sidebar">
           <img src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" alt="Hana Clinic Logo" className="h-6 w-6 object-contain" />
         </button>
       </SheetTrigger>
@@ -109,19 +109,19 @@ export const PopulationSidebar = () => {
                   <>
                     <img src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" alt="Hana Clinic Logo" className="h-14 w-auto" />
                     <div>
-                      <h2 className="text-2xl font-bold text-[#1E4D36]">Hana Compass</h2>
-                      <p className="text-sm text-[#2A6349]">Population Health Assistant</p>
+                      <h2 className="text-2xl font-bold text-[#1a1a1a]">Hana Compass</h2>
+                      <p className="text-sm text-[#333333]">Population Health Assistant</p>
                     </div>
                   </>
                 )}
                 {isViewingTask && (
                   <div>
-                    <h2 className="text-xl font-bold text-[#1E4D36]">Care Task Details</h2>
+                    <h2 className="text-xl font-bold text-[#1a1a1a]">Care Task Details</h2>
                   </div>
                 )}
                 {isViewingPatient && (
                   <div>
-                    <h2 className="text-xl font-bold text-[#1E4D36]">Patient Details</h2>
+                    <h2 className="text-xl font-bold text-[#1a1a1a]">Patient Details</h2>
                   </div>
                 )}
               </div>

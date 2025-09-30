@@ -12,8 +12,8 @@ import CareTaskDetail from "./pages/CareTaskDetail";
 // Define Hana colors
 const hanaColors = {
   background: '#E6F0EE',
-  primary: '#1E4D36',
-  secondary: '#2A6349'
+  primary: '#1a1a1a',
+  secondary: '#333333'
 };
 
 const queryClient = new QueryClient();

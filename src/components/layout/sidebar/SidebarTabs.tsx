@@ -15,7 +15,7 @@ export const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTa
         <Button 
           variant={activeTab === 'overview' ? 'default' : 'outline'} 
           size="sm"
-          className={`px-4 py-2 ${activeTab === 'overview' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          className={`px-4 py-2 ${activeTab === 'overview' ? 'bg-[#1a1a1a] hover:bg-[#333333]' : ''}`}
           onClick={() => setActiveTab('overview')}
         >
           <Brain size={18} className="mr-2" />
@@ -24,7 +24,7 @@ export const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTa
         <Button 
           variant={activeTab === 'careLog' ? 'default' : 'outline'} 
           size="sm"
-          className={`px-4 py-2 ${activeTab === 'careLog' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          className={`px-4 py-2 ${activeTab === 'careLog' ? 'bg-[#1a1a1a] hover:bg-[#333333]' : ''}`}
           onClick={() => setActiveTab('careLog')}
         >
           <Calendar size={18} className="mr-2" />
@@ -33,7 +33,7 @@ export const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTa
         <Button 
           variant={activeTab === 'protocols' ? 'default' : 'outline'} 
           size="sm"
-          className={`px-4 py-2 ${activeTab === 'protocols' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          className={`px-4 py-2 ${activeTab === 'protocols' ? 'bg-[#1a1a1a] hover:bg-[#333333]' : ''}`}
           onClick={() => setActiveTab('protocols')}
         >
           <ClipboardList size={18} className="mr-2" />
@@ -42,7 +42,7 @@ export const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTa
         <Button 
           variant={activeTab === 'billing' ? 'default' : 'outline'} 
           size="sm"
-          className={`px-4 py-2 ${activeTab === 'billing' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          className={`px-4 py-2 ${activeTab === 'billing' ? 'bg-[#1a1a1a] hover:bg-[#333333]' : ''}`}
           onClick={() => setActiveTab('billing')}
         >
           <FileText size={18} className="mr-2" />

@@ -15,7 +15,7 @@ export const PopulationSidebarTabs: React.FC<PopulationSidebarTabsProps> = ({ ac
         <Button 
           variant={activeTab === 'taskQueue' ? 'default' : 'outline'} 
           size="sm"
-          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'taskQueue' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'taskQueue' ? 'bg-[#1a1a1a] hover:bg-[#333333]' : ''}`}
           onClick={() => setActiveTab('taskQueue')}
         >
           <ListChecks size={16} className="mr-1" />
@@ -24,7 +24,7 @@ export const PopulationSidebarTabs: React.FC<PopulationSidebarTabsProps> = ({ ac
         <Button 
           variant={activeTab === 'patients' ? 'default' : 'outline'} 
           size="sm"
-          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'patients' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'patients' ? 'bg-[#1a1a1a] hover:bg-[#333333]' : ''}`}
           onClick={() => setActiveTab('patients')}
         >
           <Users size={16} className="mr-1" />
@@ -33,7 +33,7 @@ export const PopulationSidebarTabs: React.FC<PopulationSidebarTabsProps> = ({ ac
         <Button 
           variant={activeTab === 'campaigns' ? 'default' : 'outline'} 
           size="sm"
-          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'campaigns' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'campaigns' ? 'bg-[#1a1a1a] hover:bg-[#333333]' : ''}`}
           onClick={() => setActiveTab('campaigns')}
         >
           <Megaphone size={16} className="mr-1" />
@@ -42,7 +42,7 @@ export const PopulationSidebarTabs: React.FC<PopulationSidebarTabsProps> = ({ ac
         <Button 
           variant={activeTab === 'billing' ? 'default' : 'outline'} 
           size="sm"
-          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'billing' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'billing' ? 'bg-[#1a1a1a] hover:bg-[#333333]' : ''}`}
           onClick={() => setActiveTab('billing')}
         >
           <FileText size={16} className="mr-1" />
@@ -51,7 +51,7 @@ export const PopulationSidebarTabs: React.FC<PopulationSidebarTabsProps> = ({ ac
         <Button 
           variant={activeTab === 'insights' ? 'default' : 'outline'} 
           size="sm"
-          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'insights' ? 'bg-[#1E4D36] hover:bg-[#2A6349]' : ''}`}
+          className={`px-3 py-2 whitespace-nowrap ${activeTab === 'insights' ? 'bg-[#1a1a1a] hover:bg-[#333333]' : ''}`}
           onClick={() => setActiveTab('insights')}
         >
           <BarChart3 size={16} className="mr-1" />

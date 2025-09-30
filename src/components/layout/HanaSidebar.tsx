@@ -38,7 +38,7 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
       <SheetTrigger asChild>
         <button 
-          className="flex items-center justify-center w-10 h-10 bg-[#1E4D36] rounded-full shadow-lg hover:bg-[#2A6349] transition-colors pulse-animation fixed right-4 top-20 z-50"
+          className="flex items-center justify-center w-10 h-10 bg-[#1a1a1a] rounded-full shadow-lg hover:bg-[#333333] transition-colors pulse-animation fixed right-4 top-20 z-50"
           aria-label="Open Hana sidebar"
         >
           <img 
@@ -61,8 +61,8 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
                   className="h-14 w-auto"
                 />
                 <div>
-                  <h2 className="text-2xl font-bold text-[#1E4D36]">Hana Compass</h2>
-                  <p className="text-sm text-[#2A6349]">Patient Care Assistant</p>
+                  <h2 className="text-2xl font-bold text-[#1a1a1a]">Hana Compass</h2>
+                  <p className="text-sm text-[#333333]">Patient Care Assistant</p>
                 </div>
               </div>
               <button 
