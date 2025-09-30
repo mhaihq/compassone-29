@@ -15,6 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Bot, Calendar, Clock, User, FileText, History } from 'lucide-react';
 import { IntakeDrawer } from './IntakeDrawer';
 import { CoordinationDrawer } from './CoordinationDrawer';
+import { MonthlyStabilityReview } from '@/components/care-task/MonthlyStabilityReview';
 import { AuditLogTimeline } from './AuditLogTimeline';
 
 interface TaskDetailDrawerProps {
@@ -32,7 +33,27 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
 }) => {
   const [showIntakeDrawer, setShowIntakeDrawer] = React.useState(false);
   const [showCoordinationDrawer, setShowCoordinationDrawer] = React.useState(false);
+  const [showMonitoringDrawer, setShowMonitoringDrawer] = React.useState(false);
   const [showAuditLog, setShowAuditLog] = React.useState(false);
+  const [timer, setTimer] = React.useState(0);
+
+  // Timer for monitoring tasks
+  React.useEffect(() => {
+    if (showMonitoringDrawer) {
+      const interval = setInterval(() => {
+        setTimer(prev => prev + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setTimer(0);
+    }
+  }, [showMonitoringDrawer]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   if (!task) return null;
 
@@ -186,6 +207,15 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
                       View Appointments
                     </Button>
                   )}
+                  {task.module === 'Monitoring' && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowMonitoringDrawer(true)}
+                    >
+                      Start Review
+                    </Button>
+                  )}
                   <Button 
                     variant="outline" 
                     size="sm"
@@ -257,6 +287,29 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
               open={showCoordinationDrawer}
               onClose={() => setShowCoordinationDrawer(false)}
             />
+          </SheetContent>
+        </Sheet>
+      )}
+
+      {task.module === 'Monitoring' && showMonitoringDrawer && (
+        <Sheet open={showMonitoringDrawer} onOpenChange={setShowMonitoringDrawer}>
+          <SheetContent className="w-full sm:max-w-4xl">
+            <SheetHeader>
+              <SheetTitle>Monthly Stability Review</SheetTitle>
+            </SheetHeader>
+            <ScrollArea className="h-full mt-4">
+              <MonthlyStabilityReview
+                task={task}
+                onComplete={() => {
+                  setShowMonitoringDrawer(false);
+                  if (onUpdate) {
+                    onUpdate(task.id, { status: 'completed' });
+                  }
+                }}
+                timer={timer}
+                formatTime={formatTime}
+              />
+            </ScrollArea>
           </SheetContent>
         </Sheet>
       )}
