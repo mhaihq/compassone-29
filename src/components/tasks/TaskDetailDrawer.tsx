@@ -155,6 +155,13 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
                     <span className="font-medium">{task.estimatedTime}</span>
                   </div>
                 </div>
+
+                {/* Revenue Opportunity Summary */}
+                {task.billingOpportunities && task.billingOpportunities.length > 0 && (
+                  <div className="text-sm text-muted-foreground mt-2">
+                    Revenue Opportunity: {task.billingOpportunities.length} cash-pay service{task.billingOpportunities.length > 1 ? 's' : ''} available (Est. ${task.billingOpportunities.reduce((sum, opp) => sum + opp.estimatedRevenue, 0).toLocaleString()})
+                  </div>
+                )}
               </div>
 
               <Separator />
