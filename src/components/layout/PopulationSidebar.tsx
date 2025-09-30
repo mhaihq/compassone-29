@@ -12,7 +12,7 @@ import { PatientDetailContent } from './sidebar/population/PatientDetailContent'
 import { PatientInfoCard } from './sidebar/PatientInfoCard';
 import { IntakeDrawer } from '@/components/tasks/IntakeDrawer';
 import { CoordinationDrawer } from '@/components/tasks/CoordinationDrawer';
-import { MonthlyStabilityReview } from '@/components/care-task/MonthlyStabilityReview';
+import { MonitoringDrawer } from '@/components/tasks/MonitoringDrawer';
 import { useLocation } from 'react-router-dom';
 import { patientData } from '@/data/patientData';
 import { getPatientDataSummary } from '@/services/patientService';
@@ -25,7 +25,6 @@ export const PopulationSidebar = () => {
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   const [isViewingTask, setIsViewingTask] = useState(false);
   const [isViewingPatient, setIsViewingPatient] = useState(false);
-  const [timer, setTimer] = useState(0);
   const location = useLocation();
 
   // Adjust positioning based on current page
@@ -51,24 +50,6 @@ export const PopulationSidebar = () => {
   const selectedTask = selectedTaskId 
     ? populationTasksData.find(task => task.id === selectedTaskId)
     : null;
-
-  // Timer for monitoring tasks
-  React.useEffect(() => {
-    if (isViewingTask && selectedTask?.module === 'Monitoring') {
-      const interval = setInterval(() => {
-        setTimer(prev => prev + 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    } else {
-      setTimer(0);
-    }
-  }, [isViewingTask, selectedTask?.module]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
   
   const handleBackToPatients = () => {
     setIsViewingPatient(false);
@@ -167,14 +148,7 @@ export const PopulationSidebar = () => {
           <div className={`flex-grow overflow-y-auto ${isViewingTask ? 'p-0' : 'p-4'}`}>
             {isViewingTask && selectedTask ? (
               selectedTask.module === 'Monitoring' ? (
-                <div className="h-full p-4">
-                  <MonthlyStabilityReview
-                    task={selectedTask}
-                    onComplete={handleTaskComplete}
-                    timer={timer}
-                    formatTime={formatTime}
-                  />
-                </div>
+                <MonitoringDrawer task={selectedTask} open={true} onClose={handleBackToTasks} />
               ) : selectedTask.module === 'Intake' ? (
                 <IntakeDrawer task={selectedTask} open={true} onClose={handleBackToTasks} />
               ) : selectedTask.module === 'Coordination' ? (
