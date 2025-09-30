@@ -17,6 +17,16 @@ export const CampaignsContent: React.FC = () => {
 
   const [recommendedCampaigns, setRecommendedCampaigns] = useState([
     {
+      id: 6,
+      title: 'Re-Engagement Initiative for Dormant Patients',
+      category: 'Patient Retention',
+      priority: 'High priority',
+      priorityColor: 'bg-red-100 text-red-800',
+      description: 'Voice with SMS fallback for sensitive mental health outreach',
+      patients: '195 patients',
+      startDate: '5/28/2025'
+    },
+    {
       id: 2,
       title: 'PHQ-9 Kickoff',
       category: 'Behavioral Health',

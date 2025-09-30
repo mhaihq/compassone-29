@@ -3,7 +3,7 @@ export interface CampaignPatient {
   id: string;
   name: string;
   phone: string;
-  status: 'pending' | 'contacted' | 'enrolled' | 'declined' | 'callback-scheduled';
+  status: 'pending' | 'contacted' | 'enrolled' | 'declined' | 'callback-scheduled' | 're-engaged';
   lastContactDate?: string;
   nextContactDate?: string;
   contactAttempts: number;
@@ -163,5 +163,136 @@ export const ccmCampaignData: EnhancedCampaign = {
     reimbursementRate: 62.15,
     totalRevenue: 745.80,
     complianceStatus: 'compliant'
+  }
+};
+
+export const dormantPatientCampaignData: EnhancedCampaign = {
+  id: 6,
+  title: 'Re-Engagement Initiative for Dormant Patients',
+  category: 'Patient Retention',
+  status: 'Recommended',
+  statusColor: 'bg-yellow-100 text-yellow-800',
+  priority: 'High priority',
+  priorityColor: 'bg-red-100 text-red-800',
+  description: 'Voice with SMS fallback for sensitive mental health outreach',
+  reached: '0 of 195 reached',
+  startDate: '5/28/2025',
+  completion: 0,
+  patients: [
+    {
+      id: 'P006',
+      name: 'Thomas Anderson',
+      phone: '(555) 678-9012',
+      status: 'pending',
+      contactAttempts: 0,
+      notes: 'Severe depression - last seen 120 days ago',
+      riskLevel: 'high',
+      eligibilityScore: 96
+    },
+    {
+      id: 'P007',
+      name: 'Linda Martinez',
+      phone: '(555) 789-0123',
+      status: 'pending',
+      contactAttempts: 0,
+      notes: 'Bipolar disorder - missed last 3 appointments',
+      riskLevel: 'high',
+      eligibilityScore: 94
+    },
+    {
+      id: 'P008',
+      name: 'James Wilson',
+      phone: '(555) 890-1234',
+      status: 'contacted',
+      lastContactDate: '2025-05-27',
+      contactAttempts: 1,
+      notes: 'PTSD - expressed interest in resuming care',
+      riskLevel: 'high',
+      eligibilityScore: 91
+    },
+    {
+      id: 'P009',
+      name: 'Patricia Lee',
+      phone: '(555) 901-2345',
+      status: 'callback-scheduled',
+      lastContactDate: '2025-05-26',
+      nextContactDate: '2025-05-29',
+      contactAttempts: 1,
+      notes: 'Moderate anxiety - wants to discuss telehealth options',
+      riskLevel: 'medium',
+      eligibilityScore: 85
+    },
+    {
+      id: 'P010',
+      name: 'Kevin Brown',
+      phone: '(555) 012-3456',
+      status: 're-engaged',
+      lastContactDate: '2025-05-27',
+      contactAttempts: 2,
+      enrollmentDate: '2025-05-27',
+      notes: 'Successfully scheduled appointment for next week',
+      riskLevel: 'medium',
+      eligibilityScore: 83
+    },
+    {
+      id: 'P011',
+      name: 'Susan Taylor',
+      phone: '(555) 123-4568',
+      status: 'declined',
+      lastContactDate: '2025-05-25',
+      contactAttempts: 2,
+      notes: 'Not interested in resuming treatment at this time',
+      riskLevel: 'medium',
+      eligibilityScore: 78
+    },
+    {
+      id: 'P012',
+      name: 'Christopher Davis',
+      phone: '(555) 234-5679',
+      status: 'pending',
+      contactAttempts: 0,
+      notes: 'Substance use disorder - 90 days since last contact',
+      riskLevel: 'high',
+      eligibilityScore: 97
+    }
+  ],
+  scripts: [
+    {
+      id: 'S004',
+      type: 'initial',
+      title: 'Gentle Re-engagement Outreach',
+      content: 'Hi [Patient Name], this is [Staff Name] from Hana Clinic. We\'ve been thinking about you and wanted to check in. Your mental health is important to us, and we\'re here to support you whenever you\'re ready to reconnect...',
+      duration: '3-4 minutes'
+    },
+    {
+      id: 'S005',
+      type: 'follow-up',
+      title: 'Supportive Follow-up',
+      content: 'Hello [Patient Name], I wanted to follow up on our previous call. We understand life gets busy, and we have flexible scheduling options including telehealth that might work better for you...',
+      duration: '2-3 minutes'
+    },
+    {
+      id: 'S006',
+      type: 'callback',
+      title: 'Scheduled Reconnection',
+      content: 'Hi [Patient Name], I\'m calling back as we discussed. We\'re so glad you\'re open to resuming your care. Let\'s talk about what would work best for your schedule...',
+      duration: '3-5 minutes'
+    }
+  ],
+  metrics: {
+    totalPatients: 195,
+    contacted: 18,
+    enrolled: 3,
+    declined: 4,
+    pending: 170,
+    conversionRate: 16.7,
+    avgCallDuration: '5.1 min',
+    costPerEnrollment: 22.50
+  },
+  billingInfo: {
+    cptCode: '99490',
+    reimbursementRate: 62.15,
+    totalRevenue: 186.45,
+    complianceStatus: 'pending'
   }
 };
