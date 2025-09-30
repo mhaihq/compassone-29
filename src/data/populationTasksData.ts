@@ -1,509 +1,75 @@
-
 import { EnhancedPopulationTask } from '@/types/enhancedTask';
 
 export type PopulationTask = EnhancedPopulationTask;
 
 export const populationTasksData: PopulationTask[] = [
-  // Matteo Grassi - High Priority Hana-triggered insights matching his hypertension and depression
+  // Intake Tasks
   {
-    id: 'T-1001',
-    title: 'Mental Health Monitoring',
+    id: 'T-INT-001',
+    title: 'Intake Complete – Review & Push',
     patientName: 'Matteo Grassi',
     patientId: 'P100592',
-    description: 'High Alert: Depression symptoms requiring immediate clinical review and intervention',
-    priority: 'High',
-    estimatedTime: '12 min',
-    status: 'needs-review',
-    dueDate: '2025-05-27',
-    taskType: 'Mental Health Alert',
-    triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-22',
-    module: 'Monitoring',
-    channel: 'Call',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-1001',
-        timestamp: '2025-05-22T14:30:00Z',
-        actor: 'Hana AI Coach',
-        actorType: 'AI',
-        action: 'Depression symptoms detected during routine call',
-        outcome: 'success'
-      }
-    ],
-    evidenceFromCall: [
-      {
-        text: 'Patient expressed feeling hopeless about future',
-        timestamp: '14:32',
-        importance: 'high'
-      }
-    ]
-  },
-  {
-    id: 'T-1002',
-    title: 'Blood Pressure Elevated',
-    patientName: 'Matteo Grassi',
-    patientId: 'P100592',
-    description: 'Recent reading 138/88 mmHg, above target range',
-    priority: 'High',
-    estimatedTime: '5 min',
-    status: 'needs-review',
-    dueDate: '2025-05-27',
-    taskType: 'Hypertension Management',
-    triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-22',
-    module: 'Monitoring',
-    channel: 'Call',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-1002',
-        timestamp: '2025-05-22T10:15:00Z',
-        actor: 'Hana AI Coach',
-        actorType: 'AI',
-        action: 'Elevated BP reading captured',
-        outcome: 'success'
-      }
-    ]
-  },
-  {
-    id: 'T-1003',
-    title: 'Medication Adherence Check',
-    patientName: 'Matteo Grassi',
-    patientId: 'P100592',
-    description: 'Patient reports occasional missed doses of Lisinopril',
+    description: 'AI completed all intake fields, waiting for staff confirmation and EHR push',
     priority: 'Medium',
-    estimatedTime: '4 min',
+    estimatedTime: '8 min',
     status: 'needs-review',
     dueDate: '2025-05-28',
-    taskType: 'Medication Adherence',
-    triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-20',
-    module: 'Monitoring',
-    channel: 'Call',
-    assignedToAI: true,
-    aiStatus: 'pending',
-    auditLog: [
-      {
-        id: 'audit-1003',
-        timestamp: '2025-05-20T16:45:00Z',
-        actor: 'Hana AI Coach',
-        actorType: 'AI',
-        action: 'Adherence concern identified',
-        outcome: 'success'
-      }
-    ]
-  },
-  {
-    id: 'T-1004',
-    title: 'Exercise Goals Not Met',
-    patientName: 'Matteo Grassi',
-    patientId: 'P100592',
-    description: 'Only achieving 90 min/week vs target 150 min/week',
-    priority: 'Medium',
-    estimatedTime: '6 min',
-    status: 'needs-review',
-    dueDate: '2025-05-28',
-    taskType: 'Lifestyle Management',
-    triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-20',
-    module: 'Monitoring',
-    channel: 'SMS',
+    taskType: 'Intake Review',
+    triggeredBy: 'AI Intake Agent',
+    module: 'Intake',
+    channel: 'Email',
     assignedToAI: true,
     aiStatus: 'completed',
     auditLog: [
       {
-        id: 'audit-1004',
-        timestamp: '2025-05-20T11:30:00Z',
-        actor: 'Hana AI Coach',
+        id: 'audit-int-001-1',
+        timestamp: '2025-05-26T09:15:00Z',
+        actor: 'AI Intake Agent',
         actorType: 'AI',
-        action: 'Exercise goal tracking updated',
+        action: 'Completed all intake field collection via automated forms',
         outcome: 'success'
       },
       {
-        id: 'audit-1004-2',
-        timestamp: '2025-05-21T09:15:00Z',
-        actor: 'AI Agent',
+        id: 'audit-int-001-2',
+        timestamp: '2025-05-26T09:20:00Z',
+        actor: 'AI Intake Agent',
         actorType: 'AI',
-        action: 'Motivational SMS sent to patient',
+        action: 'Verified patient demographics and insurance information',
         outcome: 'success'
-      }
-    ]
-  },
-  {
-    id: 'T-MSR-001',
-    title: 'Monthly Stability Review',
-    patientName: 'Matteo Grassi',
-    patientId: 'P100592',
-    description: 'Comprehensive monthly assessment of mental health stability and care plan effectiveness',
-    priority: 'Medium',
-    estimatedTime: '15 min',
-    status: 'needs-review',
-    dueDate: '2025-05-30',
-    taskType: 'Monthly Stability Review',
-    triggeredBy: 'Scheduled Review',
-    callDate: 'N/A',
-    module: 'Monitoring',
-    channel: 'Call',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
+      },
       {
-        id: 'audit-msr-001',
-        timestamp: '2025-05-01T00:00:00Z',
+        id: 'audit-int-001-3',
+        timestamp: '2025-05-26T09:25:00Z',
         actor: 'System',
         actorType: 'System',
-        action: 'Monthly review task auto-generated',
-        outcome: 'success'
-      }
-    ]
-  },
-
-  // Other patients - Hana-triggered insights
-  {
-    id: 'T-2001',
-    title: 'Anxiety Spike During Calls',
-    patientName: 'James Thompson',
-    patientId: 'P100593',
-    description: 'GAD-7 indicators increased, mentions panic symptoms',
-    priority: 'High',
-    estimatedTime: '7 min',
-    status: 'in-progress',
-    assignedTo: 'Dr. Sarah Wilson',
-    dueDate: '2025-05-27',
-    taskType: 'Mental Health Alert',
-    triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-23',
-    module: 'Monitoring',
-    channel: 'Call',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-2001',
-        timestamp: '2025-05-23T13:20:00Z',
-        actor: 'Hana AI Coach',
-        actorType: 'AI',
-        action: 'Anxiety escalation detected',
-        outcome: 'success'
-      },
-      {
-        id: 'audit-2001-2',
-        timestamp: '2025-05-23T14:00:00Z',
-        actor: 'Dr. Sarah Wilson',
-        actorType: 'Staff',
-        action: 'Task assigned to clinician for review',
-        outcome: 'success'
-      }
-    ]
-  },
-  {
-    id: 'T-2002',
-    title: 'Social Isolation Pattern',
-    patientName: 'James Thompson',
-    patientId: 'P100593',
-    description: 'Reports avoiding social activities for 2 weeks straight',
-    priority: 'Medium',
-    estimatedTime: '5 min',
-    status: 'needs-review',
-    dueDate: '2025-05-29',
-    taskType: 'Behavioral Health',
-    triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-23',
-    module: 'Coordination',
-    channel: 'Email',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-2002',
-        timestamp: '2025-05-23T15:45:00Z',
-        actor: 'Hana AI Coach',
-        actorType: 'AI',
-        action: 'Social isolation pattern identified',
-        outcome: 'success'
-      }
-    ],
-    coordinationAppointments: [
-      {
-        id: 'appt-2002',
-        type: 'Follow-up',
-        provider: 'Therapist Johnson',
-        status: 'pending',
-        notes: 'Schedule therapy session to address social withdrawal'
-      }
-    ]
-  },
-  {
-    id: 'T-3001',
-    title: 'Medication Side Effects Concern',
-    patientName: 'Maria Rodriguez',
-    patientId: 'P100594',
-    description: 'Reports dizziness and fatigue since mood stabilizer increase',
-    priority: 'High',
-    estimatedTime: '6 min',
-    status: 'needs-qhp',
-    dueDate: '2025-05-26',
-    taskType: 'Medication Review',
-    triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-22',
-    module: 'Monitoring',
-    channel: 'Call',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-3001',
-        timestamp: '2025-05-22T11:00:00Z',
-        actor: 'Hana AI Coach',
-        actorType: 'AI',
-        action: 'Side effects reported during call',
-        outcome: 'success'
-      },
-      {
-        id: 'audit-3001-2',
-        timestamp: '2025-05-22T11:30:00Z',
-        actor: 'System',
-        actorType: 'System',
-        action: 'Escalated to QHP for medication review',
-        outcome: 'success'
-      }
-    ]
-  },
-  {
-    id: 'T-4001',
-    title: 'PTSD Trigger Identification',
-    patientName: 'Robert Chen',
-    patientId: 'P100595',
-    description: 'Identified new workplace trigger affecting sleep and concentration',
-    priority: 'Medium',
-    estimatedTime: '7 min',
-    status: 'in-progress',
-    assignedTo: 'Dr. Michael Brown',
-    dueDate: '2025-05-30',
-    taskType: 'Trauma Response',
-    triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-21',
-    module: 'Monitoring',
-    channel: 'Call',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-4001',
-        timestamp: '2025-05-21T10:30:00Z',
-        actor: 'Hana AI Coach',
-        actorType: 'AI',
-        action: 'New PTSD trigger identified',
-        outcome: 'success'
-      },
-      {
-        id: 'audit-4001-2',
-        timestamp: '2025-05-21T14:00:00Z',
-        actor: 'Dr. Michael Brown',
-        actorType: 'Staff',
-        action: 'Began trauma-informed intervention planning',
-        outcome: 'success'
-      }
-    ]
-  },
-  {
-    id: 'T-5001',
-    title: 'Therapy Engagement Drop',
-    patientName: 'Sarah Johnson',
-    patientId: 'P100596',
-    description: 'Missed last 2 therapy sessions, reports feeling "therapy fatigue"',
-    priority: 'Medium',
-    estimatedTime: '4 min',
-    status: 'completed',
-    assignedTo: 'Nurse Kelly',
-    dueDate: '2025-05-25',
-    taskType: 'Care Coordination',
-    triggeredBy: 'Hana AI Coach',
-    callDate: '2025-05-20',
-    module: 'Coordination',
-    channel: 'Call',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-5001',
-        timestamp: '2025-05-20T09:00:00Z',
-        actor: 'Hana AI Coach',
-        actorType: 'AI',
-        action: 'Therapy engagement concern detected',
-        outcome: 'success'
-      },
-      {
-        id: 'audit-5001-2',
-        timestamp: '2025-05-24T13:00:00Z',
-        actor: 'Nurse Kelly',
-        actorType: 'Staff',
-        action: 'Called patient, rescheduled therapy with different time slot',
-        outcome: 'success'
-      },
-      {
-        id: 'audit-5001-3',
-        timestamp: '2025-05-25T10:00:00Z',
-        actor: 'Patient',
-        actorType: 'Patient',
-        action: 'Attended rescheduled therapy session',
-        outcome: 'success'
-      }
-    ],
-    coordinationAppointments: [
-      {
-        id: 'appt-5001',
-        type: 'Follow-up',
-        provider: 'Therapist Martinez',
-        scheduledDate: '2025-05-25T10:00:00Z',
-        status: 'completed',
-        notes: 'Patient attended, re-engaged with treatment plan'
-      }
-    ]
-  },
-  {
-    id: 'T-6001',
-    title: 'Missing Insurance Card',
-    patientName: 'Emily Carter',
-    patientId: 'P100597',
-    description: 'New patient enrollment blocked - insurance documentation incomplete',
-    priority: 'High',
-    estimatedTime: '10 min',
-    status: 'needs-review',
-    dueDate: '2025-05-28',
-    taskType: 'Documentation',
-    triggeredBy: 'Intake Process',
-    module: 'Intake',
-    channel: 'Email',
-    assignedToAI: true,
-    aiStatus: 'in-progress',
-    auditLog: [
-      {
-        id: 'audit-6001',
-        timestamp: '2025-05-26T08:00:00Z',
-        actor: 'System',
-        actorType: 'System',
-        action: 'Enrollment blocked due to missing documents',
-        outcome: 'success'
-      },
-      {
-        id: 'audit-6001-2',
-        timestamp: '2025-05-26T09:00:00Z',
-        actor: 'AI Agent',
-        actorType: 'AI',
-        action: 'Automated email sent requesting insurance card',
+        action: 'Awaiting staff review before EHR writeback',
         outcome: 'success'
       }
     ],
     intakeDocuments: [
       {
-        id: 'doc-6001-1',
-        name: 'Insurance Card (Front)',
-        type: 'insurance',
-        status: 'missing'
-      },
-      {
-        id: 'doc-6001-2',
-        name: 'Insurance Card (Back)',
-        type: 'insurance',
-        status: 'missing'
-      },
-      {
-        id: 'doc-6001-3',
-        name: 'Consent Form',
-        type: 'consent',
+        id: 'doc-int-001-1',
+        name: 'Patient Demographics',
+        type: 'other',
         status: 'completed',
-        uploadedDate: '2025-05-25'
-      }
-    ]
-  },
-  {
-    id: 'T-6002',
-    title: 'Consent Forms Pending',
-    patientName: 'David Miller',
-    patientId: 'P100598',
-    description: 'Treatment consent and HIPAA authorization forms need signatures',
-    priority: 'High',
-    estimatedTime: '8 min',
-    status: 'needs-review',
-    dueDate: '2025-05-27',
-    taskType: 'Documentation',
-    triggeredBy: 'Intake Process',
-    module: 'Intake',
-    channel: 'SMS',
-    assignedToAI: true,
-    aiStatus: 'pending',
-    auditLog: [
-      {
-        id: 'audit-6002',
-        timestamp: '2025-05-26T10:00:00Z',
-        actor: 'System',
-        actorType: 'System',
-        action: 'Consent forms generated and sent',
-        outcome: 'success'
-      }
-    ],
-    intakeDocuments: [
-      {
-        id: 'doc-6002-1',
-        name: 'Treatment Consent',
-        type: 'consent',
-        status: 'missing'
+        uploadedDate: '2025-05-26'
       },
       {
-        id: 'doc-6002-2',
-        name: 'HIPAA Authorization',
-        type: 'consent',
-        status: 'missing'
-      },
-      {
-        id: 'doc-6002-3',
-        name: 'Insurance Card',
-        type: 'insurance',
-        status: 'completed',
-        uploadedDate: '2025-05-25'
-      }
-    ]
-  },
-  {
-    id: 'T-6003',
-    title: 'Initial Assessment Scheduling',
-    patientName: 'Lisa Anderson',
-    patientId: 'P100599',
-    description: 'New patient needs initial psychiatric evaluation scheduled',
-    priority: 'Medium',
-    estimatedTime: '12 min',
-    status: 'needs-review',
-    dueDate: '2025-05-29',
-    taskType: 'Scheduling',
-    triggeredBy: 'Intake Process',
-    module: 'Intake',
-    channel: 'Call',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-6003',
-        timestamp: '2025-05-26T14:00:00Z',
-        actor: 'Intake Coordinator',
-        actorType: 'Staff',
-        action: 'Patient intake completed, ready for scheduling',
-        outcome: 'success'
-      }
-    ],
-    intakeDocuments: [
-      {
-        id: 'doc-6003-1',
+        id: 'doc-int-001-2',
         name: 'Insurance Verification',
         type: 'insurance',
         status: 'completed',
         uploadedDate: '2025-05-26'
       },
       {
-        id: 'doc-6003-2',
+        id: 'doc-int-001-3',
+        name: 'Medical History',
+        type: 'medical-history',
+        status: 'completed',
+        uploadedDate: '2025-05-26'
+      },
+      {
+        id: 'doc-int-001-4',
         name: 'Consent Forms',
         type: 'consent',
         status: 'completed',
@@ -512,236 +78,506 @@ export const populationTasksData: PopulationTask[] = [
     ]
   },
   {
-    id: 'T-6004',
-    title: 'Prior Authorization Required',
-    patientName: 'Michael Foster',
-    patientId: 'P100600',
-    description: 'Insurance requires prior auth for BHI services',
+    id: 'T-INT-002',
+    title: 'Resolve Intake Blocker – Insurance Invalid',
+    patientName: 'Sarah Johnson',
+    patientId: 'P100596',
+    description: 'Insurance card unreadable, AI failed verification, patient confirmation needed',
     priority: 'High',
     estimatedTime: '15 min',
-    status: 'in-progress',
-    assignedTo: 'Billing Team',
-    dueDate: '2025-05-28',
-    taskType: 'Insurance',
-    triggeredBy: 'Intake Process',
+    status: 'needs-review',
+    dueDate: '2025-05-27',
+    taskType: 'Insurance Verification',
+    triggeredBy: 'AI Intake Agent',
     module: 'Intake',
-    channel: 'Email',
+    channel: 'Call',
     assignedToAI: false,
-    aiStatus: null,
+    aiStatus: 'failed',
     auditLog: [
       {
-        id: 'audit-6004',
-        timestamp: '2025-05-26T11:00:00Z',
-        actor: 'System',
-        actorType: 'System',
-        action: 'Prior auth requirement detected',
+        id: 'audit-int-002-1',
+        timestamp: '2025-05-25T14:30:00Z',
+        actor: 'AI Intake Agent',
+        actorType: 'AI',
+        action: 'Attempted OCR scan of insurance card',
+        outcome: 'failure',
+        details: 'Image quality too low, card details unreadable'
+      },
+      {
+        id: 'audit-int-002-2',
+        timestamp: '2025-05-25T14:35:00Z',
+        actor: 'AI Intake Agent',
+        actorType: 'AI',
+        action: 'Sent automated request for higher quality image',
         outcome: 'success'
       },
       {
-        id: 'audit-6004-2',
-        timestamp: '2025-05-26T13:00:00Z',
-        actor: 'Billing Team',
-        actorType: 'Staff',
-        action: 'Prior auth request submitted to insurance',
+        id: 'audit-int-002-3',
+        timestamp: '2025-05-26T08:00:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'Escalated to staff - no patient response after 24h',
         outcome: 'success'
       }
     ],
     intakeDocuments: [
       {
-        id: 'doc-6004-1',
-        name: 'Prior Auth Form',
+        id: 'doc-int-002-1',
+        name: 'Insurance Card (Front)',
         type: 'insurance',
+        status: 'pending',
+        uploadedDate: '2025-05-25'
+      },
+      {
+        id: 'doc-int-002-2',
+        name: 'Insurance Card (Back)',
+        type: 'insurance',
+        status: 'missing'
+      },
+      {
+        id: 'doc-int-002-3',
+        name: 'Consent Forms',
+        type: 'consent',
+        status: 'completed',
+        uploadedDate: '2025-05-25'
+      }
+    ]
+  },
+  {
+    id: 'T-INT-003',
+    title: 'Resolve Intake Blocker – Consent Missing',
+    patientName: 'David Martinez',
+    patientId: 'P100598',
+    description: 'Patient completed forms but digital consent signature not captured',
+    priority: 'High',
+    estimatedTime: '10 min',
+    status: 'needs-review',
+    dueDate: '2025-05-27',
+    taskType: 'Consent Collection',
+    triggeredBy: 'AI Intake Agent',
+    module: 'Intake',
+    channel: 'SMS',
+    assignedToAI: false,
+    aiStatus: 'failed',
+    auditLog: [
+      {
+        id: 'audit-int-003-1',
+        timestamp: '2025-05-26T11:00:00Z',
+        actor: 'AI Intake Agent',
+        actorType: 'AI',
+        action: 'Sent digital consent form via secure link',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-int-003-2',
+        timestamp: '2025-05-26T11:30:00Z',
+        actor: 'Patient',
+        actorType: 'Patient',
+        action: 'Opened form and completed all fields',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-int-003-3',
+        timestamp: '2025-05-26T11:32:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'Signature submission failed - technical error',
+        outcome: 'failure',
+        details: 'Browser compatibility issue with signature pad'
+      },
+      {
+        id: 'audit-int-003-4',
+        timestamp: '2025-05-26T12:00:00Z',
+        actor: 'AI Intake Agent',
+        actorType: 'AI',
+        action: 'Sent SMS with alternative signature method',
+        outcome: 'success'
+      }
+    ],
+    intakeDocuments: [
+      {
+        id: 'doc-int-003-1',
+        name: 'Treatment Consent',
+        type: 'consent',
+        status: 'pending'
+      },
+      {
+        id: 'doc-int-003-2',
+        name: 'HIPAA Authorization',
+        type: 'consent',
+        status: 'pending'
+      },
+      {
+        id: 'doc-int-003-3',
+        name: 'Insurance Verification',
+        type: 'insurance',
+        status: 'completed',
+        uploadedDate: '2025-05-25'
+      },
+      {
+        id: 'doc-int-003-4',
+        name: 'Medical History',
+        type: 'medical-history',
         status: 'completed',
         uploadedDate: '2025-05-26'
       }
     ]
   },
   {
-    id: 'T-7001',
-    title: 'Specialist Referral Needed',
-    patientName: 'Jennifer White',
-    patientId: 'P100601',
-    description: 'Patient requires referral to addiction specialist',
-    priority: 'High',
-    estimatedTime: '10 min',
-    status: 'needs-review',
-    dueDate: '2025-05-27',
-    taskType: 'Referral',
-    triggeredBy: 'Care Team',
-    module: 'Coordination',
-    channel: 'Call',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-7001',
-        timestamp: '2025-05-25T15:00:00Z',
-        actor: 'Dr. Sarah Wilson',
-        actorType: 'Staff',
-        action: 'Referral request initiated',
-        outcome: 'success'
-      }
-    ],
-    coordinationAppointments: [
-      {
-        id: 'appt-7001',
-        type: 'Referral',
-        provider: 'Addiction Specialist',
-        status: 'pending',
-        notes: 'Urgent referral for substance use disorder treatment'
-      }
-    ]
-  },
-  {
-    id: 'T-7002',
-    title: 'Lab Work Coordination',
-    patientName: 'Thomas Baker',
-    patientId: 'P100602',
-    description: 'Schedule bloodwork before medication adjustment',
+    id: 'T-INT-004',
+    title: 'EHR Writeback Failure',
+    patientName: 'Emma Williams',
+    patientId: 'P100600',
+    description: 'AI completed intake but EHR rejected coverage resource, retry required',
     priority: 'Medium',
-    estimatedTime: '8 min',
+    estimatedTime: '12 min',
     status: 'needs-review',
-    dueDate: '2025-05-29',
-    taskType: 'Lab Order',
-    triggeredBy: 'Provider',
-    module: 'Coordination',
+    dueDate: '2025-05-28',
+    taskType: 'EHR Integration',
+    triggeredBy: 'AI Intake Agent',
+    module: 'Intake',
     channel: 'Email',
-    assignedToAI: true,
-    aiStatus: 'pending',
-    auditLog: [
-      {
-        id: 'audit-7002',
-        timestamp: '2025-05-26T09:00:00Z',
-        actor: 'Dr. Michael Brown',
-        actorType: 'Staff',
-        action: 'Lab order placed',
-        outcome: 'success'
-      }
-    ],
-    coordinationAppointments: [
-      {
-        id: 'appt-7002',
-        type: 'Procedure',
-        provider: 'Quest Diagnostics',
-        status: 'pending',
-        notes: 'Metabolic panel required before lithium dose increase'
-      }
-    ]
-  },
-  {
-    id: 'T-7003',
-    title: 'Transportation Assistance',
-    patientName: 'Patricia Green',
-    patientId: 'P100603',
-    description: 'Patient needs ride to group therapy sessions',
-    priority: 'Medium',
-    estimatedTime: '6 min',
-    status: 'in-progress',
-    assignedTo: 'Care Coordinator',
-    dueDate: '2025-05-30',
-    taskType: 'Resource',
-    triggeredBy: 'Patient Request',
-    module: 'Coordination',
-    channel: 'Call',
     assignedToAI: false,
-    aiStatus: null,
+    aiStatus: 'failed',
     auditLog: [
       {
-        id: 'audit-7003',
-        timestamp: '2025-05-26T10:30:00Z',
-        actor: 'Patient',
-        actorType: 'Patient',
-        action: 'Transportation barrier reported',
+        id: 'audit-int-004-1',
+        timestamp: '2025-05-26T10:00:00Z',
+        actor: 'AI Intake Agent',
+        actorType: 'AI',
+        action: 'Completed patient intake data collection',
         outcome: 'success'
       },
       {
-        id: 'audit-7003-2',
-        timestamp: '2025-05-26T14:00:00Z',
-        actor: 'Care Coordinator',
-        actorType: 'Staff',
-        action: 'Contacted community transport services',
-        outcome: 'success'
-      }
-    ],
-    coordinationAppointments: [
+        id: 'audit-int-004-2',
+        timestamp: '2025-05-26T10:05:00Z',
+        actor: 'AI Intake Agent',
+        actorType: 'AI',
+        action: 'Attempted EHR writeback via FHIR API',
+        outcome: 'failure',
+        details: 'Coverage resource rejected - invalid payer reference'
+      },
       {
-        id: 'appt-7003',
-        type: 'Follow-up',
-        provider: 'Community Transport',
-        status: 'pending',
-        notes: 'Arrange weekly transportation for group therapy'
-      }
-    ]
-  },
-  {
-    id: 'T-7004',
-    title: 'Prescription Transfer',
-    patientName: 'Kevin Martinez',
-    patientId: 'P100604',
-    description: 'Coordinate prescription transfer from previous provider',
-    priority: 'High',
-    estimatedTime: '12 min',
-    status: 'needs-review',
-    dueDate: '2025-05-27',
-    taskType: 'Medication',
-    triggeredBy: 'Transition of Care',
-    module: 'Coordination',
-    channel: 'Email',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
+        id: 'audit-int-004-3',
+        timestamp: '2025-05-26T10:10:00Z',
+        actor: 'AI Intake Agent',
+        actorType: 'AI',
+        action: 'Retry attempt with corrected payer ID',
+        outcome: 'failure',
+        details: 'EHR validation error - coverage period mismatch'
+      },
       {
-        id: 'audit-7004',
-        timestamp: '2025-05-26T08:30:00Z',
-        actor: 'Nurse Kelly',
-        actorType: 'Staff',
-        action: 'Request sent to previous provider',
-        outcome: 'success'
-      }
-    ],
-    coordinationAppointments: [
-      {
-        id: 'appt-7004',
-        type: 'Follow-up',
-        provider: 'Previous Psychiatrist',
-        status: 'pending',
-        notes: 'Obtain medication history and active prescriptions'
-      }
-    ]
-  },
-  {
-    id: 'T-7005',
-    title: 'Care Plan Update Meeting',
-    patientName: 'Angela Davis',
-    patientId: 'P100605',
-    description: 'Schedule multidisciplinary team meeting for care plan review',
-    priority: 'Medium',
-    estimatedTime: '10 min',
-    status: 'needs-review',
-    dueDate: '2025-05-31',
-    taskType: 'Care Planning',
-    triggeredBy: 'Scheduled Review',
-    module: 'Coordination',
-    channel: 'Email',
-    assignedToAI: false,
-    aiStatus: null,
-    auditLog: [
-      {
-        id: 'audit-7005',
-        timestamp: '2025-05-26T12:00:00Z',
+        id: 'audit-int-004-4',
+        timestamp: '2025-05-26T10:15:00Z',
         actor: 'System',
         actorType: 'System',
-        action: 'Quarterly care plan review due',
+        action: 'Escalated to staff for manual review',
+        outcome: 'success'
+      }
+    ],
+    intakeDocuments: [
+      {
+        id: 'doc-int-004-1',
+        name: 'Patient Demographics',
+        type: 'other',
+        status: 'completed',
+        uploadedDate: '2025-05-26'
+      },
+      {
+        id: 'doc-int-004-2',
+        name: 'Insurance Verification',
+        type: 'insurance',
+        status: 'completed',
+        uploadedDate: '2025-05-26'
+      },
+      {
+        id: 'doc-int-004-3',
+        name: 'Consent Forms',
+        type: 'consent',
+        status: 'completed',
+        uploadedDate: '2025-05-26'
+      }
+    ]
+  },
+
+  // Coordination Tasks
+  {
+    id: 'T-COORD-001',
+    title: 'No-Show: Action Needed',
+    patientName: 'James Thompson',
+    patientId: 'P100593',
+    description: 'Missed appointment today, AI unable to finalize reschedule or fee handling',
+    priority: 'High',
+    estimatedTime: '20 min',
+    status: 'needs-review',
+    dueDate: '2025-05-27',
+    taskType: 'No-Show Management',
+    triggeredBy: 'AI Coordination Agent',
+    module: 'Coordination',
+    channel: 'Call',
+    assignedToAI: false,
+    aiStatus: 'failed',
+    auditLog: [
+      {
+        id: 'audit-coord-001-1',
+        timestamp: '2025-05-26T09:15:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'No-show detected for 9:00 AM appointment',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-001-2',
+        timestamp: '2025-05-26T09:30:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Attempted automated outreach via SMS',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-001-3',
+        timestamp: '2025-05-26T10:00:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Patient responded, attempted to reschedule',
+        outcome: 'failure',
+        details: 'No available slots match patient preferences'
+      },
+      {
+        id: 'audit-coord-001-4',
+        timestamp: '2025-05-26T10:15:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Attempted to apply no-show fee per policy',
+        outcome: 'failure',
+        details: 'Patient requested fee waiver, requires staff approval'
+      }
+    ],
+    coordinationAppointments: [
+      {
+        id: 'appt-coord-001-1',
+        type: 'Initial Consultation',
+        provider: 'Dr. Sarah Wilson',
+        scheduledDate: '2025-05-26T09:00:00Z',
+        status: 'cancelled',
+        notes: 'Patient no-show, attempted reschedule unsuccessful'
+      }
+    ]
+  },
+  {
+    id: 'T-COORD-002',
+    title: 'Late Cancellation – Backfill Slot',
+    patientName: 'Maria Rodriguez',
+    patientId: 'P100594',
+    description: 'Patient cancelled <24h, AI could not fill from waitlist, slot open for action',
+    priority: 'Medium',
+    estimatedTime: '15 min',
+    status: 'needs-review',
+    dueDate: '2025-05-27',
+    taskType: 'Schedule Optimization',
+    triggeredBy: 'AI Coordination Agent',
+    module: 'Coordination',
+    channel: 'SMS',
+    assignedToAI: false,
+    aiStatus: 'failed',
+    auditLog: [
+      {
+        id: 'audit-coord-002-1',
+        timestamp: '2025-05-26T15:30:00Z',
+        actor: 'Patient',
+        actorType: 'Patient',
+        action: 'Cancelled appointment scheduled for 2025-05-27 10:00 AM',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-002-2',
+        timestamp: '2025-05-26T15:32:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'Late cancellation detected (<24h notice)',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-002-3',
+        timestamp: '2025-05-26T15:35:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Searched waitlist for available patients',
+        outcome: 'success',
+        details: 'Found 3 waitlisted patients'
+      },
+      {
+        id: 'audit-coord-002-4',
+        timestamp: '2025-05-26T15:40:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Sent automated offers to waitlisted patients',
+        outcome: 'failure',
+        details: 'All 3 patients unable to accept short-notice appointment'
+      }
+    ],
+    coordinationAppointments: [
+      {
+        id: 'appt-coord-002-1',
+        type: 'Follow-up',
+        provider: 'Therapist Martinez',
+        scheduledDate: '2025-05-27T10:00:00Z',
+        status: 'cancelled',
+        notes: 'Late cancellation, slot still available'
+      }
+    ]
+  },
+  {
+    id: 'T-COORD-003',
+    title: 'Referral Loop Open',
+    patientName: 'Robert Chen',
+    patientId: 'P100595',
+    description: 'Referral sent 5 days ago, no specialist appointment confirmed, report outstanding',
+    priority: 'Medium',
+    estimatedTime: '18 min',
+    status: 'needs-review',
+    dueDate: '2025-05-28',
+    taskType: 'Referral Management',
+    triggeredBy: 'AI Coordination Agent',
+    module: 'Coordination',
+    channel: 'Call',
+    assignedToAI: false,
+    aiStatus: 'in-progress',
+    auditLog: [
+      {
+        id: 'audit-coord-003-1',
+        timestamp: '2025-05-21T11:00:00Z',
+        actor: 'Dr. Michael Brown',
+        actorType: 'Staff',
+        action: 'Created referral to cardiology specialist',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-003-2',
+        timestamp: '2025-05-21T11:15:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Sent referral documentation to specialist office',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-003-3',
+        timestamp: '2025-05-23T09:00:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Follow-up check: No appointment scheduled yet',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-003-4',
+        timestamp: '2025-05-24T14:00:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Automated reminder sent to specialist office',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-003-5',
+        timestamp: '2025-05-26T10:00:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'Escalated to staff - 5 days without confirmation',
         outcome: 'success'
       }
     ],
     coordinationAppointments: [
       {
-        id: 'appt-7005',
-        type: 'Follow-up',
-        provider: 'Care Team',
+        id: 'appt-coord-003-1',
+        type: 'Referral',
+        provider: 'Dr. James Cardiology Specialist',
         status: 'pending',
-        notes: 'Review treatment progress and adjust care plan as needed'
+        notes: 'Referral sent 5 days ago, awaiting specialist appointment confirmation'
+      }
+    ]
+  },
+  {
+    id: 'T-COORD-004',
+    title: 'Therapy Engagement Drop',
+    patientName: 'Sarah Johnson',
+    patientId: 'P100596',
+    description: 'Missed 2 sessions, AI flagged engagement risk, outreach incomplete',
+    priority: 'Medium',
+    estimatedTime: '12 min',
+    status: 'needs-review',
+    dueDate: '2025-05-28',
+    taskType: 'Care Engagement',
+    triggeredBy: 'AI Coordination Agent',
+    module: 'Coordination',
+    channel: 'Call',
+    assignedToAI: false,
+    aiStatus: 'in-progress',
+    auditLog: [
+      {
+        id: 'audit-coord-004-1',
+        timestamp: '2025-05-20T09:00:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'First therapy session missed',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-004-2',
+        timestamp: '2025-05-20T10:00:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Sent automated follow-up SMS',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-004-3',
+        timestamp: '2025-05-23T09:00:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'Second therapy session missed',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-004-4',
+        timestamp: '2025-05-23T11:00:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Engagement risk flagged, attempted phone outreach',
+        outcome: 'failure',
+        details: 'No answer, left voicemail'
+      },
+      {
+        id: 'audit-coord-004-5',
+        timestamp: '2025-05-24T14:00:00Z',
+        actor: 'AI Coordination Agent',
+        actorType: 'AI',
+        action: 'Follow-up email sent with re-engagement resources',
+        outcome: 'success'
+      },
+      {
+        id: 'audit-coord-004-6',
+        timestamp: '2025-05-26T09:00:00Z',
+        actor: 'System',
+        actorType: 'System',
+        action: 'Escalated to care coordinator - no patient response',
+        outcome: 'success'
+      }
+    ],
+    coordinationAppointments: [
+      {
+        id: 'appt-coord-004-1',
+        type: 'Follow-up',
+        provider: 'Therapist Martinez',
+        scheduledDate: '2025-05-20T14:00:00Z',
+        status: 'cancelled',
+        notes: 'Patient no-show'
+      },
+      {
+        id: 'appt-coord-004-2',
+        type: 'Follow-up',
+        provider: 'Therapist Martinez',
+        scheduledDate: '2025-05-23T14:00:00Z',
+        status: 'cancelled',
+        notes: 'Patient no-show, engagement concern'
       }
     ]
   }
