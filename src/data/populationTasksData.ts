@@ -245,6 +245,39 @@ export const populationTasksData: PopulationTask[] = [
         action: 'Monthly review task auto-generated',
         outcome: 'success'
       }
+    ],
+    billingOpportunities: [
+      {
+        id: 'opp-msr-001-1',
+        title: 'Advanced Mental Health Analytics Package',
+        description: 'Comprehensive mental health tracking with AI-powered trend analysis, predictive alerts, and monthly detailed stability reports.',
+        category: 'mental-health',
+        priority: 'medium',
+        estimatedRevenue: 450,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'high',
+        reasoning: 'Patient with depression history would benefit from proactive monitoring and data-driven insights to prevent future episodes.',
+        suggestedActions: [
+          'Present during stability review as proactive care enhancement',
+          'Emphasize early warning system for mood changes',
+          'Share data showing reduced hospitalization rates with tracking'
+        ]
+      },
+      {
+        id: 'opp-msr-001-2',
+        title: 'Behavioral Health Concierge Service',
+        description: 'Priority access to care team, same-day appointment availability, and dedicated care coordinator for mental health needs.',
+        category: 'convenience',
+        priority: 'medium',
+        estimatedRevenue: 350,
+        pricingModel: 'monthly',
+        conversionLikelihood: 'medium',
+        reasoning: 'Given ongoing mental health management needs, quick access to support can prevent crisis situations.',
+        suggestedActions: [
+          'Position as peace of mind for both patient and family',
+          'Highlight reduced wait times and continuity of care'
+        ]
+      }
     ]
   },
 

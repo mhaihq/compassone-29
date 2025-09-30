@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { careTasksData as careTasksByCptCode, cptCodeInfo } from '@/components/layout/sidebar/care-tasks/careTasksData';
 import type { CareTask as ImportedCareTask } from '@/components/layout/sidebar/care-tasks/types';
 import type { BillingOpportunity } from '@/types/billingOpportunity';
+import { populationTasksData } from '@/data/populationTasksData';
 
 // Define consistent task interface
 interface CareTask {
@@ -50,9 +51,17 @@ interface CareTask {
   billingOpportunities?: BillingOpportunity[];
 }
 
-// Convert CPT-grouped tasks to flat task lookup
+// Convert CPT-grouped tasks to flat task lookup and merge billing opportunities from population data
 const getAllTasks = (): Record<string, CareTask> => {
   const flatTasks: Record<string, CareTask> = {};
+  
+  // Create a lookup map for billing opportunities from population data
+  const billingOpportunitiesMap: Record<string, BillingOpportunity[]> = {};
+  populationTasksData.forEach(popTask => {
+    if (popTask.billingOpportunities && popTask.billingOpportunities.length > 0) {
+      billingOpportunitiesMap[popTask.id] = popTask.billingOpportunities;
+    }
+  });
   
   Object.entries(careTasksByCptCode).forEach(([cptCode, tasks]) => {
     tasks.forEach((task: ImportedCareTask) => {
@@ -66,7 +75,9 @@ const getAllTasks = (): Record<string, CareTask> => {
         evidenceFromCall: task.evidenceFromCall || [],
         audioUrl: task.audioUrl || "#",
         transcript: task.transcript || "",
-        suggestedActions: task.suggestedActions || []
+        suggestedActions: task.suggestedActions || [],
+        // Merge billing opportunities from population data by task ID
+        billingOpportunities: billingOpportunitiesMap[task.id] || []
       };
     });
   });
