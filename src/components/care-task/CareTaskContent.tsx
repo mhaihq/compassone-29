@@ -15,6 +15,8 @@ import { FollowUpStep } from '@/components/care-task/FollowUpStep';
 import { FinalizeStep } from '@/components/care-task/FinalizeStep';
 import { MonthlyStabilityReview } from '@/components/care-task/MonthlyStabilityReview';
 import { useNavigate } from 'react-router-dom';
+import { careTasksData as careTasksByCptCode, cptCodeInfo } from '@/components/layout/sidebar/care-tasks/careTasksData';
+import type { CareTask as ImportedCareTask } from '@/components/layout/sidebar/care-tasks/types';
 
 // Define consistent task interface
 interface CareTask {
@@ -46,101 +48,31 @@ interface CareTask {
   }>;
 }
 
-// Sample data - would come from an API or context in a real app
-const careTasksData: Record<string, CareTask> = {
-  'T-1001': {
-    id: 'T-1001',
-    title: 'Mental Health Monitoring',
-    description: 'High Alert: Depression symptoms requiring immediate clinical review and intervention',
-    category: 'Mental-health',
-    categoryColor: 'pink',
-    minutes: 12,
-    insight: 'High Alert triggered by Hana AI Coach - immediate clinical review required for depression management',
-    status: 'urgent',
-    cptCode: '99484',
-    cptDescription: 'Behavioral Health Integration',
-    patientId: 'P100592',
-    patientName: 'Matteo Grassi',
-    flagReason: 'Critical escalation in depression symptoms detected during routine monitoring, requiring immediate clinical intervention and care plan adjustment.',
-    evidenceFromCall: [
-      {
-        text: "My depression has gotten significantly worse over the past week. I'm having trouble getting out of bed and I've been having some really dark thoughts.",
-        timestamp: "2:45",
-        importance: "high"
-      },
-      {
-        text: "I haven't been taking my antidepressant regularly because I don't think it's working anymore. What's the point?",
-        timestamp: "4:15",
-        importance: "high"
-      },
-      {
-        text: "I cancelled my therapy appointment this week because I just couldn't face it. Everything feels overwhelming.",
-        timestamp: "6:30",
-        importance: "high"
-      }
-    ],
-    audioUrl: "#",
-    transcript: "AI: How have you been feeling since our last check-in?\nPatient: My depression has gotten significantly worse over the past week. I'm having trouble getting out of bed and I've been having some really dark thoughts.\nAI: I'm concerned about what you're telling me. Can you tell me more about your medication?\nPatient: I haven't been taking my antidepressant regularly because I don't think it's working anymore. What's the point?\nAI: It's important that we address this. How have you been managing your therapy sessions?\nPatient: I cancelled my therapy appointment this week because I just couldn't face it. Everything feels overwhelming.",
-    suggestedActions: [
-      { id: 'action-1', text: 'Immediate mental health crisis assessment and safety planning', default: true },
-      { id: 'action-2', text: 'Emergency consultation with psychiatrist for medication review', default: true },
-      { id: 'action-3', text: 'Coordinate urgent therapy session within 24-48 hours', default: true },
-      { id: 'action-4', text: 'Implement enhanced monitoring protocol with daily check-ins', default: true },
-      { id: 'action-5', text: 'Assess need for higher level of care (IOP/PHP)', default: false }
-    ]
-  },
-  'T-1002': {
-    id: 'T-1002',
-    title: 'Blood Pressure Elevated',
-    description: 'Recent reading 138/88 mmHg, above target range',
-    category: 'Vitals',
-    categoryColor: 'blue',
-    minutes: 5,
-    insight: 'Flagged by Hana AI Coach - medication adherence affecting BP control',
-    status: 'urgent',
-    cptCode: '99490',
-    cptDescription: 'Chronic Care Management',
-    patientId: 'P100592',
-    patientName: 'Matteo Grassi',
-    flagReason: 'Patient blood pressure reading above target range, indicating need for intervention.',
-    evidenceFromCall: [
-      {
-        text: "I've been forgetting to take my blood pressure medication some mornings when I'm rushing to work.",
-        timestamp: "2:15",
-        importance: "high"
-      },
-      {
-        text: "My home readings have been around 135-140 over 85-90 lately.",
-        timestamp: "4:30",
-        importance: "high"
-      }
-    ],
-    audioUrl: "#",
-    transcript: "AI: How has your blood pressure been this week?\nPatient: I've been forgetting to take my blood pressure medication some mornings when I'm rushing to work.\nAI: That's concerning. What have your home readings been?\nPatient: My home readings have been around 135-140 over 85-90 lately. I know it's higher than it should be.",
-    suggestedActions: [
-      { id: 'action-1', text: 'Review medication timing and set up reminders', default: true },
-      { id: 'action-2', text: 'Schedule blood pressure recheck in 1 week', default: true },
-      { id: 'action-3', text: 'Discuss lifestyle modifications (diet, exercise, stress)', default: false }
-    ]
-  },
-  'T-MSR-001': {
-    id: 'T-MSR-001',
-    title: 'Monthly Stability Review',
-    description: 'Comprehensive monthly assessment of mental health stability and care plan effectiveness',
-    category: 'Monthly-review',
-    categoryColor: 'purple',
-    minutes: 15,
-    insight: 'Scheduled monthly review to assess patient stability trends and adjust care plan as needed',
-    status: 'pending',
-    cptCode: '99484',
-    cptDescription: 'Behavioral Health Integration',
-    patientId: 'P100592',
-    patientName: 'Matteo Grassi',
-    taskType: 'monthly-stability-review',
-    suggestedActions: [],
-    evidenceFromCall: []
-  }
+// Convert CPT-grouped tasks to flat task lookup
+const getAllTasks = (): Record<string, CareTask> => {
+  const flatTasks: Record<string, CareTask> = {};
+  
+  Object.entries(careTasksByCptCode).forEach(([cptCode, tasks]) => {
+    tasks.forEach((task: ImportedCareTask) => {
+      flatTasks[task.id] = {
+        ...task,
+        cptCode: cptCode,
+        cptDescription: cptCodeInfo[cptCode]?.description || '',
+        patientId: 'P100592',
+        patientName: 'Matteo Grassi',
+        flagReason: task.description,
+        evidenceFromCall: task.evidenceFromCall || [],
+        audioUrl: task.audioUrl || "#",
+        transcript: task.transcript || "",
+        suggestedActions: task.suggestedActions || []
+      };
+    });
+  });
+  
+  return flatTasks;
 };
+
+const careTasksData = getAllTasks();
 
 const STEPS = ['Risk Assessment', 'Care Plan', 'Follow-up', 'Finalize'];
 
