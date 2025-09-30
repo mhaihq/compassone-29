@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Bot, Calendar, Clock, User, FileText, History } from 'lucide-react';
+import { Bot, Calendar, Clock, User, FileText, History, DollarSign } from 'lucide-react';
 import { IntakeDrawer } from './IntakeDrawer';
 import { CoordinationDrawer } from './CoordinationDrawer';
 import { AuditLogTimeline } from './AuditLogTimeline';
@@ -35,6 +35,7 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
   const [showIntakeDrawer, setShowIntakeDrawer] = React.useState(false);
   const [showCoordinationDrawer, setShowCoordinationDrawer] = React.useState(false);
   const [showAuditLog, setShowAuditLog] = React.useState(false);
+  const [showRevenuePlan, setShowRevenuePlan] = React.useState(false);
 
   const handleDiscussService = (opportunityId: string) => {
     const opportunity = task?.billingOpportunities?.find(opp => opp.id === opportunityId);
@@ -155,13 +156,6 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
                     <span className="font-medium">{task.estimatedTime}</span>
                   </div>
                 </div>
-
-                {/* Revenue Opportunity Summary */}
-                {task.billingOpportunities && task.billingOpportunities.length > 0 && (
-                  <div className="text-sm text-muted-foreground mt-2">
-                    Revenue Opportunity: {task.billingOpportunities.length} cash-pay service{task.billingOpportunities.length > 1 ? 's' : ''} available (Est. ${task.billingOpportunities.reduce((sum, opp) => sum + opp.estimatedRevenue, 0).toLocaleString()})
-                  </div>
-                )}
               </div>
 
               <Separator />
@@ -185,7 +179,7 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
               {/* Module-specific Actions */}
               <div className="my-6">
                 <h3 className="text-sm font-medium mb-3">Module Actions</h3>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   {task.module === 'Intake' && (
                     <Button 
                       variant="outline" 
@@ -212,6 +206,17 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
                     <History className="w-4 h-4 mr-2" />
                     View Activity Log
                   </Button>
+                  {task.billingOpportunities && task.billingOpportunities.length > 0 && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowRevenuePlan(true)}
+                      className="text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+                    >
+                      <DollarSign className="w-4 h-4 mr-2" />
+                      Revenue Opportunities ({task.billingOpportunities.length})
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -239,7 +244,7 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
               )}
 
               {/* Billing Opportunities */}
-              {task.billingOpportunities && task.billingOpportunities.length > 0 && (
+              {showRevenuePlan && task.billingOpportunities && task.billingOpportunities.length > 0 && (
                 <>
                   <Separator />
                   <div className="my-6">
