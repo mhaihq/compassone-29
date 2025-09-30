@@ -86,9 +86,9 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
           {/* Task Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1 mb-1 flex-wrap">
-              <span className="font-medium text-sm text-foreground truncate">{task.patientName}</span>
+              <span className="font-medium text-sm text-foreground truncate">{task.title}</span>
               <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-              <span className="text-xs text-muted-foreground truncate">{task.title}</span>
+              <span className="text-xs text-muted-foreground truncate">{task.patientName}</span>
               <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
               <Badge className={`${getPriorityColor(task.priority)} text-white border-0 text-xs px-1.5 py-0`}>
                 {task.priority}
