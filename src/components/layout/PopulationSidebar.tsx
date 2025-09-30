@@ -84,15 +84,15 @@ export const PopulationSidebar = () => {
   return (
     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
       <SheetTrigger asChild>
-        <button className={`flex items-center justify-center w-10 h-10 bg-[#1E4D36] rounded-full shadow-lg hover:bg-[#2A6349] transition-colors pulse-animation fixed ${iconPosition} z-50`} aria-label="Open Population Health sidebar">
+        <button className={`flex items-center justify-center w-10 h-10 bg-hero-accent/90 backdrop-blur-sm rounded-full shadow-2xl hover:bg-hero-accent transition-colors pulse-animation fixed ${iconPosition} z-50 border border-hero-border/50`} aria-label="Open Population Health sidebar">
           <img src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" alt="Hana Clinic Logo" className="h-6 w-6 object-contain" />
         </button>
       </SheetTrigger>
       
-      <SheetContent className="p-0 max-w-2/3 w-2/3 border-l border-gray-200 overflow-y-auto bg-[#F1F1F1]">
+      <SheetContent className="p-0 max-w-2/3 w-2/3 border-l border-hero-border overflow-y-auto bg-hero-surface backdrop-blur-xl">
         <div className="flex flex-col h-full">
           {/* Simplified Header for Task/Patient Views */}
-          <div className="relative bg-white shadow-sm">
+          <div className="relative bg-hero-card/80 backdrop-blur-xl shadow-lg border-b border-hero-border/50">
             <div className="relative z-10 flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
                 {isViewingContent && (
@@ -100,7 +100,7 @@ export const PopulationSidebar = () => {
                     variant="ghost" 
                     size="sm" 
                     onClick={isViewingTask ? handleBackToTasks : handleBackToPatients} 
-                    className="mr-2 p-2 hover:bg-gray-100"
+                    className="mr-2 p-2 hover:bg-hero-accent/20"
                   >
                     <ArrowLeft size={16} />
                   </Button>
@@ -109,24 +109,24 @@ export const PopulationSidebar = () => {
                   <>
                     <img src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png" alt="Hana Clinic Logo" className="h-14 w-auto" />
                     <div>
-                      <h2 className="text-2xl font-bold text-[#1E4D36]">Hana Compass</h2>
-                      <p className="text-sm text-[#2A6349]">Population Health Assistant</p>
+                      <h2 className="text-2xl font-bold text-hero-foreground">Hana Compass</h2>
+                      <p className="text-sm text-muted-foreground">Population Health Assistant</p>
                     </div>
                   </>
                 )}
                 {isViewingTask && (
                   <div>
-                    <h2 className="text-xl font-bold text-[#1E4D36]">Care Task Details</h2>
+                    <h2 className="text-xl font-bold text-hero-foreground">Care Task Details</h2>
                   </div>
                 )}
                 {isViewingPatient && (
                   <div>
-                    <h2 className="text-xl font-bold text-[#1E4D36]">Patient Details</h2>
+                    <h2 className="text-xl font-bold text-hero-foreground">Patient Details</h2>
                   </div>
                 )}
               </div>
               <button 
-                className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100/50" 
+                className="text-muted-foreground hover:text-hero-foreground p-2 rounded-full hover:bg-hero-accent/20 transition-colors" 
                 onClick={() => setIsSidebarOpen(false)} 
                 aria-label="Close sidebar"
               >
@@ -171,8 +171,8 @@ export const PopulationSidebar = () => {
           </div>
           
           {/* Footer - Always visible */}
-          <div className="bg-white shadow-sm p-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500 text-center">
+          <div className="bg-hero-card/80 backdrop-blur-xl shadow-lg p-4 border-t border-hero-border/50">
+            <p className="text-xs text-muted-foreground text-center">
               Hana Compass • Population Health • 5 Active Patients • Last updated: 2 hours ago
             </p>
           </div>
