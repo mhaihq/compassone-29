@@ -21,6 +21,8 @@ export interface CareTask {
   patientId?: string;
   patientName?: string;
   flagReason?: string;
+  type?: string;
+  subtype?: string;
   evidenceFromCall?: Array<{
     text: string;
     timestamp: string;
@@ -32,6 +34,27 @@ export interface CareTask {
     id: string;
     text: string;
     default: boolean;
+  }>;
+  intakeDocuments?: Array<{
+    id: string;
+    name: string;
+    type: 'consent' | 'insurance' | 'medical-history' | 'other';
+    status: 'missing' | 'pending' | 'completed' | 'expired';
+    uploadedDate?: string;
+    expiryDate?: string;
+    url?: string;
+  }>;
+  billingOpportunities?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    priority: string;
+    estimatedRevenue: number;
+    pricingModel: string;
+    conversionLikelihood: string;
+    reasoning: string;
+    suggestedActions: string[];
   }>;
 }
 

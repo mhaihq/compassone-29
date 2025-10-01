@@ -57,6 +57,15 @@ interface CareTask {
     default: boolean;
   }>;
   billingOpportunities?: BillingOpportunity[];
+  intakeDocuments?: Array<{
+    id: string;
+    name: string;
+    type: 'consent' | 'insurance' | 'medical-history' | 'other';
+    status: 'missing' | 'pending' | 'completed' | 'expired';
+    uploadedDate?: string;
+    expiryDate?: string;
+    url?: string;
+  }>;
 }
 
 // Convert CPT-grouped tasks to flat task lookup and merge billing opportunities from population data
@@ -91,9 +100,10 @@ const getAllTasks = (): Record<string, CareTask> => {
     });
   });
   
-  // Add monitoring tasks from population data
+  // Add monitoring and intake assessment tasks from population data
   populationTasksData
-    .filter(popTask => popTask.module === 'Monitoring')
+    .filter(popTask => popTask.module === 'Monitoring' || 
+            (popTask.module === 'Intake' && popTask.type === 'intake' && popTask.subtype?.includes('assessment')))
     .forEach(popTask => {
       flatTasks[popTask.id] = {
         id: popTask.id,
@@ -116,7 +126,8 @@ const getAllTasks = (): Record<string, CareTask> => {
         audioUrl: "#",
         transcript: "",
         suggestedActions: [],
-        billingOpportunities: popTask.billingOpportunities || []
+        billingOpportunities: popTask.billingOpportunities || [],
+        intakeDocuments: popTask.intakeDocuments || []
       };
     });
   
@@ -379,7 +390,55 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
     );
   }
 
-  // Check if this is an Assessment Review task
+  // Check if this is an Intake Assessment task
+  if (task?.type === 'intake' && task?.subtype?.includes('assessment')) {
+    return (
+      <div className="space-y-4">
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Assessment Intake - {task.title}</h2>
+            <p className="text-muted-foreground mb-6">{task.description}</p>
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold mb-2">Patient Information</h3>
+                <p><strong>Name:</strong> {task.patientName}</p>
+                <p><strong>Patient ID:</strong> {task.patientId}</p>
+              </div>
+              
+              {task.intakeDocuments && task.intakeDocuments.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-2">Required Documents</h3>
+                  <div className="space-y-2">
+                    {task.intakeDocuments.map((doc) => (
+                      <div key={doc.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                        <span>{doc.name}</span>
+                        <Badge className={
+                          doc.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          doc.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }>
+                          {doc.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              <div className="pt-4">
+                <p className="text-sm text-muted-foreground">
+                  This intake assessment will be completed and then moved to monitoring for review.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Check if this is an Assessment Review task (Monitoring)
   if (task?.type === 'assessment-review') {
     if (showEHRIntegration) {
       return (
