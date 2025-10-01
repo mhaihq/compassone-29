@@ -71,6 +71,7 @@ const getAllTasks = (): Record<string, CareTask> => {
     }
   });
   
+  // Add CPT-grouped tasks
   Object.entries(careTasksByCptCode).forEach(([cptCode, tasks]) => {
     tasks.forEach((task: ImportedCareTask) => {
       flatTasks[task.id] = {
@@ -89,6 +90,35 @@ const getAllTasks = (): Record<string, CareTask> => {
       };
     });
   });
+  
+  // Add monitoring tasks from population data
+  populationTasksData
+    .filter(popTask => popTask.module === 'Monitoring')
+    .forEach(popTask => {
+      flatTasks[popTask.id] = {
+        id: popTask.id,
+        title: popTask.title,
+        description: popTask.description,
+        category: popTask.taskType || 'General',
+        categoryColor: 'blue',
+        minutes: parseInt(popTask.estimatedTime) || 10,
+        insight: popTask.description,
+        status: popTask.status,
+        cptCode: popTask.taskType || '',
+        cptDescription: popTask.taskType || '',
+        patientId: popTask.patientId,
+        patientName: popTask.patientName,
+        taskType: popTask.taskType,
+        type: popTask.type,
+        subtype: popTask.subtype,
+        flagReason: popTask.description,
+        evidenceFromCall: popTask.evidenceFromCall || [],
+        audioUrl: "#",
+        transcript: "",
+        suggestedActions: [],
+        billingOpportunities: popTask.billingOpportunities || []
+      };
+    });
   
   return flatTasks;
 };
