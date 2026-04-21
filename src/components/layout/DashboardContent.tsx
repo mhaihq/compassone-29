@@ -5,6 +5,7 @@ import { PatientsListContent } from '@/components/layout/sidebar/population/Pati
 import { EnrollmentContent } from '@/components/layout/sidebar/population/EnrollmentContent';
 import { BillingContent } from '@/components/layout/sidebar/population/BillingContent';
 import { CareTaskContent } from '@/components/care-task/CareTaskContent';
+import { PopulationManagement } from '@/pages/population/PopulationManagement';
 import { PatientDetailContent } from '@/components/layout/sidebar/population/PatientDetailContent';
 import { PatientInfoCard } from '@/components/layout/sidebar/PatientInfoCard';
 import { IntakeDrawer } from '@/components/tasks/IntakeDrawer';
@@ -76,6 +77,7 @@ export function DashboardContent({ nav }: DashboardContentProps) {
             {activeTab === 'patients' && <PatientsListContent onOpenPatient={openPatient} />}
             {activeTab === 'enrollment' && <EnrollmentContent />}
             {activeTab === 'billing' && <BillingContent />}
+            {activeTab === 'population' && <PopulationManagement />}
           </div>
         )}
       </div>

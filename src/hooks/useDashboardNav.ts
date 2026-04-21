@@ -3,7 +3,7 @@ import { populationTasksData } from '@/data/populationTasksData';
 import { patientData } from '@/data/patientData';
 import { getPatientDataSummary } from '@/services/patientService';
 
-export type DashboardTab = 'taskQueue' | 'patients' | 'enrollment' | 'billing';
+export type DashboardTab = 'taskQueue' | 'patients' | 'enrollment' | 'billing' | 'population';
 
 // TODO: Replace with real API call
 export function useDashboardNav() {

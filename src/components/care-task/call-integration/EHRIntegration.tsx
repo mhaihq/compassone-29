@@ -34,19 +34,22 @@ export const EHRIntegration: React.FC<EHRIntegrationProps> = ({
   onEHRSubmit
 }) => {
   const [encounterType, setEncounterType] = useState('telehealth_followup');
-  const [selectedCptCodes, setSelectedCptCodes] = useState<string[]>(['99213']);
+  const [selectedCptCodes, setSelectedCptCodes] = useState<string[]>(['99490']);
   const [includeTranscript, setIncludeTranscript] = useState(true);
   const [includeCitations, setIncludeCitations] = useState(true);
   const [includeMetrics, setIncludeMetrics] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const availableCptCodes = [
-    { code: '99213', description: 'Office/outpatient visit, established patient, moderate complexity' },
-    { code: '99214', description: 'Office/outpatient visit, established patient, high complexity' },
-    { code: '90834', description: 'Psychotherapy, 45 minutes' },
-    { code: '90837', description: 'Psychotherapy, 60 minutes' },
-    { code: '99401', description: 'Preventive counseling, 15 minutes' },
-    { code: '96116', description: 'Neurobehavioral status exam' }
+    { code: '99490', description: 'CCM — Non-complex, 20 min/month (non-physician staff)' },
+    { code: '99439', description: 'CCM — Non-complex add-on, each additional 20 min' },
+    { code: '99491', description: 'CCM — Physician/QHP direct, ≥30 min' },
+    { code: '99487', description: 'CCM — Complex, ≥60 min/month' },
+    { code: '99489', description: 'CCM — Complex add-on, each additional 30 min' },
+    { code: 'G0506', description: 'CCM — Initiating visit (comprehensive assessment, first month only)' },
+    { code: 'G0556', description: 'APCM — Level I (low complexity)' },
+    { code: 'G0557', description: 'APCM — Level II (moderate complexity)' },
+    { code: 'G0558', description: 'APCM — Level III (high complexity / ≥2 chronic conditions)' }
   ];
 
   const handleCptCodeToggle = (code: string, checked: boolean) => {
@@ -71,7 +74,7 @@ export const EHRIntegration: React.FC<EHRIntegrationProps> = ({
     
     const ehrData: EHRSubmissionData = {
       encounterType,
-      primaryDiagnosis: 'F32.9 Major depressive disorder, single episode, unspecified',
+      primaryDiagnosis: 'I10 Essential hypertension; E11.9 Type 2 diabetes mellitus',
       cptCodes: selectedCptCodes,
       documentation: generateSOAPNote(),
       followUpRequired: callSummary.actionItems.length > 0,

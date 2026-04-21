@@ -1,38 +1,85 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, FileText, Brain, User, Clock } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Calendar, FileText, Brain, User, Clock, Shield, ClipboardList } from 'lucide-react';
 import { patientsData } from '@/data/patientsData';
+import { patientsCcmData } from '@/data/patientsCcmData';
 import { OverviewTab } from '@/components/overview/OverviewTab';
 import { PatientCareLog } from './PatientCareLog';
 import { BillingContent } from '../BillingContent';
+import { ConsentCapture } from '@/pages/patient/consent/ConsentCapture';
+import { ApcmTierPanel } from '@/pages/patient/apcm-tier/ApcmTierPanel';
+import { CarePlanPanel } from '@/pages/patient/care-plan/CarePlanPanel';
+import type { CarePlanData } from '@/pages/patient/care-plan/CarePlanPanel';
+import type { Patient } from '@/types/patient';
 
 interface PatientDetailContentProps {
   patientId: string;
 }
 
-export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ patientId }) => {
+const emptyCarePlan: CarePlanData = {
+  patientGoals: '',
+  chronicConditions: '',
+  medicationList: '',
+  allergiesAndInteractions: '',
+  symptomMonitoring: '',
+  preventiveServices: '',
+  specialistCoordination: '',
+  communityResources: '',
+  crisisAndEmergency: '',
+};
+
+const seedCarePlan = (p: Patient): CarePlanData => ({
+  patientGoals: 'Maintain independence at home. Manage BP and blood sugar to stay out of hospital.',
+  chronicConditions: p.chronicConditions.map(c => `${c.icd10} — ${c.label} (since ${c.onsetYear ?? 'unknown'})`).join('\n'),
+  medicationList: 'Lisinopril 10mg daily (HTN). Metformin 500mg twice daily (DM). Atorvastatin 20mg nightly.',
+  allergiesAndInteractions: 'NKDA. No flagged interactions on current regimen.',
+  symptomMonitoring: 'BP target <130/80. HbA1c <7%. Weekly weight. Daily glucose log.',
+  preventiveServices: 'Annual flu shot — due Oct 2026. Colonoscopy — due 2027. Annual eye exam — due Dec 2026.',
+  specialistCoordination: 'PCP: Dr. Kim (primary). Nephrology: referral pending. Cardiology: last seen Jan 2026.',
+  communityResources: 'Meals on Wheels — enrolled. Transportation via Medicaid NEMT.',
+  crisisAndEmergency: 'Call 911 for BP >180/120 or chest pain. After-hours: 1-800-555-0100. Emergency contact: spouse.',
+  lastUpdated: p.carePlanLastUpdated,
+  updatedBy: 'Care Team',
+});
+
+function calculateAge(dob: string) {
+  const b = new Date(dob);
+  const t = new Date();
+  let a = t.getFullYear() - b.getFullYear();
+  if (t.getMonth() < b.getMonth() || (t.getMonth() === b.getMonth() && t.getDate() < b.getDate())) a--;
+  return a;
+}
+
+export function PatientDetailContent({ patientId }: PatientDetailContentProps) {
   const [activeTab, setActiveTab] = useState('overview');
   const patient = patientsData.find(p => p.id === patientId);
+  const [ccmPatient, setCcmPatient] = useState<Patient | null>(
+    patientsCcmData.find(p => p.id === patientId) ?? null
+  );
+  const [carePlan, setCarePlan] = useState<CarePlanData>(
+    ccmPatient ? seedCarePlan(ccmPatient) : emptyCarePlan
+  );
 
   if (!patient) {
-    return (
-      <div className="py-8 text-center text-muted-foreground text-sm">Patient not found.</div>
-    );
+    return <div className="py-8 text-center text-muted-foreground text-sm">Patient not found.</div>;
   }
 
-  const calculateAge = (dob: string) => {
-    const b = new Date(dob);
-    const t = new Date();
-    let a = t.getFullYear() - b.getFullYear();
-    if (t.getMonth() < b.getMonth() || (t.getMonth() === b.getMonth() && t.getDate() < b.getDate())) a--;
-    return a;
-  };
+  const enrolledLabel = ccmPatient?.enrolledInAPCM
+    ? `APCM Level ${ccmPatient.apcmLevel}`
+    : ccmPatient?.enrolledInCCM
+    ? 'CCM Enrolled'
+    : null;
+
+  const minutesBadge = ccmPatient && ccmPatient.minutesTarget > 0
+    ? `${ccmPatient.minutesThisMonth} / ${ccmPatient.minutesTarget} min`
+    : null;
 
   return (
     <div className="space-y-4">
-      {/* Patient card — name, age, last contact, conditions, ops status */}
+      {/* Patient header card */}
       <Card className="shadow-sm">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
@@ -54,18 +101,31 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
                   </span>
                 </div>
               </div>
-
               <div className="flex flex-wrap gap-1">
                 <Badge variant="outline" className="text-xs">{patient.primaryDiagnosis}</Badge>
-                {patient.diagnosisCode && (
-                  <Badge variant="outline" className="text-xs">{patient.diagnosisCode}</Badge>
-                )}
               </div>
-
               <div className="flex flex-wrap gap-1.5">
-                <Badge variant="outline" className="text-xs text-green-700 border-green-300">CCM Enrolled</Badge>
-                <Badge variant="outline" className="text-xs">Care plan active</Badge>
-                <Badge variant="outline" className="text-xs">42 / 60 min logged</Badge>
+                {enrolledLabel && (
+                  <Badge variant="outline" className="text-xs text-green-700 border-green-300">
+                    {enrolledLabel}
+                  </Badge>
+                )}
+                {carePlan.lastUpdated && (
+                  <Badge variant="outline" className="text-xs">Care plan active</Badge>
+                )}
+                {minutesBadge && (
+                  <Badge variant="outline" className="text-xs">{minutesBadge} logged</Badge>
+                )}
+                {ccmPatient && !ccmPatient.consent.obtained && (
+                  <Badge variant="outline" className="text-xs text-amber-700 border-amber-300">
+                    Consent needed
+                  </Badge>
+                )}
+                {ccmPatient?.initiatingVisit.completed && (
+                  <Badge variant="outline" className="text-xs text-blue-700 border-blue-300">
+                    Initiating visit ✓
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
@@ -73,85 +133,86 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview" className="flex items-center gap-1.5">
-            <Brain className="h-4 w-4" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="careLog" className="flex items-center gap-1.5">
-            <Calendar className="h-4 w-4" />
-            Care Plan & Log
-          </TabsTrigger>
-          <TabsTrigger value="billing" className="flex items-center gap-1.5">
-            <FileText className="h-4 w-4" />
-            Billing
-          </TabsTrigger>
-        </TabsList>
+        <ScrollArea orientation="horizontal">
+          <TabsList className="flex w-max min-w-full">
+            <TabsTrigger value="overview" className="flex items-center gap-1.5 text-xs">
+              <Brain className="h-3.5 w-3.5" />Overview
+            </TabsTrigger>
+            <TabsTrigger value="carePlan" className="flex items-center gap-1.5 text-xs">
+              <ClipboardList className="h-3.5 w-3.5" />Care Plan
+            </TabsTrigger>
+            <TabsTrigger value="careLog" className="flex items-center gap-1.5 text-xs">
+              <Calendar className="h-3.5 w-3.5" />Call Log
+            </TabsTrigger>
+            <TabsTrigger value="consent" className="flex items-center gap-1.5 text-xs">
+              <FileText className="h-3.5 w-3.5" />Consent
+            </TabsTrigger>
+            <TabsTrigger value="enrollment" className="flex items-center gap-1.5 text-xs">
+              <Shield className="h-3.5 w-3.5" />Enrollment
+            </TabsTrigger>
+            <TabsTrigger value="billing" className="flex items-center gap-1.5 text-xs">
+              <FileText className="h-3.5 w-3.5" />Billing
+            </TabsTrigger>
+          </TabsList>
+        </ScrollArea>
 
         <TabsContent value="overview" className="mt-4">
           <OverviewTab />
         </TabsContent>
 
+        <TabsContent value="carePlan" className="mt-4">
+          <CarePlanPanel
+            patientId={patientId}
+            plan={carePlan}
+            onSave={setCarePlan}
+          />
+        </TabsContent>
+
         <TabsContent value="careLog" className="mt-4 space-y-4">
-          <CarePlanSummary />
           <PatientCareLog />
+        </TabsContent>
+
+        <TabsContent value="consent" className="mt-4">
+          {ccmPatient ? (
+            <ConsentCapture
+              patientId={patientId}
+              patientName={patient.name}
+              consent={ccmPatient.consent}
+              onConsentUpdate={(update) =>
+                setCcmPatient(prev => prev ? { ...prev, consent: { ...prev.consent, ...update } } : prev)
+              }
+            />
+          ) : (
+            <div className="py-8 text-center text-muted-foreground text-sm">
+              Patient is not enrolled in CCM/APCM.
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="enrollment" className="mt-4">
+          {ccmPatient ? (
+            <ApcmTierPanel
+              patientId={patientId}
+              patientName={patient.name}
+              enrolledInCCM={ccmPatient.enrolledInCCM}
+              enrolledInAPCM={ccmPatient.enrolledInAPCM}
+              apcmLevel={ccmPatient.apcmLevel}
+              monthBillingMode={ccmPatient.monthBillingMode}
+              onEnrollmentChange={(update) =>
+                setCcmPatient(prev => prev ? { ...prev, ...update } : prev)
+              }
+            />
+          ) : (
+            <div className="py-8 text-center text-muted-foreground text-sm">
+              No enrollment record found.
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="billing" className="mt-4">
           <BillingContent />
         </TabsContent>
       </Tabs>
-    </div>
-  );
-};
-
-// Inline care plan summary — shown above the call log in the Care Plan & Log tab
-function CarePlanSummary() {
-  // TODO: Replace with real API call
-  const plan = {
-    status: 'Active',
-    lastUpdated: '2026-04-18',
-    updatedBy: 'Dr. Wilson',
-    statusSinceLastReview: 'Depression symptoms stable. PHQ-9 dropped from 15 to 11. BP still elevated (138/88).',
-    medicationUpdate: 'Sertraline 100mg daily. Lisinopril 10mg daily — adherence concerns.',
-    symptomUpdate: 'Mood improving. Occasional hopelessness mid-afternoon. No SI.',
-    interventions: 'Weekly Hana check-ins. Coordinated with Dr. Wilson on lisinopril adherence.',
-    nextReviewNote: 'Check PHQ-9 at next review. Escalate if BP remains >135/85.',
-  };
-
-  return (
-    <Card className="shadow-sm">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-          <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">Care Plan</h3>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs text-green-700 border-green-300">{plan.status}</Badge>
-            <span className="text-xs text-muted-foreground">
-              Updated {new Date(plan.lastUpdated).toLocaleDateString()} by {plan.updatedBy}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          <Field label="Status since last review" value={plan.statusSinceLastReview} />
-          <Field label="Medication update" value={plan.medicationUpdate} />
-          <Field label="Symptom update" value={plan.symptomUpdate} />
-          <Field label="Interventions" value={plan.interventions} />
-          <Field label="Next review note" value={plan.nextReviewNote} className="sm:col-span-2" />
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Field({ label, value, className }: { label: string; value: string; className?: string }) {
-  return (
-    <div className={className}>
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">{label}</p>
-      <p className="text-sm text-foreground leading-snug">{value}</p>
     </div>
   );
 }
