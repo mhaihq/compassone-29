@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Card, CardContent } from '@/components/ui/card';
-import { PatientPopulationMap } from './PatientPopulationMap';
 
 interface PatientsListContentProps {
   onOpenPatient: (patientId: string) => void;
@@ -54,13 +53,6 @@ export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpen
         <h2 className="text-lg font-semibold text-foreground">Patient Population</h2>
         <Badge variant="outline" className="text-xs">{filteredPatients.length} patients</Badge>
       </div>
-
-      <PatientPopulationMap
-        patients={filteredPatients}
-        onPatientSelect={onOpenPatient}
-        searchTerm={searchTerm}
-        severityFilter={severityFilter}
-      />
 
       {/* Risk counters */}
       <div className="grid grid-cols-3 gap-2 p-3 bg-card rounded-lg border border-border">

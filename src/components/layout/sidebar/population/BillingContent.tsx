@@ -51,28 +51,28 @@ export const BillingContent: React.FC = () => {
 
   const metrics = [
     { title: 'Enrolled Patients', value: '247', icon: Users, color: 'text-[#1a1a1a]', bgColor: 'bg-[#f5f5f5]' },
-    { title: 'Ready to Bill', value: '$24,580', icon: DollarSign, color: 'text-green-600', bgColor: 'bg-green-50' },
+    { title: 'Ready to Bill', value: '$10,412', icon: DollarSign, color: 'text-green-600', bgColor: 'bg-green-50' },
     { title: 'At Risk of Expiring', value: '12', icon: AlertTriangle, color: 'text-orange-600', bgColor: 'bg-orange-50' },
     { title: 'Average Time Logged', value: '42 min', icon: Clock, color: 'text-blue-600', bgColor: 'bg-blue-50' },
   ];
 
   const readyToBillPatients: Patient[] = [
-    { id: 'P001', name: 'Sarah Johnson', cptCode: 'G2214', description: 'Initial Assessment', minutesUsed: 50, minutesTotal: 50, amount: '$185.00', status: 'ready', daysRemaining: 5 },
-    { id: 'P002', name: 'Michael Chen', cptCode: '99484', description: 'Monthly Service', minutesUsed: 20, minutesTotal: 20, amount: '$95.00', status: 'ready', daysRemaining: 8 },
-    { id: 'P003', name: 'Jennifer Martinez', cptCode: '99492', description: 'First Month CoCM', minutesUsed: 70, minutesTotal: 70, amount: '$220.00', status: 'ready', daysRemaining: 12 },
-    { id: 'P004', name: 'David Wilson', cptCode: 'G2214', description: 'Initial Assessment', minutesUsed: 50, minutesTotal: 50, amount: '$185.00', status: 'ready', daysRemaining: 6 },
-    { id: 'P005', name: 'Amanda Thompson', cptCode: '99484', description: 'Monthly Service', minutesUsed: 20, minutesTotal: 20, amount: '$95.00', status: 'ready', daysRemaining: 9 },
-    { id: 'P013', name: 'Kevin Park', cptCode: '99493', description: 'Subsequent CoCM', minutesUsed: 60, minutesTotal: 60, amount: '$160.00', status: 'ready', daysRemaining: 7 },
-    { id: 'P014', name: 'Rachel Green', cptCode: 'G2214', description: 'Initial Assessment', minutesUsed: 50, minutesTotal: 50, amount: '$185.00', status: 'ready', daysRemaining: 4 },
+    { id: 'P001', name: 'Sarah Johnson',    cptCode: '99490', description: 'CCM Monthly (20 min)',        minutesUsed: 22, minutesTotal: 20, amount: '$42.00', status: 'ready', daysRemaining: 5 },
+    { id: 'P002', name: 'Michael Chen',     cptCode: '99490', description: 'CCM Monthly (20 min)',        minutesUsed: 20, minutesTotal: 20, amount: '$42.00', status: 'ready', daysRemaining: 8 },
+    { id: 'P003', name: 'Jennifer Martinez',cptCode: '99487', description: 'Complex CCM (60 min)',        minutesUsed: 62, minutesTotal: 60, amount: '$92.00', status: 'ready', daysRemaining: 12 },
+    { id: 'P004', name: 'David Wilson',     cptCode: '99490', description: 'CCM Monthly (20 min)',        minutesUsed: 24, minutesTotal: 20, amount: '$42.00', status: 'ready', daysRemaining: 6 },
+    { id: 'P005', name: 'Amanda Thompson',  cptCode: '99439', description: 'CCM Add-on (+20 min)',        minutesUsed: 41, minutesTotal: 40, amount: '$80.00', status: 'ready', daysRemaining: 9 },
+    { id: 'P013', name: 'Kevin Park',       cptCode: '99491', description: 'Provider CCM (30 min)',       minutesUsed: 32, minutesTotal: 30, amount: '$84.00', status: 'ready', daysRemaining: 7 },
+    { id: 'P014', name: 'Rachel Green',     cptCode: '99490', description: 'CCM Monthly (20 min)',        minutesUsed: 21, minutesTotal: 20, amount: '$42.00', status: 'ready', daysRemaining: 4 },
   ];
 
   const atRiskPatients: Patient[] = [
-    { id: 'P006', name: 'Emma Davis', cptCode: 'G2214', description: 'Initial Assessment', minutesUsed: 45, minutesTotal: 50, amount: '$185.00', status: 'at-risk', daysRemaining: 3, riskFactors: ['Expires in 3 days', 'Missing care plan'] },
-    { id: 'P007', name: 'James Wilson', cptCode: '99484', description: 'Monthly Service', minutesUsed: 18, minutesTotal: 20, amount: '$95.00', status: 'at-risk', daysRemaining: 5, riskFactors: ['Not contacted in 14 days', 'Missing 2 minutes'] },
-    { id: 'P008', name: 'Lisa Anderson', cptCode: '99492', description: 'First Month CoCM', minutesUsed: 65, minutesTotal: 70, amount: '$220.00', status: 'at-risk', daysRemaining: 2, riskFactors: ['Expires in 2 days', 'Missing documentation'] },
-    { id: 'P009', name: 'Robert Kim', cptCode: 'G2214', description: 'Initial Assessment', minutesUsed: 42, minutesTotal: 50, amount: '$185.00', status: 'at-risk', daysRemaining: 4, riskFactors: ['Missing 8 minutes', 'Care plan incomplete'] },
-    { id: 'P010', name: 'Maria Garcia', cptCode: '99484', description: 'Monthly Service', minutesUsed: 15, minutesTotal: 20, amount: '$95.00', status: 'at-risk', daysRemaining: 6, riskFactors: ['Not contacted in 10 days', 'Missing 5 minutes'] },
-    { id: 'P015', name: 'Thomas Lee', cptCode: '99493', description: 'Subsequent CoCM', minutesUsed: 55, minutesTotal: 60, amount: '$160.00', status: 'at-risk', daysRemaining: 1, riskFactors: ['Expires tomorrow', 'Missing physician consultation'] },
+    { id: 'P006', name: 'Emma Davis',    cptCode: '99490', description: 'CCM Monthly (20 min)',   minutesUsed: 15, minutesTotal: 20, amount: '$42.00', status: 'at-risk', daysRemaining: 3, riskFactors: ['Expires in 3 days', 'Missing 5 minutes', 'Missing care plan'] },
+    { id: 'P007', name: 'James Wilson',  cptCode: '99490', description: 'CCM Monthly (20 min)',   minutesUsed: 18, minutesTotal: 20, amount: '$42.00', status: 'at-risk', daysRemaining: 5, riskFactors: ['Not contacted in 14 days', 'Missing 2 minutes'] },
+    { id: 'P008', name: 'Lisa Anderson', cptCode: '99487', description: 'Complex CCM (60 min)',   minutesUsed: 48, minutesTotal: 60, amount: '$92.00', status: 'at-risk', daysRemaining: 2, riskFactors: ['Expires in 2 days', 'Missing 12 minutes', 'Missing documentation'] },
+    { id: 'P009', name: 'Robert Kim',    cptCode: '99490', description: 'CCM Monthly (20 min)',   minutesUsed: 12, minutesTotal: 20, amount: '$42.00', status: 'at-risk', daysRemaining: 4, riskFactors: ['Missing 8 minutes', 'Care plan incomplete'] },
+    { id: 'P010', name: 'Maria Garcia',  cptCode: '99490', description: 'CCM Monthly (20 min)',   minutesUsed: 15, minutesTotal: 20, amount: '$42.00', status: 'at-risk', daysRemaining: 6, riskFactors: ['Not contacted in 10 days', 'Missing 5 minutes'] },
+    { id: 'P015', name: 'Thomas Lee',    cptCode: '99491', description: 'Provider CCM (30 min)',  minutesUsed: 22, minutesTotal: 30, amount: '$84.00', status: 'at-risk', daysRemaining: 1, riskFactors: ['Expires tomorrow', 'Missing 8 minutes', 'Missing provider sign-off'] },
   ];
 
   const currentPatients = activeFilter === 'ready' ? readyToBillPatients : atRiskPatients;

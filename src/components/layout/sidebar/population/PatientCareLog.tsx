@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, Phone, Video, MessageCircle, FileText, CheckCircle2, ShieldCheck, User } from 'lucide-react';
+import { Calendar, Clock, Phone, Video, MessageCircle, FileText, CheckCircle2, ShieldCheck, User, Bot } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +25,46 @@ interface CallEntry {
   reviewedBy?: string;
   reviewedAt?: string;
 }
+
+interface UpcomingCall {
+  id: string;
+  title: string;
+  channel: CallChannel;
+  date: string;
+  time: string;
+  participant: string;
+  agenda: string[];
+}
+
+// TODO: Replace with real API call
+const mockUpcomingCalls: UpcomingCall[] = [
+  {
+    id: 'up-001',
+    title: 'Weekly CCM Check-in',
+    channel: 'phone',
+    date: '2026-04-29',
+    time: '14:30',
+    participant: 'Hana AI Coach',
+    agenda: [
+      'Review BP readings since last call',
+      'Medication adherence check — lisinopril',
+      'PHQ-2 screening',
+    ],
+  },
+  {
+    id: 'up-002',
+    title: 'Monthly Care Plan Review',
+    channel: 'video',
+    date: '2026-05-05',
+    time: '10:00',
+    participant: 'Dr. Wilson',
+    agenda: [
+      'Review monthly care plan',
+      'Discuss BP trend and medication adjustment',
+      'Update goals for next month',
+    ],
+  },
+];
 
 // TODO: Replace with real API call
 const mockCallLog: CallEntry[] = [
@@ -133,11 +173,69 @@ export const PatientCareLog: React.FC = () => {
 
   return (
     <>
+      {/* Upcoming AI Calls */}
+      {mockUpcomingCalls.length > 0 && (
+        <Card className="shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              Upcoming Calls
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              {mockUpcomingCalls.map(call => {
+                const ChannelIcon = CHANNEL_ICON[call.channel];
+                const isAI = call.participant.toLowerCase().includes('hana') || call.participant.toLowerCase().includes('ai');
+                return (
+                  <div key={call.id} className="flex items-start gap-3 px-4 py-3">
+                    <div className="flex-shrink-0 p-1.5 rounded-md bg-muted">
+                      <ChannelIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">{call.title}</span>
+                        <Badge variant="outline" className="text-xs">Scheduled</Badge>
+                        {isAI && (
+                          <Badge variant="outline" className="text-xs text-violet-700 border-violet-200">
+                            <Bot className="h-2.5 w-2.5 mr-0.5" />
+                            AI
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {new Date(call.date).toLocaleDateString()} · {call.time}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <User className="h-3 w-3" />
+                          {call.participant}
+                        </span>
+                      </div>
+                      {call.agenda.length > 0 && (
+                        <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5 mt-1">
+                          {call.agenda.map((a, i) => <li key={i}>{a}</li>)}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Past Calls */}
       <Card className="shadow-sm">
         <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-base">Care Log</CardTitle>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                Past Calls
+              </CardTitle>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {totalMinutes} min logged for billing this cycle
               </p>

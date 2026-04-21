@@ -28,7 +28,7 @@ export const BillingContent: React.FC = () => {
         <TabsContent value="overview" className="space-y-6">
           <Card className="mb-6">
             <CardContent className="p-4">
-              <h4 className="font-medium mb-3">BHI Billing Codes</h4>
+              <h4 className="font-medium mb-3">CCM Billing Codes</h4>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -40,65 +40,65 @@ export const BillingContent: React.FC = () => {
                 </TableHeader>
                 <TableBody>
                   <TableRow>
-                    <TableCell className="font-medium">G2214</TableCell>
-                    <TableCell>Initial Assessment</TableCell>
-                    <TableCell>35/50 min</TableCell>
-                    <TableCell><Badge className="bg-green-100 text-green-700">Active</Badge></TableCell>
+                    <TableCell className="font-medium">99490</TableCell>
+                    <TableCell>CCM Monthly (20 min)</TableCell>
+                    <TableCell>22/20 min</TableCell>
+                    <TableCell><Badge className="bg-green-100 text-green-700">Ready</Badge></TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-medium">99484</TableCell>
-                    <TableCell>General BHI Service</TableCell>
-                    <TableCell>12/20 min</TableCell>
-                    <TableCell><Badge className="bg-green-100 text-green-700">Active</Badge></TableCell>
+                    <TableCell className="font-medium">99439</TableCell>
+                    <TableCell>CCM Add-on (+20 min)</TableCell>
+                    <TableCell>0/20 min</TableCell>
+                    <TableCell><Badge className="bg-gray-100 text-gray-700">Not Started</Badge></TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-medium">99492</TableCell>
-                    <TableCell>First Month CoCM</TableCell>
-                    <TableCell>0/70 min</TableCell>
+                    <TableCell className="font-medium">99487</TableCell>
+                    <TableCell>Complex CCM (60 min)</TableCell>
+                    <TableCell>0/60 min</TableCell>
                     <TableCell><Badge className="bg-gray-100 text-gray-700">Not Started</Badge></TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <Card className="bg-white border-none shadow-sm">
               <CardContent className="p-4">
-                <h4 className="font-medium text-gray-900">BHI G2214</h4>
-                <p className="text-sm text-gray-600 mb-3">Initial Assessment</p>
-                
+                <h4 className="font-medium text-gray-900">CCM 99490</h4>
+                <p className="text-sm text-gray-600 mb-3">Monthly (20 min)</p>
+
                 <div className="mb-2">
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-600">Time Used</span>
-                    <span className="text-gray-900 font-medium">35/50 min</span>
+                    <span className="text-gray-900 font-medium">22/20 min</span>
                   </div>
-                  <Progress value={70} className="h-2 bg-gray-100" />
+                  <Progress value={100} className="h-2 bg-gray-100" />
                 </div>
-                
+
                 <div className="text-right">
-                  <span className="text-xs text-gray-500">
-                    15 minutes remaining
+                  <span className="text-xs text-green-700 font-medium">
+                    Threshold met
                   </span>
                 </div>
               </CardContent>
             </Card>
             <Card className="bg-white border-none shadow-sm">
               <CardContent className="p-4">
-                <h4 className="font-medium text-gray-900">BHI 99484</h4>
-                <p className="text-sm text-gray-600 mb-3">Monthly Service</p>
-                
+                <h4 className="font-medium text-gray-900">CCM 99439</h4>
+                <p className="text-sm text-gray-600 mb-3">Add-on (+20 min)</p>
+
                 <div className="mb-2">
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-600">Time Used</span>
-                    <span className="text-gray-900 font-medium">12/20 min</span>
+                    <span className="text-gray-900 font-medium">0/20 min</span>
                   </div>
-                  <Progress value={60} className="h-2 bg-gray-100" />
+                  <Progress value={0} className="h-2 bg-gray-100" />
                 </div>
-                
+
                 <div className="text-right">
                   <span className="text-xs text-gray-500">
-                    8 minutes remaining
+                    20 minutes remaining
                   </span>
                 </div>
               </CardContent>
