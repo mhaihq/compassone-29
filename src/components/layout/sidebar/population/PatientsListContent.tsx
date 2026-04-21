@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Card, CardContent } from '@/components/ui/card';
+import { StatusPill } from '@/components/ui/status-dot';
 
 interface PatientsListContentProps {
   onOpenPatient: (patientId: string) => void;
@@ -27,12 +28,12 @@ export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpen
     return matchesSearch && matchesSeverity;
   });
 
-  const getSeverityColor = (severity: string) => {
+  const getSeverityTone = (severity: string): 'red' | 'orange' | 'green' | 'muted' => {
     switch (severity) {
-      case 'Severe': return 'bg-red-100 text-red-800 border-red-200';
-      case 'Moderate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Mild': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-muted text-muted-foreground';
+      case 'Severe': return 'red';
+      case 'Moderate': return 'orange';
+      case 'Mild': return 'green';
+      default: return 'muted';
     }
   };
 
@@ -56,24 +57,17 @@ export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpen
 
       {/* Risk counters */}
       <div className="grid grid-cols-3 gap-2 p-3 bg-card rounded-lg border border-border">
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground">High Risk</p>
-          <p className="font-semibold text-sm text-destructive">
-            {activePatients.filter(p => p.severity === 'Severe').length}
-          </p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground">Medium Risk</p>
-          <p className="font-semibold text-sm text-yellow-600">
-            {activePatients.filter(p => p.severity === 'Moderate').length}
-          </p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground">Low Risk</p>
-          <p className="font-semibold text-sm text-green-600">
-            {activePatients.filter(p => p.severity === 'Mild').length}
-          </p>
-        </div>
+        {[
+          { label: 'High Risk', tone: 'red' as const, count: activePatients.filter(p => p.severity === 'Severe').length },
+          { label: 'Medium Risk', tone: 'orange' as const, count: activePatients.filter(p => p.severity === 'Moderate').length },
+          { label: 'Low Risk', tone: 'green' as const, count: activePatients.filter(p => p.severity === 'Mild').length },
+        ].map(r => (
+          <div key={r.label} className="flex items-center justify-center gap-2">
+            <span className={`h-1.5 w-1.5 rounded-full ${r.tone === 'red' ? 'bg-red-500' : r.tone === 'orange' ? 'bg-orange-500' : 'bg-green-500'}`} />
+            <span className="text-xs text-muted-foreground">{r.label}</span>
+            <span className="text-sm font-medium text-foreground tabular-nums">{r.count}</span>
+          </div>
+        ))}
       </div>
 
       {/* Search + filter */}
@@ -121,9 +115,7 @@ export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpen
                 <div className="flex-1 min-w-0 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-semibold text-sm text-foreground">{patient.name}</span>
-                    <Badge className={`text-xs ${getSeverityColor(patient.severity)}`}>
-                      {patient.severity}
-                    </Badge>
+                    <StatusPill tone={getSeverityTone(patient.severity)}>{patient.severity}</StatusPill>
                   </div>
                   <p className="text-xs text-muted-foreground">{patient.id} · {calculateAge(patient.dateOfBirth)}y · {patient.gender}</p>
                   <Badge variant="outline" className="text-xs">{patient.primaryDiagnosis}</Badge>
@@ -170,9 +162,7 @@ export const PatientsListContent: React.FC<PatientsListContentProps> = ({ onOpen
                     {calculateAge(patient.dateOfBirth)}y · {patient.gender}
                   </td>
                   <td className="px-4 py-3">
-                    <Badge className={`text-xs ${getSeverityColor(patient.severity)}`}>
-                      {patient.severity}
-                    </Badge>
+                    <StatusPill tone={getSeverityTone(patient.severity)}>{patient.severity}</StatusPill>
                   </td>
                   <td className="px-4 py-3 text-xs text-muted-foreground">
                     <p>{new Date(patient.lastVisit).toLocaleDateString()}</p>

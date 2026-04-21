@@ -5,6 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
+import { StatusPill } from '@/components/ui/status-dot';
+
+type Tone = 'blue' | 'orange' | 'yellow' | 'green' | 'red' | 'violet' | 'muted';
 import { ArrowLeft, ChevronRight, Phone, FileText, UserCheck, AlertTriangle, Users, Clock, CheckCircle2, XCircle, Activity, Upload } from 'lucide-react';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -54,13 +57,13 @@ const mockPatients: EnrollmentPatient[] = [
 
 // ── Stage config ───────────────────────────────────────────────────────────────
 
-const STAGES: { key: Stage; label: string; icon: React.ElementType; color: string; bg: string; badgeClass: string }[] = [
-  { key: 'eligible',        label: 'Eligible',         icon: Users,        color: 'text-blue-600',   bg: 'bg-blue-50',   badgeClass: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { key: 'outreach',        label: 'In Outreach',      icon: Phone,        color: 'text-yellow-600', bg: 'bg-yellow-50', badgeClass: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  { key: 'consent-pending', label: 'Consent Pending',  icon: FileText,     color: 'text-orange-600', bg: 'bg-orange-50', badgeClass: 'bg-orange-100 text-orange-700 border-orange-200' },
-  { key: 'ready',           label: 'Ready to Enroll',  icon: UserCheck,    color: 'text-primary',    bg: 'bg-primary/10',badgeClass: 'bg-primary/10 text-primary border-primary/20' },
-  { key: 'enrolled',        label: 'Enrolled',         icon: CheckCircle2, color: 'text-green-600',  bg: 'bg-green-50',  badgeClass: 'bg-green-100 text-green-700 border-green-200' },
-  { key: 'declined',        label: 'Declined',         icon: XCircle,      color: 'text-muted-foreground', bg: 'bg-muted', badgeClass: 'bg-muted text-muted-foreground border-border' },
+const STAGES: { key: Stage; label: string; icon: React.ElementType; tone: Tone }[] = [
+  { key: 'eligible',        label: 'Eligible',         icon: Users,        tone: 'blue' },
+  { key: 'outreach',        label: 'In Outreach',      icon: Phone,        tone: 'yellow' },
+  { key: 'consent-pending', label: 'Consent Pending',  icon: FileText,     tone: 'orange' },
+  { key: 'ready',           label: 'Ready to Enroll',  icon: UserCheck,    tone: 'violet' },
+  { key: 'enrolled',        label: 'Enrolled',         icon: CheckCircle2, tone: 'green' },
+  { key: 'declined',        label: 'Declined',         icon: XCircle,      tone: 'muted' },
 ];
 
 const COHORTS: { key: CohortKey; label: string; icon: React.ElementType }[] = [
@@ -72,10 +75,10 @@ const COHORTS: { key: CohortKey; label: string; icon: React.ElementType }[] = [
   { key: 'no-contact-30d',      label: 'No Contact 30+ Days',    icon: Phone },
 ];
 
-const RISK_BADGE: Record<string, string> = {
-  High:   'bg-red-100 text-red-700 border-red-200',
-  Medium: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  Low:    'bg-green-100 text-green-700 border-green-200',
+const RISK_TONE: Record<string, Tone> = {
+  High:   'red',
+  Medium: 'orange',
+  Low:    'green',
 };
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -195,10 +198,17 @@ export function EnrollmentContent() {
                   onClick={() => openQueue(stage.key, null)}
                   className="w-full flex items-center gap-3 p-3 rounded-lg border border-border bg-card hover:bg-accent transition-colors text-left group"
                 >
-                  <div className={`p-2 rounded-md ${stage.bg} flex-shrink-0`}>
-                    <stage.icon className={`h-4 w-4 ${stage.color}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
+                  <stage.icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <div className="flex-1 min-w-0 flex items-center gap-2">
+                    <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${
+                      stage.tone === 'red' ? 'bg-red-500' :
+                      stage.tone === 'orange' ? 'bg-orange-500' :
+                      stage.tone === 'yellow' ? 'bg-yellow-500' :
+                      stage.tone === 'green' ? 'bg-green-500' :
+                      stage.tone === 'blue' ? 'bg-blue-500' :
+                      stage.tone === 'violet' ? 'bg-violet-500' :
+                      'bg-muted-foreground/50'
+                    }`} />
                     <span className="text-sm font-medium text-foreground">{stage.label}</span>
                   </div>
                   <span className="text-lg font-bold text-foreground tabular-nums">{count}</span>
@@ -319,7 +329,7 @@ export function EnrollmentContent() {
                       </div>
                     </td>
                     <td className="px-3 py-3">
-                      <Badge className={`text-xs ${RISK_BADGE[patient.riskLevel]}`}>{patient.riskLevel}</Badge>
+                      <StatusPill tone={RISK_TONE[patient.riskLevel]}>{patient.riskLevel}</StatusPill>
                     </td>
                     <td className="px-3 py-3 text-xs text-muted-foreground">
                       {patient.lastContact
@@ -333,7 +343,7 @@ export function EnrollmentContent() {
                       {patient.assignedTo ?? <span className="text-muted-foreground/50">Unassigned</span>}
                     </td>
                     <td className="px-3 py-3">
-                      <Badge className={`text-xs ${stageCfg.badgeClass}`}>{stageCfg.label}</Badge>
+                      <StatusPill tone={stageCfg.tone}>{stageCfg.label}</StatusPill>
                     </td>
                     <td className="px-3 py-3" onClick={e => e.stopPropagation()}>
                       <NextActionButton patient={patient} />
@@ -360,8 +370,8 @@ export function EnrollmentContent() {
                   <div className="flex-1 min-w-0 space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-medium text-sm text-foreground">{patient.name}</span>
-                      <Badge className={`text-xs ${RISK_BADGE[patient.riskLevel]}`}>{patient.riskLevel}</Badge>
-                      <Badge className={`text-xs ${stageCfg.badgeClass}`}>{stageCfg.label}</Badge>
+                      <StatusPill tone={RISK_TONE[patient.riskLevel]}>{patient.riskLevel}</StatusPill>
+                      <StatusPill tone={stageCfg.tone}>{stageCfg.label}</StatusPill>
                     </div>
                     <p className="text-xs text-muted-foreground">{patient.pcp} · {patient.age}y</p>
                     <div className="flex flex-wrap gap-1">
@@ -427,8 +437,8 @@ function PatientDrawer({ patient, onClose }: { patient: EnrollmentPatient | null
         <div className="space-y-5">
           {/* Status + risk */}
           <div className="flex flex-wrap gap-2">
-            <Badge className={`text-xs ${stageCfg.badgeClass}`}>{stageCfg.label}</Badge>
-            <Badge className={`text-xs ${RISK_BADGE[patient.riskLevel]}`}>{patient.riskLevel} Risk</Badge>
+            <StatusPill tone={stageCfg.tone}>{stageCfg.label}</StatusPill>
+            <StatusPill tone={RISK_TONE[patient.riskLevel]}>{patient.riskLevel} Risk</StatusPill>
           </div>
 
           {/* Patient info */}

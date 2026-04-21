@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
+import { StatusPill } from '@/components/ui/status-dot';
 import {
   DollarSign,
   Users,
@@ -50,10 +51,10 @@ export const BillingContent: React.FC = () => {
   };
 
   const metrics = [
-    { title: 'Enrolled Patients', value: '247', icon: Users, color: 'text-[#1a1a1a]', bgColor: 'bg-[#f5f5f5]' },
-    { title: 'Ready to Bill', value: '$10,412', icon: DollarSign, color: 'text-green-600', bgColor: 'bg-green-50' },
-    { title: 'At Risk of Expiring', value: '12', icon: AlertTriangle, color: 'text-orange-600', bgColor: 'bg-orange-50' },
-    { title: 'Average Time Logged', value: '42 min', icon: Clock, color: 'text-blue-600', bgColor: 'bg-blue-50' },
+    { title: 'Enrolled Patients',   value: '247',     icon: Users },
+    { title: 'Ready to Bill',       value: '$10,412', icon: DollarSign },
+    { title: 'At Risk of Expiring', value: '12',      icon: AlertTriangle },
+    { title: 'Average Time Logged', value: '42 min',  icon: Clock },
   ];
 
   const readyToBillPatients: Patient[] = [
@@ -78,16 +79,16 @@ export const BillingContent: React.FC = () => {
   const currentPatients = activeFilter === 'ready' ? readyToBillPatients : atRiskPatients;
 
   const getStatusBadge = (status: string) => {
-    if (status === 'ready') return <Badge className="bg-green-100 text-green-700 border-green-200 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" />Ready</Badge>;
-    if (status === 'at-risk') return <Badge className="bg-orange-100 text-orange-700 border-orange-200">At Risk</Badge>;
-    return <Badge className="bg-gray-100 text-gray-700 border-gray-200">Pending</Badge>;
+    if (status === 'ready')   return <StatusPill tone="green">Ready</StatusPill>;
+    if (status === 'at-risk') return <StatusPill tone="orange">At Risk</StatusPill>;
+    return <StatusPill>Pending</StatusPill>;
   };
 
   const getRiskIcon = (factor: string) => {
-    if (factor.includes('Expires') || factor.includes('days') || factor.includes('tomorrow')) return <Calendar className="h-3 w-3 text-orange-500" />;
-    if (factor.includes('Missing') || factor.includes('care plan') || factor.includes('documentation') || factor.includes('consultation')) return <ClipboardX className="h-3 w-3 text-red-500" />;
-    if (factor.includes('contacted')) return <MessageCircleX className="h-3 w-3 text-blue-500" />;
-    return <AlertTriangle className="h-3 w-3 text-orange-500" />;
+    if (factor.includes('Expires') || factor.includes('days') || factor.includes('tomorrow')) return <Calendar className="h-3 w-3 text-muted-foreground" />;
+    if (factor.includes('Missing') || factor.includes('care plan') || factor.includes('documentation') || factor.includes('consultation')) return <ClipboardX className="h-3 w-3 text-muted-foreground" />;
+    if (factor.includes('contacted')) return <MessageCircleX className="h-3 w-3 text-muted-foreground" />;
+    return <AlertTriangle className="h-3 w-3 text-muted-foreground" />;
   };
 
   return (
@@ -99,21 +100,18 @@ export const BillingContent: React.FC = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 border border-border rounded-lg overflow-hidden">
         {metrics.map((metric, i) => (
-          <Card key={i} className="shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">{metric.title}</p>
-                  <p className="text-lg font-bold text-foreground">{metric.value}</p>
-                </div>
-                <div className={`p-2 rounded-lg ${metric.bgColor}`}>
-                  <metric.icon className={`h-4 w-4 ${metric.color}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div
+            key={i}
+            className={`p-4 bg-card ${i < metrics.length - 1 ? 'border-r-0 lg:border-r border-border' : ''} ${i < 2 ? 'border-b lg:border-b-0 border-border' : ''}`}
+          >
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
+              <metric.icon className="h-3.5 w-3.5" />
+              <span>{metric.title}</span>
+            </div>
+            <p className="text-lg font-semibold text-foreground tabular-nums">{metric.value}</p>
+          </div>
         ))}
       </div>
 
@@ -199,14 +197,14 @@ export const BillingContent: React.FC = () => {
                     <TableCell className="py-3">
                       {activeFilter === 'ready' && (
                         billedIds.has(patient.id)
-                          ? <Badge variant="outline" className="text-xs text-green-700 border-green-300"><CheckCircle2 className="h-3 w-3 mr-1" />Submitted</Badge>
-                          : <Button size="sm" className="h-8 px-3 text-xs" onClick={() => markBilled(patient)}>Bill Now</Button>
+                          ? <StatusPill tone="green">Submitted</StatusPill>
+                          : <Button size="sm" variant="outline" className="h-8 px-3 text-xs" onClick={() => markBilled(patient)}>Bill Now</Button>
                       )}
                       {activeFilter === 'at-risk' && (
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-8 px-3 text-xs border-orange-200 text-orange-700 hover:bg-orange-50"
+                          className="h-8 px-3 text-xs"
                           onClick={() => markReviewed(patient)}
                         >
                           Review

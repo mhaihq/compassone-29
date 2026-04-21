@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { StatusPill } from '@/components/ui/status-dot';
 import { NewTaskModal } from './NewTaskModal';
 import { TaskMetricsFooter } from './TaskMetricsFooter';
 import { TaskBoardView } from './TaskBoardView';
@@ -54,21 +55,21 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
     pendingTasks: tasks.filter(t => t.status !== 'completed').length
   };
 
-  const getModuleColor = (module: string) => {
-    switch (module) {
-      case 'Intake': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'Coordination': return 'bg-violet-50 text-violet-700 border-violet-200';
-      case 'Monitoring': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      default: return 'bg-muted text-muted-foreground';
+  const getPriorityTone = (priority: string): 'red' | 'orange' | 'blue' | 'muted' => {
+    switch (priority) {
+      case 'High': return 'red';
+      case 'Medium': return 'orange';
+      case 'Low': return 'blue';
+      default: return 'muted';
     }
   };
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityBar = (priority: string) => {
     switch (priority) {
-      case 'High': return 'bg-severity-high';
-      case 'Medium': return 'bg-severity-medium';
-      case 'Low': return 'bg-severity-low';
-      default: return 'bg-muted-foreground';
+      case 'High': return 'bg-red-500';
+      case 'Medium': return 'bg-orange-500';
+      case 'Low': return 'bg-blue-500';
+      default: return 'bg-muted-foreground/40';
     }
   };
 
@@ -119,21 +120,19 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
       <CardContent className="p-3">
         <div className="flex items-center gap-2">
           {/* Priority Indicator */}
-          <div className={`w-1 h-10 rounded-full flex-shrink-0 ${getPriorityColor(task.priority)}`} />
-          
+          <div className={`w-0.5 h-10 rounded-full flex-shrink-0 ${getPriorityBar(task.priority)}`} />
+
           {/* Task Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="font-medium text-sm text-foreground truncate">{task.title}</span>
               <span className="text-xs text-muted-foreground truncate">· {task.patientName}</span>
-              <Badge className={`${getPriorityColor(task.priority)} text-white border-0 text-xs px-1.5 py-0`}>
-                {task.priority}
-              </Badge>
+              <StatusPill tone={getPriorityTone(task.priority)}>{task.priority}</StatusPill>
               {task.assignedToAI && (
-                <Badge className="bg-violet-50 text-violet-700 border-violet-200 gap-1 text-xs px-1.5 py-0">
+                <StatusPill tone="violet">
                   <Bot className="w-2.5 h-2.5" />
                   AI
-                </Badge>
+                </StatusPill>
               )}
             </div>
             <p className="text-xs text-muted-foreground line-clamp-1">{task.description}</p>
