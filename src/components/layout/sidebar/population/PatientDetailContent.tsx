@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, User, Phone, Mail, MapPin, Clock, FileText, Brain } from 'lucide-react';
+import { Calendar, FileText, Brain } from 'lucide-react';
 import { patientsData } from '@/data/patientsData';
 import OverviewTab from '@/components/overview/OverviewTab';
 import { PatientCareLog } from './PatientCareLog';
@@ -19,134 +17,50 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
 
   if (!patient) {
     return (
-      <div className="p-4 text-center text-gray-500">
-        <p>Patient not found</p>
-      </div>
+      <div className="py-8 text-center text-muted-foreground text-sm">Patient not found.</div>
     );
   }
 
-  const isDetailedPatient = patientId === 'P100592';
-
   return (
     <div className="space-y-4">
-      {/* Patient Info Header */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <User className="h-5 w-5" />
-            {patient.name}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <p className="text-sm text-gray-600">Patient ID: {patient.id}</p>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">{patient.primaryDiagnosis}</Badge>
-              {patient.diagnosisCode && (
-                <Badge variant="outline">{patient.diagnosisCode}</Badge>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Minimal patient header */}
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 className="text-base font-semibold text-foreground">{patient.name}</h2>
+        <span className="text-xs text-muted-foreground">{patient.id}</span>
+        <Badge variant="outline" className="text-xs">{patient.primaryDiagnosis}</Badge>
+        {patient.diagnosisCode && (
+          <Badge variant="outline" className="text-xs">{patient.diagnosisCode}</Badge>
+        )}
+      </div>
 
-      {/* Tabs for detailed view */}
-      {isDetailedPatient ? (
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <Brain className="h-4 w-4" />
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="careLog" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Care Log
-            </TabsTrigger>
-            <TabsTrigger value="billing" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Billing
-            </TabsTrigger>
-          </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview" className="flex items-center gap-1.5">
+            <Brain className="h-4 w-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="careLog" className="flex items-center gap-1.5">
+            <Calendar className="h-4 w-4" />
+            Care Log
+          </TabsTrigger>
+          <TabsTrigger value="billing" className="flex items-center gap-1.5">
+            <FileText className="h-4 w-4" />
+            Billing
+          </TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="overview" className="mt-4">
-            <OverviewTab />
-          </TabsContent>
+        <TabsContent value="overview" className="mt-4">
+          <OverviewTab />
+        </TabsContent>
 
-          <TabsContent value="careLog" className="mt-4">
-            <PatientCareLog />
-          </TabsContent>
+        <TabsContent value="careLog" className="mt-4">
+          <PatientCareLog />
+        </TabsContent>
 
-          <TabsContent value="billing" className="mt-4">
-            <BillingContent />
-          </TabsContent>
-        </Tabs>
-      ) : (
-        /* Basic patient info for other patients */
-        <div className="space-y-4">
-          {/* Primary Diagnosis */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Primary Diagnosis
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="font-medium">{patient.primaryDiagnosis}</p>
-                <Badge variant="outline">{patient.diagnosisCode}</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Visit Information */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Visit Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Last Visit</p>
-                  <p className="text-sm">{new Date(patient.lastVisit).toLocaleDateString()}</p>
-                </div>
-                {patient.nextAppointment && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Next Appointment</p>
-                    <p className="text-sm text-blue-600">{new Date(patient.nextAppointment).toLocaleDateString()}</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Contact Information */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Contact Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm">(555) 123-4567</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm">{patient.name.toLowerCase().replace(' ', '.')}@email.com</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm">123 Main St, City, State 12345</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        <TabsContent value="billing" className="mt-4">
+          <BillingContent />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

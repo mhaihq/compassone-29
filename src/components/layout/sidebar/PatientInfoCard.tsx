@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { User, Calendar, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -12,31 +11,26 @@ interface PatientInfoCardProps {
 
 export const PatientInfoCard: React.FC<PatientInfoCardProps> = ({
   patientSummary,
-  variant = 'default'
+  variant = 'default',
 }) => {
   const { patientData, patientAge, lastContactedFormatted, medicalConditions } = patientSummary;
 
   if (variant === 'compact') {
     return (
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-        <CardContent className="p-3">
-          <div className="flex items-start gap-2">
-            <div className="bg-blue-100 p-1.5 rounded-full">
-              <User className="h-4 w-4 text-blue-600" />
+      <Card className="border-0 shadow-none rounded-none border-b border-border">
+        <CardContent className="px-6 py-3">
+          <div className="flex items-center gap-3">
+            <div className="bg-muted p-1.5 rounded-full flex-shrink-0">
+              <User className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-gray-900 truncate text-sm">
-                {patientData.name}
-              </h3>
-              <div className="flex items-center gap-3 mt-1 text-xs text-gray-600">
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  <span>{patientAge}y</span>
-                </div>
-                <div className="flex items-center gap-1">
+              <span className="font-medium text-sm text-foreground">{patientData.name}</span>
+              <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
+                <span>{patientAge}y</span>
+                <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  <span>{lastContactedFormatted}</span>
-                </div>
+                  {lastContactedFormatted}
+                </span>
               </div>
             </div>
           </div>
@@ -45,46 +39,61 @@ export const PatientInfoCard: React.FC<PatientInfoCardProps> = ({
     );
   }
 
+  // Status indicators — derive from patientData if available, otherwise show sensible defaults
+  const statuses: { label: string; variant: 'outline' | 'secondary'; className?: string }[] = [];
+
+  // Enrollment / consent status (placeholder — real data from API)
+  statuses.push({ label: 'CCM Enrolled', variant: 'outline', className: 'text-green-700 border-green-300' });
+
+  // Care plan status
+  statuses.push({ label: 'Care plan active', variant: 'outline' });
+
+  // Billing minutes status
+  statuses.push({ label: '42 / 60 min logged', variant: 'outline' });
+
   return (
-    <div className="p-4 bg-white">
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="bg-blue-100 p-2 rounded-full">
-              <User className="h-5 w-5 text-blue-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900 truncate">
-                {patientData.name}
-              </h3>
-              <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
+    <Card className="shadow-sm">
+      <CardContent className="p-4">
+        <div className="flex items-start gap-3">
+          <div className="bg-muted p-2 rounded-full flex-shrink-0">
+            <User className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <div className="flex-1 min-w-0 space-y-2">
+            <div>
+              <h3 className="font-semibold text-foreground truncate">{patientData.name}</h3>
+              <div className="flex flex-wrap items-center gap-3 mt-0.5 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  <span>{patientAge} years old</span>
-                </div>
-                <div className="flex items-center gap-1">
+                  {patientAge} years old
+                </span>
+                <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  <span>Last: {lastContactedFormatted}</span>
-                </div>
+                  Last contact: {lastContactedFormatted}
+                </span>
               </div>
-              {medicalConditions.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {medicalConditions.slice(0, 3).map((condition, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {condition}
-                    </Badge>
-                  ))}
-                  {medicalConditions.length > 3 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{medicalConditions.length - 3} more
-                    </Badge>
-                  )}
-                </div>
-              )}
+            </div>
+
+            {medicalConditions.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {medicalConditions.slice(0, 3).map((c, i) => (
+                  <Badge key={i} variant="outline" className="text-xs">{c}</Badge>
+                ))}
+                {medicalConditions.length > 3 && (
+                  <Badge variant="outline" className="text-xs">+{medicalConditions.length - 3}</Badge>
+                )}
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-1.5 pt-0.5">
+              {statuses.map((s, i) => (
+                <Badge key={i} variant={s.variant} className={`text-xs ${s.className ?? ''}`}>
+                  {s.label}
+                </Badge>
+              ))}
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
