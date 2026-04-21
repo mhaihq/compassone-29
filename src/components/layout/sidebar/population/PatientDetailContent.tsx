@@ -3,14 +3,11 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, User, Phone, Mail, MapPin, Activity, Clock, FileText, Brain, ClipboardList } from 'lucide-react';
+import { Calendar, User, Phone, Mail, MapPin, Clock, FileText, Brain } from 'lucide-react';
 import { patientsData } from '@/data/patientsData';
-import { patientData } from '@/data/patientData';
 import OverviewTab from '@/components/overview/OverviewTab';
 import { PatientCareLog } from './PatientCareLog';
-import { ProtocolsContent } from '../ProtocolsContent';
 import { BillingContent } from '../BillingContent';
-import { getSeverityColor } from '@/utils/patientUtils';
 
 interface PatientDetailContentProps {
   patientId: string;
@@ -56,7 +53,7 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
       {/* Tabs for detailed view */}
       {isDetailedPatient ? (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
               Overview
@@ -64,10 +61,6 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
             <TabsTrigger value="careLog" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Care Log
-            </TabsTrigger>
-            <TabsTrigger value="protocols" className="flex items-center gap-2">
-              <ClipboardList className="h-4 w-4" />
-              Protocols
             </TabsTrigger>
             <TabsTrigger value="billing" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
@@ -81,10 +74,6 @@ export const PatientDetailContent: React.FC<PatientDetailContentProps> = ({ pati
 
           <TabsContent value="careLog" className="mt-4">
             <PatientCareLog />
-          </TabsContent>
-
-          <TabsContent value="protocols" className="mt-4">
-            <ProtocolsContent />
           </TabsContent>
 
           <TabsContent value="billing" className="mt-4">

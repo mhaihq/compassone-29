@@ -4,7 +4,6 @@ import { TaskQueueContent } from '@/components/layout/sidebar/population/TaskQue
 import { PatientsListContent } from '@/components/layout/sidebar/population/PatientsListContent';
 import { CampaignsContent } from '@/components/layout/sidebar/population/CampaignsContent';
 import { BillingContent } from '@/components/layout/sidebar/population/BillingContent';
-import { InsightsContent } from '@/components/layout/sidebar/population/InsightsContent';
 import { CareTaskContent } from '@/components/care-task/CareTaskContent';
 import { PatientDetailContent } from '@/components/layout/sidebar/population/PatientDetailContent';
 import { PatientInfoCard } from '@/components/layout/sidebar/PatientInfoCard';
@@ -77,7 +76,6 @@ export function DashboardContent({ nav }: DashboardContentProps) {
             {activeTab === 'patients' && <PatientsListContent onOpenPatient={openPatient} />}
             {activeTab === 'campaigns' && <CampaignsContent />}
             {activeTab === 'billing' && <BillingContent />}
-            {activeTab === 'insights' && <InsightsContent />}
           </div>
         )}
       </div>
