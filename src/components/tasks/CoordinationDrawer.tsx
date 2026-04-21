@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ScriptBuilder } from './ScriptBuilder';
+import { TaskOutcomeActions } from '@/components/care-task/TaskOutcomeActions';
+import { emptyTaskOutcome, type TaskOutcome } from '@/types/taskOutcome';
 
 interface CoordinationDrawerProps {
   task: EnhancedPopulationTask;
@@ -41,7 +43,7 @@ export const CoordinationDrawer: React.FC<CoordinationDrawerProps> = ({ task, on
   const [selectedDecision, setSelectedDecision] = useState<string>('');
   const [feeWaiverReason, setFeeWaiverReason] = useState('');
   const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
-  const [outcome, setOutcome] = useState<string>('');
+  const [outcome, setOutcome] = useState<TaskOutcome>(emptyTaskOutcome);
 
   const handleScriptToggle = (scriptId: string, checked: boolean) => {
     setSelectedScripts(prev => 
@@ -265,6 +267,8 @@ export const CoordinationDrawer: React.FC<CoordinationDrawerProps> = ({ task, on
               </CardContent>
             </Card>
 
+            <TaskOutcomeActions outcome={outcome} onChange={setOutcome} />
+
             <Card className="border-primary/20">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 text-emerald-600 mb-2">
@@ -352,11 +356,11 @@ export const CoordinationDrawer: React.FC<CoordinationDrawerProps> = ({ task, on
             Next: {STEPS[currentStep + 1]}
           </Button>
         ) : (
-          <Button 
+          <Button
             className="flex-1"
             onClick={onClose}
           >
-            Approve & Finalize
+            {outcome.countsForBilling ? 'Approve, Finalize & Add to Billing' : 'Approve & Finalize'}
           </Button>
         )}
         <Button variant="outline" onClick={onClose}>

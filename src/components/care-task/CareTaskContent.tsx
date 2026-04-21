@@ -333,12 +333,17 @@ export const CareTaskContent: React.FC<CareTaskContentProps> = ({ taskId, onComp
   };
 
   // Handle finalizing the task
-  const handleFinalize = () => {
+  const handleFinalize = (outcome?: import('@/types/taskOutcome').TaskOutcome) => {
+    const parts: string[] = [`Time logged: ${formatTime(timer)}`];
+    if (outcome?.countsForBilling) parts.push('added to billing');
+    if (outcome?.escalate) parts.push('escalated');
+    if (outcome?.updateCarePlan) parts.push('care plan updated');
+
     toast({
-      title: "Care Task Completed",
-      description: `Time logged: ${formatTime(timer)} minutes for ${task?.cptCode} billing code.`,
+      title: 'Care Task Completed',
+      description: parts.join(' · '),
     });
-    
+
     setTimeout(() => {
       onComplete?.();
     }, 1500);
