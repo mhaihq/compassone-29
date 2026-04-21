@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { FileText, Pencil, CheckCircle2, Save } from 'lucide-react';
 
 export interface CarePlanData {
@@ -11,13 +13,16 @@ export interface CarePlanData {
   chronicConditions: string;
   medicationList: string;
   allergiesAndInteractions: string;
-  symptomMonitoring: string;
+  plannedInterventions: string;
+  expectedOutcomes: string;
+  coordinationOfCare: string;
   preventiveServices: string;
-  specialistCoordination: string;
   communityResources: string;
   crisisAndEmergency: string;
+  sharedWithPatient: boolean;
   lastUpdated?: string;
   updatedBy?: string;
+  revisionHistory?: { date: string; by: string; summary: string }[];
 }
 
 interface CarePlanPanelProps {
@@ -26,16 +31,17 @@ interface CarePlanPanelProps {
   onSave: (plan: CarePlanData) => void;
 }
 
-const FIELDS: { key: keyof CarePlanData; label: string; placeholder: string }[] = [
+const TEXT_FIELDS: { key: keyof CarePlanData; label: string; placeholder: string }[] = [
   { key: 'patientGoals', label: '1. Patient Goals & Preferences', placeholder: 'What matters most to the patient; functional goals for the care period…' },
-  { key: 'chronicConditions', label: '2. Chronic Conditions & Problem List', placeholder: 'Active diagnoses, ICD-10 codes, onset dates, current status…' },
+  { key: 'chronicConditions', label: '2. Chronic Conditions & Problem List', placeholder: 'Active diagnoses, ICD-10 codes, onset dates, monitoring targets (e.g. BP <130/80)…' },
   { key: 'medicationList', label: '3. Medication List', placeholder: 'Drug name, dose, frequency, prescribing provider…' },
   { key: 'allergiesAndInteractions', label: '4. Allergies & Drug Interactions', placeholder: 'Known allergies, adverse reactions, flagged interactions…' },
-  { key: 'symptomMonitoring', label: '5. Symptom Monitoring & Targets', placeholder: 'BP target <130/80, HbA1c <7%, weight check weekly…' },
-  { key: 'preventiveServices', label: '6. Preventive Services Due', placeholder: 'Annual flu shot, mammogram, colonoscopy, A1c lab — due dates…' },
-  { key: 'specialistCoordination', label: '7. Specialist Coordination', placeholder: 'Cardiology f/u May 2026, nephrology referral pending…' },
-  { key: 'communityResources', label: '8. Community Resources', placeholder: 'Meals on Wheels, transportation assistance, local diabetes support group…' },
-  { key: 'crisisAndEmergency', label: '9. Crisis & Emergency Plan', placeholder: '911 for chest pain or BP >180/120. Emergency contact: [name/number]. After-hours line…' },
+  { key: 'plannedInterventions', label: '5. Planned Interventions', placeholder: 'What the care team will do: medication adjustments, education sessions, referrals, monitoring schedule…' },
+  { key: 'expectedOutcomes', label: '6. Expected Outcomes & Prognosis', placeholder: 'Clinical goals and expected trajectory: BP controlled within 3 months, HbA1c <7% by Q3…' },
+  { key: 'coordinationOfCare', label: '7. Coordination of Care', placeholder: 'Billing provider, treating providers, specialist roles, how the team communicates (care conference, EHR notes)…' },
+  { key: 'preventiveServices', label: '8. Preventive Services Due', placeholder: 'Annual flu shot, mammogram, colonoscopy, A1c lab — due dates…' },
+  { key: 'communityResources', label: '9. Community & Social Resources', placeholder: 'Meals on Wheels, transportation assistance, local diabetes support group…' },
+  { key: 'crisisAndEmergency', label: '10. Crisis & Emergency Plan', placeholder: '911 for chest pain or BP >180/120. Emergency contact: [name/number]. After-hours line…' },
 ];
 
 export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
@@ -44,7 +50,14 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
   const [saved, setSaved] = useState(false);
 
   function handleSave() {
-    onSave({ ...draft, lastUpdated: new Date().toISOString().slice(0, 10), updatedBy: 'Care Team' });
+    const today = new Date().toISOString().slice(0, 10);
+    const newRevision = { date: today, by: 'Care Team', summary: 'Plan updated' };
+    onSave({
+      ...draft,
+      lastUpdated: today,
+      updatedBy: 'Care Team',
+      revisionHistory: [...(plan.revisionHistory ?? []), newRevision],
+    });
     setEditing(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
@@ -57,13 +70,14 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
 
   return (
     <div className="space-y-4">
+      {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-semibold text-foreground">Electronic Care Plan</span>
           {plan.lastUpdated && (
             <span className="text-xs text-muted-foreground">
-              Updated {new Date(plan.lastUpdated).toLocaleDateString()} {plan.updatedBy ? `by ${plan.updatedBy}` : ''}
+              Updated {new Date(plan.lastUpdated).toLocaleDateString()}{plan.updatedBy ? ` by ${plan.updatedBy}` : ''}
             </span>
           )}
         </div>
@@ -88,10 +102,27 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
         </div>
       </div>
 
+      {/* Shared with patient — CMS requires documentation of this */}
+      <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2">
+        <Checkbox
+          id="shared-with-patient"
+          checked={editing ? draft.sharedWithPatient : plan.sharedWithPatient}
+          onCheckedChange={checked =>
+            editing && setDraft(prev => ({ ...prev, sharedWithPatient: checked === true }))
+          }
+          disabled={!editing}
+        />
+        <Label htmlFor="shared-with-patient" className="text-xs text-foreground cursor-pointer">
+          Care plan shared with patient and all treating providers
+          <span className="ml-1 text-muted-foreground">(CMS requirement)</span>
+        </Label>
+      </div>
+
       <Separator />
 
+      {/* 10 text fields */}
       <div className="grid grid-cols-1 gap-4">
-        {FIELDS.map(({ key, label, placeholder }) => (
+        {TEXT_FIELDS.map(({ key, label, placeholder }) => (
           <Card key={key} className="shadow-none border-border">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
@@ -117,6 +148,23 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
           </Card>
         ))}
       </div>
+
+      {/* Revision history */}
+      {(plan.revisionHistory ?? []).length > 0 && (
+        <>
+          <Separator />
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground mb-2">Revision History</p>
+            <div className="space-y-1">
+              {[...(plan.revisionHistory ?? [])].reverse().map((r, i) => (
+                <p key={i} className="text-xs text-muted-foreground">
+                  {new Date(r.date).toLocaleDateString()} — {r.by}: {r.summary}
+                </p>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
