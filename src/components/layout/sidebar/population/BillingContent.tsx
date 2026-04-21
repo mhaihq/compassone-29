@@ -108,24 +108,24 @@ export const BillingContent: React.FC = () => {
         <CardHeader className="pb-4">
           <CardTitle className="text-base text-foreground mb-4">Patient Billing Status</CardTitle>
 
-          <div className="flex items-center p-1 bg-muted rounded-lg w-fit">
+          <div className="flex items-center p-1 bg-muted rounded-lg w-full sm:w-fit">
             <Button
               variant={activeFilter === 'ready' ? 'default' : 'ghost'}
               size="sm"
-              className="rounded-md px-4 py-2"
+              className="rounded-md px-3 py-2 flex-1 sm:flex-none"
               onClick={() => setActiveFilter('ready')}
             >
-              <CheckCircle2 className="h-4 w-4 mr-2" />
+              <CheckCircle2 className="h-4 w-4 mr-1.5" />
               Ready to Bill
               <Badge variant="secondary" className="ml-2 text-xs">{readyToBillPatients.length}</Badge>
             </Button>
             <Button
               variant={activeFilter === 'at-risk' ? 'default' : 'ghost'}
               size="sm"
-              className="rounded-md px-4 py-2 ml-1"
+              className="rounded-md px-3 py-2 ml-1 flex-1 sm:flex-none"
               onClick={() => setActiveFilter('at-risk')}
             >
-              <AlertTriangle className="h-4 w-4 mr-2" />
+              <AlertTriangle className="h-4 w-4 mr-1.5" />
               At Risk
               <Badge variant="secondary" className="ml-2 text-xs">{atRiskPatients.length}</Badge>
             </Button>
@@ -156,28 +156,30 @@ export const BillingContent: React.FC = () => {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead className="text-xs font-medium px-6">Patient</TableHead>
-                  <TableHead className="text-xs font-medium">CPT Code</TableHead>
-                  <TableHead className="text-xs font-medium">Progress</TableHead>
+                  <TableHead className="text-xs font-medium px-4">Patient</TableHead>
+                  <TableHead className="text-xs font-medium hidden sm:table-cell">CPT Code</TableHead>
+                  <TableHead className="text-xs font-medium hidden md:table-cell">Progress</TableHead>
                   <TableHead className="text-xs font-medium">Amount</TableHead>
                   <TableHead className="text-xs font-medium">Status</TableHead>
-                  {activeFilter === 'at-risk' && <TableHead className="text-xs font-medium">Risk Factors</TableHead>}
+                  {activeFilter === 'at-risk' && <TableHead className="text-xs font-medium hidden lg:table-cell">Risk Factors</TableHead>}
                   <TableHead className="text-xs font-medium">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {currentPatients.map(patient => (
                   <TableRow key={patient.id} className="hover:bg-muted/30 border-b border-border">
-                    <TableCell className="px-6">
+                    <TableCell className="px-4 py-3">
                       <p className="font-medium text-sm">{patient.name}</p>
-                      <p className="text-xs text-muted-foreground">ID: {patient.id}</p>
+                      <p className="text-xs text-muted-foreground hidden sm:block">ID: {patient.id}</p>
+                      {/* Show CPT inline on mobile */}
+                      <p className="text-xs text-muted-foreground sm:hidden">{patient.cptCode} · {patient.description}</p>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <p className="font-medium text-sm">{patient.cptCode}</p>
                       <p className="text-xs text-muted-foreground">{patient.description}</p>
                     </TableCell>
-                    <TableCell>
-                      <div className="space-y-1.5 min-w-[100px]">
+                    <TableCell className="hidden md:table-cell">
+                      <div className="space-y-1.5 w-28">
                         <div className="flex justify-between text-xs">
                           <span className="text-muted-foreground">{patient.minutesUsed}/{patient.minutesTotal} min</span>
                           <span className="font-medium">{Math.round((patient.minutesUsed / patient.minutesTotal) * 100)}%</span>
@@ -188,7 +190,7 @@ export const BillingContent: React.FC = () => {
                     <TableCell className="font-medium text-sm">{patient.amount}</TableCell>
                     <TableCell>{getStatusBadge(patient.status)}</TableCell>
                     {activeFilter === 'at-risk' && (
-                      <TableCell>
+                      <TableCell className="hidden lg:table-cell">
                         <div className="space-y-1">
                           {patient.riskFactors?.map((f, i) => (
                             <div key={i} className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -199,10 +201,10 @@ export const BillingContent: React.FC = () => {
                         </div>
                       </TableCell>
                     )}
-                    <TableCell>
+                    <TableCell className="py-3">
                       <div className="flex gap-1">
                         <Button size="sm" variant="outline" className="h-8 w-8 p-0"><Phone className="h-3 w-3" /></Button>
-                        <Button size="sm" variant="outline" className="h-8 w-8 p-0"><FileText className="h-3 w-3" /></Button>
+                        <Button size="sm" variant="outline" className="h-8 w-8 p-0 hidden sm:flex"><FileText className="h-3 w-3" /></Button>
                         {activeFilter === 'ready' && (
                           <Button size="sm" className="h-8 px-3 text-xs">Bill Now</Button>
                         )}

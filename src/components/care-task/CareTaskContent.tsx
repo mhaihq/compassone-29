@@ -133,18 +133,18 @@ export function CareTaskContent({ taskId, onComplete }: CareTaskContentProps) {
   const evidenceToShow = [...highEvidence, ...otherEvidence].slice(0, 2);
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6">
       {/* Timer bar */}
-      <div className="flex items-center justify-between bg-card border border-border rounded-lg px-4 py-2.5">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Clock size={14} />
-          <span>Session time:</span>
+      <div className="flex items-center justify-between bg-card border border-border rounded-lg px-4 py-2.5 gap-3">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground min-w-0">
+          <Clock size={14} className="flex-shrink-0" />
+          <span className="hidden sm:inline">Session time:</span>
           <span className="font-mono font-medium text-foreground">{formatTime(timer)}</span>
-          <span className="text-xs text-muted-foreground/70">
+          <span className="text-xs text-muted-foreground/70 hidden sm:inline">
             ({Math.round((timer / (20 * 60)) * 100)}% of 20 min)
           </span>
         </div>
-        <Button variant="outline" size="sm" className="h-7 px-2 text-xs" onClick={() => setIsTimerRunning(r => !r)}>
+        <Button variant="outline" size="sm" className="h-8 px-3 text-xs flex-shrink-0" onClick={() => setIsTimerRunning(r => !r)}>
           {isTimerRunning ? <><Pause size={11} className="mr-1" />Pause</> : <><Play size={11} className="mr-1" />Resume</>}
         </Button>
       </div>

@@ -164,31 +164,31 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
     <div className="flex flex-col h-full bg-background">
       {/* Header - Fixed at top */}
       <div className="flex-shrink-0 p-4 bg-card border-b border-border">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Task Queue</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
               {filteredTasks.length} tasks {filters.module !== 'All' && `in ${filters.module}`}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)}>
               <TabsList className="h-8">
                 <TabsTrigger value="list" className="text-xs h-7 px-2 gap-1">
                   <List className="w-3 h-3" />
-                  List
+                  <span className="hidden sm:inline">List</span>
                 </TabsTrigger>
                 <TabsTrigger value="board" className="text-xs h-7 px-2 gap-1">
                   <Kanban className="w-3 h-3" />
-                  Board
+                  <span className="hidden sm:inline">Board</span>
                 </TabsTrigger>
                 <TabsTrigger value="table" className="text-xs h-7 px-2 gap-1">
                   <TableIcon className="w-3 h-3" />
-                  Table
+                  <span className="hidden sm:inline">Table</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
-            <Button onClick={() => setShowNewTaskModal(true)} className="gap-1 h-8 px-2 text-xs">
+            <Button onClick={() => setShowNewTaskModal(true)} className="gap-1 h-8 px-3 text-xs">
               <Plus className="w-3 h-3" />
               New Task
             </Button>
@@ -197,11 +197,11 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
 
         {/* Search and Filters */}
         <div className="flex items-center gap-2">
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-0">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
             <Input
               placeholder="Search tasks..."
-              className="pl-7 h-8 text-xs"
+              className="pl-7 h-9 text-sm"
               value={filters.searchTerm}
               onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value })}
             />
@@ -210,10 +210,10 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
             variant="outline"
             size="sm"
             onClick={() => setShowFilters(!showFilters)}
-            className="gap-1 h-8 px-2 text-xs"
+            className="gap-1 h-9 px-3 text-xs flex-shrink-0"
           >
             <Filter className="w-3 h-3" />
-            Filters
+            <span className="hidden sm:inline">Filters</span>
           </Button>
         </div>
 
