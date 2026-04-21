@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { EvidenceCard } from './EvidenceCard';
+import type { CareTaskViewModel, EvidenceFromCall } from './types';
 
 interface RiskAssessmentStepProps {
-  task: any;
+  task: CareTaskViewModel;
   riskApproved: boolean | null;
   onRiskDecision: (approved: boolean) => void;
   onShowAudio: () => void;
@@ -24,7 +25,7 @@ export const RiskAssessmentStep: React.FC<RiskAssessmentStepProps> = ({
   onEvidenceAction
 }) => {
   const savedEvidenceCount = Object.values(evidenceStatuses).filter(status => status === 'saved').length;
-  const totalEvidenceCount = task.evidenceFromCall.length;
+  const totalEvidenceCount = task.evidenceFromCall?.length ?? 0;
   const allEvidenceReviewed = Object.keys(evidenceStatuses).length === totalEvidenceCount;
 
   return (
@@ -60,7 +61,7 @@ export const RiskAssessmentStep: React.FC<RiskAssessmentStepProps> = ({
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {task.evidenceFromCall.map((evidence: any, index: number) => (
+            {task.evidenceFromCall?.map((evidence: EvidenceFromCall, index: number) => (
               <EvidenceCard
                 key={index}
                 evidence={{

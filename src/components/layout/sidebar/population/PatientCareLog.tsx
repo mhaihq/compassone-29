@@ -1,304 +1,393 @@
-
 import React, { useState } from 'react';
-import { Calendar, Clock, Video, Phone, ChevronDown, ChevronUp, Edit, FileText, MessageCircle } from 'lucide-react';
+import { Calendar, Clock, Phone, Video, MessageCircle, FileText, CheckCircle2, ShieldCheck, User, Bot } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+
+type CallChannel = 'video' | 'phone' | 'sms';
+type CallStatus = 'completed' | 'missed' | 'scheduled';
+
+interface CallEntry {
+  id: string;
+  title: string;
+  channel: CallChannel;
+  status: CallStatus;
+  date: string;
+  time: string;
+  durationMin: number | null;
+  participant: string;
+  summary: string;
+  transcript?: string;
+  minutesLogged: number;
+  countedForBilling: boolean;
+  cptCode?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+}
+
+interface UpcomingCall {
+  id: string;
+  title: string;
+  channel: CallChannel;
+  date: string;
+  time: string;
+  participant: string;
+  agenda: string[];
+}
+
+// TODO: Replace with real API call
+const mockUpcomingCalls: UpcomingCall[] = [
+  {
+    id: 'up-001',
+    title: 'Weekly CCM Check-in',
+    channel: 'phone',
+    date: '2026-04-29',
+    time: '14:30',
+    participant: 'Hana AI Coach',
+    agenda: [
+      'Review BP readings since last call',
+      'Medication adherence check — lisinopril',
+      'PHQ-2 screening',
+    ],
+  },
+  {
+    id: 'up-002',
+    title: 'Monthly Care Plan Review',
+    channel: 'video',
+    date: '2026-05-05',
+    time: '10:00',
+    participant: 'Dr. Wilson',
+    agenda: [
+      'Review monthly care plan',
+      'Discuss BP trend and medication adjustment',
+      'Update goals for next month',
+    ],
+  },
+];
+
+// TODO: Replace with real API call
+const mockCallLog: CallEntry[] = [
+  {
+    id: 'call-001',
+    title: 'Monthly CCM Review',
+    channel: 'phone',
+    status: 'completed',
+    date: '2026-04-22',
+    time: '14:32',
+    durationMin: 14,
+    participant: 'Hana AI Coach',
+    summary: 'Depression symptoms discussed. PHQ-9 administered (score 11, down from 15). BP reading elevated at 138/88. Medication adherence discussed — patient reports occasional missed lisinopril doses.',
+    transcript: 'Hana: How have you been feeling since our last call?\nPatient: The medication seems to be helping with the low mood, but I still have bad days.\nHana: Can we talk about those days? When do they usually happen?\nPatient: Usually mid-afternoon. I feel exhausted and hopeless for a few hours.\nHana: That sounds difficult. Let\'s note that and talk to Dr. Wilson at your next appointment.',
+    minutesLogged: 14,
+    countedForBilling: true,
+    cptCode: '99490',
+    reviewedBy: 'Sarah M. (RN)',
+    reviewedAt: '2026-04-22',
+  },
+  {
+    id: 'call-002',
+    title: 'Medication Adherence Check',
+    channel: 'sms',
+    status: 'completed',
+    date: '2026-04-20',
+    time: '11:30',
+    durationMin: 4,
+    participant: 'Hana AI Coach',
+    summary: 'SMS follow-up on lisinopril adherence. Patient confirmed 2 missed doses this week. Education provided on importance of consistent dosing.',
+    minutesLogged: 4,
+    countedForBilling: true,
+    cptCode: '99490',
+    reviewedBy: 'Sarah M. (RN)',
+    reviewedAt: '2026-04-20',
+  },
+  {
+    id: 'call-003',
+    title: 'Care Plan Review',
+    channel: 'video',
+    status: 'completed',
+    date: '2026-04-18',
+    time: '10:00',
+    durationMin: 18,
+    participant: 'Dr. Wilson',
+    summary: 'Comprehensive care plan review. Updated medication plan. Scheduled follow-up for BP recheck in 1 week.',
+    minutesLogged: 18,
+    countedForBilling: true,
+    cptCode: '99490',
+    reviewedBy: 'Dr. Wilson',
+    reviewedAt: '2026-04-18',
+  },
+  {
+    id: 'call-004',
+    title: 'Weekly Check-in',
+    channel: 'phone',
+    status: 'completed',
+    date: '2026-04-15',
+    time: '15:00',
+    durationMin: 8,
+    participant: 'Hana AI Coach',
+    summary: 'Patient reports feeling more stable. Sleep improved. No SI. Exercise minutes below target (90/150 min this week).',
+    minutesLogged: 8,
+    countedForBilling: true,
+    cptCode: '99490',
+    reviewedBy: 'Sarah M. (RN)',
+    reviewedAt: '2026-04-15',
+  },
+  {
+    id: 'call-005',
+    title: 'Weekly Check-in',
+    channel: 'phone',
+    status: 'missed',
+    date: '2026-04-08',
+    time: '15:00',
+    durationMin: null,
+    participant: 'Hana AI Coach',
+    summary: 'Patient did not answer. Voicemail left. Rescheduled for following week.',
+    minutesLogged: 2,
+    countedForBilling: false,
+  },
+];
+
+const CHANNEL_ICON: Record<CallChannel, React.ElementType> = {
+  video: Video,
+  phone: Phone,
+  sms: MessageCircle,
+};
+
+const STATUS_BADGE: Record<CallStatus, { label: string; className: string }> = {
+  completed: { label: 'Completed', className: 'bg-green-100 text-green-700 border-green-200' },
+  missed:    { label: 'Missed',    className: 'bg-red-100 text-red-700 border-red-200' },
+  scheduled: { label: 'Scheduled', className: 'bg-blue-100 text-blue-700 border-blue-200' },
+};
 
 export const PatientCareLog: React.FC = () => {
-  const [activeItem, setActiveItem] = useState<string | null>(null);
-  
-  const toggleItem = (itemId: string) => {
-    setActiveItem(activeItem === itemId ? null : itemId);
-  };
-  
+  const [selected, setSelected] = useState<CallEntry | null>(null);
+  const [search, setSearch] = useState('');
+
+  const filtered = mockCallLog.filter(
+    c => c.title.toLowerCase().includes(search.toLowerCase()) ||
+         c.summary.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  const totalMinutes = mockCallLog.reduce((sum, c) => sum + (c.countedForBilling ? c.minutesLogged : 0), 0);
+
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">Care Log</CardTitle>
-          <div className="flex items-center gap-2">
-            <div className="relative w-48">
-              <Input 
-                type="text"
-                placeholder="Search logs..."
-                className="pl-10 py-2 bg-white text-sm"
-              />
-              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-400">
-                  <path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                </svg>
-              </div>
-            </div>
-            <div className="flex rounded-md border border-input overflow-hidden">
-              <Button variant="ghost" className="px-3 py-1 text-sm rounded-none bg-blue-50 text-blue-700 border-r">All</Button>
-              <Button variant="ghost" className="px-3 py-1 text-sm rounded-none">Future</Button>
-              <Button variant="ghost" className="px-3 py-1 text-sm rounded-none">Past</Button>
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {/* Upcoming Calls Section */}
-        <div className="mb-6">
-          <div className="flex items-center text-gray-600 mb-3">
-            <Calendar size={16} className="mr-2" />
-            <h4 className="text-md font-medium">Upcoming Calls</h4>
-          </div>
-
-          {/* Medication Review */}
-          <div className="bg-white rounded-lg p-4 mb-3 border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="text-blue-600">
-                  <Video size={20} />
-                </div>
-                <div>
-                  <h5 className="font-medium text-gray-900">Medication Review</h5>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Calendar size={14} className="mr-1" />
-                    <span>May 5 • 10:30 AM</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className="bg-blue-50 text-blue-700">Scheduled</Badge>
-                <Badge className="bg-teal-600 text-white">Dr. Smith</Badge>
-                <Button variant="ghost" size="sm" className="p-1">
-                  <ChevronDown size={20} />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Mental Health Check-in */}
-          <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="text-blue-600">
-                  <Phone size={20} />
-                </div>
-                <div>
-                  <h5 className="font-medium text-gray-900">Mental Health Check-in</h5>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Calendar size={14} className="mr-1" />
-                    <span>May 7 • 2:15 PM</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className="bg-blue-50 text-blue-700">Scheduled</Badge>
-                <Badge className="bg-teal-600 text-white">AI Voice Coach</Badge>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="p-1"
-                  onClick={() => toggleItem('mental-health')}
-                >
-                  {activeItem === 'mental-health' ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                </Button>
-              </div>
-            </div>
-
-            {activeItem === 'mental-health' && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="flex justify-between items-center mb-4">
-                  <h6 className="text-blue-600 font-medium flex items-center">
-                    <FileText size={16} className="mr-2" />
-                    Call Script
-                  </h6>
-                  <Button variant="ghost" size="sm" className="text-gray-500 flex items-center">
-                    <Edit size={16} className="mr-1" />
-                    Edit Script
-                  </Button>
-                </div>
-
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li>Administer PHQ-9 assessment.</li>
-                    <li>Ask about sleep quality and daily activities.</li>
-                    <li>Check for any suicidal ideation.</li>
-                    <li>Discuss coping mechanisms.</li>
-                  </ul>
-                </div>
-
-                <div className="mt-4">
-                  <h6 className="text-gray-700 font-medium mb-2">Related Tasks</h6>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between bg-white p-3 rounded-md border border-gray-100">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 rounded-full bg-red-500 mr-3"></div>
-                        <span>PHQ-9 Assessment</span>
+    <>
+      {/* Upcoming AI Calls */}
+      {mockUpcomingCalls.length > 0 && (
+        <Card className="shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              Upcoming Calls
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              {mockUpcomingCalls.map(call => {
+                const ChannelIcon = CHANNEL_ICON[call.channel];
+                const isAI = call.participant.toLowerCase().includes('hana') || call.participant.toLowerCase().includes('ai');
+                return (
+                  <div key={call.id} className="flex items-start gap-3 px-4 py-3">
+                    <div className="flex-shrink-0 p-1.5 rounded-md bg-muted">
+                      <ChannelIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">{call.title}</span>
+                        <Badge variant="outline" className="text-xs">Scheduled</Badge>
+                        {isAI && (
+                          <Badge variant="outline" className="text-xs text-violet-700 border-violet-200">
+                            <Bot className="h-2.5 w-2.5 mr-0.5" />
+                            AI
+                          </Badge>
+                        )}
                       </div>
-                      <span className="text-sm text-gray-500">high</span>
-                    </div>
-                    <div className="flex items-center justify-between bg-white p-3 rounded-md border border-gray-100">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 rounded-full bg-blue-500 mr-3"></div>
-                        <span>Sleep Quality Check</span>
+                      <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {new Date(call.date).toLocaleDateString()} · {call.time}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <User className="h-3 w-3" />
+                          {call.participant}
+                        </span>
                       </div>
-                      <span className="text-sm text-gray-500">low</span>
+                      {call.agenda.length > 0 && (
+                        <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5 mt-1">
+                          {call.agenda.map((a, i) => <li key={i}>{a}</li>)}
+                        </ul>
+                      )}
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Past Calls Section */}
-        <div>
-          <div className="flex items-center text-gray-600 mb-3">
-            <Clock size={16} className="mr-2" />
-            <h4 className="text-md font-medium">Past Calls</h4>
+      {/* Past Calls */}
+      <Card className="shadow-sm">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                Past Calls
+              </CardTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {totalMinutes} min logged for billing this cycle
+              </p>
+            </div>
+            <Input
+              placeholder="Search log..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="h-9 text-sm sm:w-56"
+            />
           </div>
-
-          {/* Initial Assessment */}
-          <div className="bg-white rounded-lg p-4 mb-3 border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="text-green-600">
-                  <Video size={20} />
-                </div>
-                <div>
-                  <h5 className="font-medium text-gray-900">Initial Assessment</h5>
-                  <div className="flex items-center text-sm text-gray-500 gap-2">
-                    <div className="flex items-center">
-                      <Calendar size={14} className="mr-1" />
-                      <span>Apr 28 • 11:00 AM</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock size={14} className="mr-1" />
-                      <span>24 min</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className="bg-green-50 text-green-700">Completed</Badge>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="p-1"
-                  onClick={() => toggleItem('initial-assessment')}
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y divide-border">
+            {filtered.map(call => {
+              const ChannelIcon = CHANNEL_ICON[call.channel];
+              const statusCfg = STATUS_BADGE[call.status];
+              return (
+                <button
+                  key={call.id}
+                  onClick={() => setSelected(call)}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors text-left"
                 >
-                  {activeItem === 'initial-assessment' ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                </Button>
-              </div>
-            </div>
-
-            {activeItem === 'initial-assessment' && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <h6 className="text-gray-700 font-medium mb-2">SOAP Notes</h6>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h6 className="text-blue-600 text-sm font-medium mb-1">Subjective</h6>
-                    <p className="text-gray-700">Patient reports dizziness after taking the new medication. Symptoms are worse in the morning.</p>
+                  <div className="flex-shrink-0 p-1.5 rounded-md bg-muted">
+                    <ChannelIcon className="h-3.5 w-3.5 text-muted-foreground" />
                   </div>
-                  
-                  <div>
-                    <h6 className="text-green-600 text-sm font-medium mb-1">Objective</h6>
-                    <p className="text-gray-700">BP: 130/85, HR: 76, Temp: 98.6F. Patient appears slightly pale.</p>
-                  </div>
-                  
-                  <div>
-                    <h6 className="text-amber-600 text-sm font-medium mb-1">Assessment</h6>
-                    <p className="text-gray-700">Medication side effect - dizziness from antihypertensive medication.</p>
-                  </div>
-                  
-                  <div>
-                    <h6 className="text-purple-600 text-sm font-medium mb-1">Plan</h6>
-                    <p className="text-gray-700">Reduce dosage by 50%. Follow up in 1 week. Patient to monitor BP daily.</p>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <h6 className="text-gray-700 font-medium mb-2">Flags</h6>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-red-50 text-red-700 border border-red-200">Medication Side Effect</Badge>
-                    <Badge className="bg-amber-50 text-amber-700 border border-amber-200">Requires Follow-up</Badge>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <h6 className="text-gray-700 font-medium mb-2">Summary</h6>
-                  <p className="text-gray-700">Completed initial assessment. Patient reports medication side effects.</p>
-                </div>
-
-                <div className="mt-4">
-                  <div className="flex items-center justify-between">
-                    <h6 className="text-gray-700 font-medium flex items-center">
-                      <MessageCircle size={16} className="mr-2" />
-                      Transcript
-                    </h6>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-500">
-                          <path d="M3.5 2C3.22386 2 3 2.22386 3 2.5V12.5C3 12.7761 3.22386 13 3.5 13H11.5C11.7761 13 12 12.7761 12 12.5V6H8.5C8.22386 6 8 5.77614 8 5.5V2H3.5ZM9 2.70711L11.2929 5H9V2.70711ZM2 2.5C2 1.67157 2.67157 1 3.5 1H8.5C8.63261 1 8.75979 1.05268 8.85355 1.14645L12.8536 5.14645C12.9473 5.24021 13 5.36739 13 5.5V12.5C13 13.3284 12.3284 14 11.5 14H3.5C2.67157 14 2 13.3284 2 12.5V2.5Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                        </svg>
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-500">
-                          <path d="M7.5 2C4.46243 2 2 4.46243 2 7.5C2 10.5376 4.46243 13 7.5 13C10.5376 13 13 10.5376 13 7.5C13 4.46243 10.5376 2 7.5 2ZM1 7.5C1 3.91015 3.91015 1 7.5 1C11.0899 1 14 3.91015 14 7.5C14 11.0899 11.0899 14 7.5 14C3.91015 14 1 11.0899 1 7.5ZM7.5 4C7.77614 4 8 4.22386 8 4.5V7H10.5C10.7761 7 11 7.22386 11 7.5C11 7.77614 10.7761 8 10.5 8H7.5C7.22386 8 7 7.77614 7 7.5V4.5C7 4.22386 7.22386 4 7.5 4Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                        </svg>
-                      </Button>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm font-medium text-foreground">{call.title}</span>
+                      <Badge className={`text-xs ${statusCfg.className}`}>{statusCfg.label}</Badge>
+                      {call.countedForBilling && (
+                        <Badge variant="outline" className="text-xs text-green-700 border-green-300">
+                          <ShieldCheck className="h-2.5 w-2.5 mr-0.5" />
+                          Billed
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {new Date(call.date).toLocaleDateString()} · {call.time}
+                      </span>
+                      {call.durationMin && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {call.durationMin} min
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <User className="h-3 w-3" />
+                        {call.participant}
+                      </span>
                     </div>
                   </div>
-                  
-                  <div className="bg-gray-50 p-3 rounded-md mt-2 text-sm text-gray-700">
-                    <p className="text-gray-500 mb-3">Transcript of 24 min call</p>
-                    <div className="space-y-2">
-                      <p><span className="font-medium">Dr:</span> How are you feeling today?</p>
-                      <p><span className="font-medium">Patient:</span> I've been having some dizziness with the new medication.</p>
-                      <p><span className="font-medium">Dr:</span> Let's discuss that and possibly adjust your dosage.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <h6 className="text-gray-700 font-medium mb-2">Outcomes</h6>
-                  <ul className="list-disc pl-5 space-y-1">
-                    <li>Adjusted medication dosage</li>
-                    <li>Scheduled follow-up in 1 week</li>
-                  </ul>
-                </div>
-              </div>
-            )}
+                </button>
+              );
+            })}
           </div>
+          {filtered.length === 0 && (
+            <div className="py-8 text-center text-sm text-muted-foreground">No log entries match your search.</div>
+          )}
+        </CardContent>
+      </Card>
 
-          {/* Medication Consultation */}
-          <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="text-green-600">
-                  <MessageCircle size={20} />
-                </div>
-                <div>
-                  <h5 className="font-medium text-gray-900">Medication Consultation</h5>
-                  <div className="flex items-center text-sm text-gray-500 gap-2">
-                    <div className="flex items-center">
-                      <Calendar size={14} className="mr-1" />
-                      <span>Apr 15 • 10:00 AM</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock size={14} className="mr-1" />
-                      <span>5 min</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className="bg-green-50 text-green-700">Completed</Badge>
-                <Button variant="ghost" size="sm" className="p-1">
-                  <ChevronDown size={20} />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      <CallDetailDrawer call={selected} onClose={() => setSelected(null)} />
+    </>
   );
 };
+
+function CallDetailDrawer({ call, onClose }: { call: CallEntry | null; onClose: () => void }) {
+  if (!call) return null;
+  const statusCfg = STATUS_BADGE[call.status];
+  return (
+    <Sheet open={!!call} onOpenChange={o => { if (!o) onClose(); }}>
+      <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+        <SheetHeader className="mb-4">
+          <SheetTitle className="text-base">{call.title}</SheetTitle>
+        </SheetHeader>
+
+        <div className="space-y-5">
+          {/* Status row */}
+          <div className="flex flex-wrap gap-2">
+            <Badge className={`text-xs ${statusCfg.className}`}>{statusCfg.label}</Badge>
+            {call.countedForBilling && (
+              <Badge variant="outline" className="text-xs text-green-700 border-green-300">
+                <ShieldCheck className="h-3 w-3 mr-1" />
+                Counts for billing
+              </Badge>
+            )}
+            {call.cptCode && <Badge variant="outline" className="text-xs">{call.cptCode}</Badge>}
+          </div>
+
+          {/* Call metadata */}
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Date & time</span>
+              <span className="font-medium">{new Date(call.date).toLocaleDateString()} · {call.time}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Channel</span>
+              <span className="font-medium capitalize">{call.channel}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Duration</span>
+              <span className="font-medium">{call.durationMin ? `${call.durationMin} min` : '—'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Participant</span>
+              <span className="font-medium">{call.participant}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Minutes logged</span>
+              <span className="font-medium">{call.minutesLogged} min</span>
+            </div>
+          </div>
+
+          {/* Summary */}
+          <div>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Summary</p>
+            <p className="text-sm text-foreground leading-relaxed">{call.summary}</p>
+          </div>
+
+          {/* Transcript */}
+          {call.transcript && (
+            <div>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                <FileText className="h-3 w-3" />
+                Transcript excerpt
+              </p>
+              <pre className="text-xs text-foreground bg-muted rounded-md p-3 whitespace-pre-wrap font-sans leading-relaxed">
+                {call.transcript}
+              </pre>
+            </div>
+          )}
+
+          {/* Audit trail */}
+          {call.reviewedBy && (
+            <div className="pt-4 border-t border-border">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Audit</p>
+              <div className="flex items-center gap-2 text-sm">
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <span>Reviewed by <span className="font-medium">{call.reviewedBy}</span></span>
+                {call.reviewedAt && (
+                  <span className="text-xs text-muted-foreground ml-auto">
+                    {new Date(call.reviewedAt).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}

@@ -59,9 +59,9 @@ export const TaskCallIntegration: React.FC<TaskCallIntegrationProps> = ({
       description: "Call summary has been integrated with the task system."
     });
     
-    // Here you would typically update the task in your state management system
-    console.log('Task update:', update);
-    
+    // TODO: wire to useTasks().applyUpdate(update) once hook is in place
+    void update;
+
     // Complete the workflow
     setTimeout(() => {
       onCallComplete();

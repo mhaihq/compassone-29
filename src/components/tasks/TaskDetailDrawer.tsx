@@ -1,5 +1,7 @@
 import React from 'react';
-import { EnhancedPopulationTask } from '@/types/enhancedTask';
+import { EnhancedPopulationTask, TaskStatus } from '@/types/enhancedTask';
+
+type TaskPriority = EnhancedPopulationTask['priority'];
 import {
   Sheet,
   SheetContent,
@@ -46,20 +48,6 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
     }
   };
 
-  // DEBUG: Log task data to verify billingOpportunities
-  React.useEffect(() => {
-    if (task) {
-      console.log('=== TASK DETAIL DRAWER DEBUG ===');
-      console.log('Task ID:', task.id);
-      console.log('Task Title:', task.title);
-      console.log('Has billingOpportunities?', !!task.billingOpportunities);
-      console.log('billingOpportunities length:', task.billingOpportunities?.length || 0);
-      console.log('billingOpportunities data:', task.billingOpportunities);
-      console.log('Full task object:', task);
-      console.log('================================');
-    }
-  }, [task]);
-
   if (!task) return null;
 
   const getModuleColor = (module: string) => {
@@ -82,13 +70,13 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({
 
   const handleStatusChange = (newStatus: string) => {
     if (onUpdate) {
-      onUpdate(task.id, { status: newStatus as any });
+      onUpdate(task.id, { status: newStatus as TaskStatus });
     }
   };
 
   const handlePriorityChange = (newPriority: string) => {
     if (onUpdate) {
-      onUpdate(task.id, { priority: newPriority as any });
+      onUpdate(task.id, { priority: newPriority as TaskPriority });
     }
   };
 

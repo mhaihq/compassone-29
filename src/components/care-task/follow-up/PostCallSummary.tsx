@@ -13,7 +13,7 @@ interface PostCallSummaryProps {
   taskId: string;
   onViewAnalytics: () => void;
   onReturnToTasks: () => void;
-  onEHRSubmit: (ehrData: any) => void;
+  onEHRSubmit: (ehrData: unknown) => void;
 }
 
 export const PostCallSummary: React.FC<PostCallSummaryProps> = ({

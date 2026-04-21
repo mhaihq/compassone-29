@@ -65,8 +65,8 @@ function followUpReducer(state: FollowUpState, action: FollowUpAction): FollowUp
         }
       };
     
-    case 'CLEAR_FIELD_ERROR':
-      const { [action.field]: _, ...remainingErrors } = state.form.errors;
+    case 'CLEAR_FIELD_ERROR': {
+      const { [action.field]: _omitted, ...remainingErrors } = state.form.errors;
       return {
         ...state,
         form: {
@@ -75,6 +75,7 @@ function followUpReducer(state: FollowUpState, action: FollowUpAction): FollowUp
           isValid: Object.keys(remainingErrors).length === 0
         }
       };
+    }
     
     case 'SET_FIELD_TOUCHED':
       return {
@@ -190,14 +191,14 @@ export const useEnhancedFollowUp = () => {
 
   // Enhanced handlers with performance tracking
   const handlers: FollowUpHandlers = {
-    onValidateField: useCallback((field: string, value: any): ValidationError | null => {
+    onValidateField: useCallback((_field: string, _value: unknown): ValidationError | null => {
       if (!state.config.enableValidation) return null;
-      
+
       // Validation logic would go here
       return null;
     }, [state.config.enableValidation]),
 
-    onFieldChange: useCallback((field: string, value: any) => {
+    onFieldChange: useCallback((field: string, value: unknown) => {
       dispatch({ type: 'SET_FIELD_VALUE', field, value });
       dispatch({ type: 'CLEAR_FIELD_ERROR', field });
     }, []),

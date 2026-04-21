@@ -4,9 +4,10 @@ import { FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import type { CareTaskViewModel } from './types';
 
 interface CarePlanStepProps {
-  task: any;
+  task: CareTaskViewModel;
   selectedActions: string[];
   manualAction: string;
   summary: string;

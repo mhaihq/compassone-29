@@ -101,4 +101,3 @@ export const HanaSidebar: React.FC<HanaSidebarProps> = ({ autoOpen = false }) =>
   );
 };
 
-export default HanaSidebar;

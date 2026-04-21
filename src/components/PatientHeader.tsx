@@ -11,7 +11,7 @@ interface PatientHeaderProps {
   patient: PatientData;
 }
 
-const PatientHeader: React.FC<PatientHeaderProps> = ({ patient }) => {
+export const PatientHeader: React.FC<PatientHeaderProps> = ({ patient }) => {
   const patientAge = calculateAge(patient.dateOfBirth);
 
   return (
@@ -82,4 +82,3 @@ const PatientHeader: React.FC<PatientHeaderProps> = ({ patient }) => {
   );
 };
 
-export default PatientHeader;

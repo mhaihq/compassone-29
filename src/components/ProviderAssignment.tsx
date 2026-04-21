@@ -6,7 +6,7 @@ import { providers, patientProviders, Provider } from '@/data/providerData';
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 
-const ProviderAssignment: React.FC = () => {
+export const ProviderAssignment: React.FC = () => {
   // Filter to get assigned providers
   const assignedProviders = providers.filter(provider => 
     patientProviders.includes(provider.id)
@@ -113,4 +113,3 @@ const ProviderCard: React.FC<ProviderCardProps> = ({ provider, isAssigned }) => 
   );
 };
 
-export default ProviderAssignment;

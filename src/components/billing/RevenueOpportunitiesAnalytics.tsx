@@ -21,7 +21,7 @@ interface RevenueOpportunitiesAnalyticsProps {
   actualRevenue?: number;
 }
 
-const categoryInfo: Record<OpportunityCategory, { label: string; color: string; icon: any }> = {
+const categoryInfo: Record<OpportunityCategory, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
   'mental-health': { label: 'Mental Health', color: 'bg-purple-100 text-purple-700 border-purple-200', icon: Sparkles },
   'wellness-prevention': { label: 'Wellness', color: 'bg-green-100 text-green-700 border-green-200', icon: TrendingUp },
   'convenience': { label: 'Convenience', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: Package },

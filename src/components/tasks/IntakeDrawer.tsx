@@ -20,7 +20,8 @@ export const IntakeDrawer: React.FC<IntakeDrawerProps> = ({ task, onClose }) => 
   const [outcome, setOutcome] = useState<TaskOutcome>(emptyTaskOutcome);
 
   const handleFinalize = () => {
-    console.log('Finalizing intake:', { decision: selectedDecision, outcome });
+    void selectedDecision;
+    void outcome;
     onClose();
   };
 

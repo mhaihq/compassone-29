@@ -2,9 +2,10 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TaskQueueContent } from '@/components/layout/sidebar/population/TaskQueueContent';
 import { PatientsListContent } from '@/components/layout/sidebar/population/PatientsListContent';
-import { CampaignsContent } from '@/components/layout/sidebar/population/CampaignsContent';
+import { EnrollmentContent } from '@/components/layout/sidebar/population/EnrollmentContent';
 import { BillingContent } from '@/components/layout/sidebar/population/BillingContent';
 import { CareTaskContent } from '@/components/care-task/CareTaskContent';
+import { PopulationManagement } from '@/pages/population/PopulationManagement';
 import { PatientDetailContent } from '@/components/layout/sidebar/population/PatientDetailContent';
 import { PatientInfoCard } from '@/components/layout/sidebar/PatientInfoCard';
 import { IntakeDrawer } from '@/components/tasks/IntakeDrawer';
@@ -30,7 +31,7 @@ export function DashboardContent({ nav }: DashboardContentProps) {
     ? 'Care Task Details'
     : isViewingPatient
     ? 'Patient Details'
-    : NAV_ITEMS.find(n => n.id === activeTab)?.label;
+    : NAV_ITEMS.find(n => n.id === activeTab)?.label ?? 'Dashboard';
 
   return (
     <main className="flex-1 flex flex-col overflow-hidden bg-background">
@@ -74,8 +75,9 @@ export function DashboardContent({ nav }: DashboardContentProps) {
           <div className="p-6">
             {activeTab === 'taskQueue' && <TaskQueueContent onOpenTask={openTask} />}
             {activeTab === 'patients' && <PatientsListContent onOpenPatient={openPatient} />}
-            {activeTab === 'campaigns' && <CampaignsContent />}
+            {activeTab === 'enrollment' && <EnrollmentContent />}
             {activeTab === 'billing' && <BillingContent />}
+            {activeTab === 'population' && <PopulationManagement />}
           </div>
         )}
       </div>
