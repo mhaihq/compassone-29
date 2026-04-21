@@ -1,4 +1,4 @@
-import { ListChecks, Megaphone, FileText, Users, Settings } from 'lucide-react';
+import { ListChecks, UserPlus, FileText, Users, Settings } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { DashboardTab } from '@/hooks/useDashboardNav';
@@ -16,7 +16,7 @@ const PRIMARY_ITEMS: NavItem[] = [
 ];
 
 const SECONDARY_ITEMS: NavItem[] = [
-  { id: 'campaigns', label: 'Campaigns', icon: <Megaphone size={18} /> },
+  { id: 'enrollment', label: 'Enrollment', icon: <UserPlus size={18} /> },
 ];
 
 export const NAV_ITEMS: NavItem[] = [...PRIMARY_ITEMS, ...SECONDARY_ITEMS];
