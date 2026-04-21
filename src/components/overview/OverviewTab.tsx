@@ -29,7 +29,7 @@ const mockOverview = {
   ],
 };
 
-const OverviewTab = () => {
+export function OverviewTab() {
   const { conditions, carePlan, billing, recentActivity } = mockOverview;
   const billingPct = Math.min(Math.round((billing.minutesLogged / billing.minutesRequired) * 100), 100);
 
@@ -132,6 +132,4 @@ const OverviewTab = () => {
 
     </div>
   );
-};
-
-export default OverviewTab;
+}

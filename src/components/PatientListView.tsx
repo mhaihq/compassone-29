@@ -10,7 +10,7 @@ interface PatientListViewProps {
   onPatientClick: (patientId: string) => void;
 }
 
-const PatientListView: React.FC<PatientListViewProps> = ({ patients, onPatientClick }) => {
+export const PatientListView: React.FC<PatientListViewProps> = ({ patients, onPatientClick }) => {
   // Calculate age from DOB
   const calculateAge = (dob: string): number => {
     const birthDate = new Date(dob);
@@ -134,4 +134,3 @@ const PatientListView: React.FC<PatientListViewProps> = ({ patients, onPatientCl
   );
 };
 
-export default PatientListView;

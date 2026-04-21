@@ -10,7 +10,7 @@ interface MedicalHistoryProps {
   patient: PatientData;
 }
 
-const MedicalHistory: React.FC<MedicalHistoryProps> = ({ patient }) => {
+export const MedicalHistory: React.FC<MedicalHistoryProps> = ({ patient }) => {
   // Format date helper
   const formatDate = (dateString: string): string => {
     const options: Intl.DateTimeFormatOptions = { 
@@ -129,4 +129,3 @@ const MedicalHistory: React.FC<MedicalHistoryProps> = ({ patient }) => {
   );
 };
 
-export default MedicalHistory;

@@ -74,8 +74,8 @@ export interface TaskContext {
 
 // Event handlers with enhanced type safety
 export interface FollowUpHandlers {
-  onValidateField: (field: string, value: any) => ValidationError | null;
-  onFieldChange: (field: string, value: any) => void;
+  onValidateField: (field: string, value: unknown) => ValidationError | null;
+  onFieldChange: (field: string, value: unknown) => void;
   onFieldBlur: (field: string) => void;
   onSubmit: (data: FollowUpFormData) => Promise<FollowUpActionResult>;
   onCancel: () => void;
@@ -120,7 +120,7 @@ export interface FollowUpState {
 
 // Action types for state management
 export type FollowUpAction =
-  | { type: 'SET_FIELD_VALUE'; field: string; value: any }
+  | { type: 'SET_FIELD_VALUE'; field: string; value: unknown }
   | { type: 'SET_FIELD_ERROR'; field: string; error: string }
   | { type: 'CLEAR_FIELD_ERROR'; field: string }
   | { type: 'SET_FIELD_TOUCHED'; field: string }

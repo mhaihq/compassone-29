@@ -11,10 +11,17 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon, Bot, User } from 'lucide-react';
 import { TaskModule, TaskChannel } from '@/types/enhancedTask';
 
+export interface NewTaskSubmission {
+  module: TaskModule;
+  channel: TaskChannel;
+  assignToAI: boolean;
+  dueDate: string;
+}
+
 interface NewTaskModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (taskData: any) => void;
+  onSubmit: (taskData: NewTaskSubmission) => void;
 }
 
 export const NewTaskModal: React.FC<NewTaskModalProps> = ({ open, onClose, onSubmit }) => {

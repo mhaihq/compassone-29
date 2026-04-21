@@ -45,7 +45,7 @@ export const CampaignDetailsView: React.FC<CampaignDetailsViewProps> = ({ campai
       patient.id === patientId 
         ? { 
             ...patient, 
-            status: newStatus as any,
+            status: newStatus as typeof patient.status,
             lastContactDate: new Date().toISOString().split('T')[0],
             contactAttempts: patient.contactAttempts + 1,
             notes: notes || patient.notes

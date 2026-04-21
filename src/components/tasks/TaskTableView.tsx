@@ -1,5 +1,7 @@
 import React from 'react';
-import { EnhancedPopulationTask } from '@/types/enhancedTask';
+import { EnhancedPopulationTask, TaskStatus } from '@/types/enhancedTask';
+
+type TaskPriority = EnhancedPopulationTask['priority'];
 import { Badge } from '@/components/ui/badge';
 import { Bot } from 'lucide-react';
 import {
@@ -49,13 +51,13 @@ export const TaskTableView: React.FC<TaskTableViewProps> = ({ tasks, onTaskClick
 
   const handleStatusChange = (taskId: string, newStatus: string) => {
     if (onUpdate) {
-      onUpdate(taskId, { status: newStatus as any });
+      onUpdate(taskId, { status: newStatus as TaskStatus });
     }
   };
 
   const handlePriorityChange = (taskId: string, newPriority: string) => {
     if (onUpdate) {
-      onUpdate(taskId, { priority: newPriority as any });
+      onUpdate(taskId, { priority: newPriority as TaskPriority });
     }
   };
 

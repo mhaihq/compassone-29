@@ -10,7 +10,7 @@ interface TreatmentPlanProps {
   patient: PatientData;
 }
 
-const TreatmentPlan: React.FC<TreatmentPlanProps> = ({ patient }) => {
+export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({ patient }) => {
   // Format date helper
   const formatDate = (dateString?: string): string => {
     if (!dateString) return 'No date set';
@@ -123,4 +123,3 @@ const TreatmentPlan: React.FC<TreatmentPlanProps> = ({ patient }) => {
   );
 };
 
-export default TreatmentPlan;

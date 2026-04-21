@@ -53,5 +53,5 @@ export interface FollowUpHandlers {
   onStartCall: () => void;
   onCallComplete: () => void;
   onViewAnalytics: () => void;
-  onEHRSubmit: (ehrData: any) => void;
+  onEHRSubmit: (ehrData: unknown) => void;
 }

@@ -87,8 +87,8 @@ export const CallQueue: React.FC<CallQueueProps> = ({ searchTerm, onStartCall })
           setCallsWithInsights(prev => prev.map(c => 
             c.id === call.id ? { ...c, aiInsights: insights } : c
           ));
-        } catch (error) {
-          console.error('Failed to load insights for', call.patientId, error);
+        } catch {
+          // TODO: surface load failure via toast once wired to real API
         }
         
         setLoadingInsights(prev => ({ ...prev, [call.id]: false }));

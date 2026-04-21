@@ -1,4 +1,4 @@
-# HANA Frontend — UI Development Guide
+# Hana Compass — CCM Dashboard UI Development Guide
 
 You are building the **frontend UI only** — pages, components, and flows with dummy data. The backend/API will be built separately. Your job is to make every screen look great, feel responsive, and be ready for API integration with minimal rework.
 

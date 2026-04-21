@@ -8,9 +8,10 @@ import { StabilityAssessmentStep } from './monthly-stability/StabilityAssessment
 import { DocumentationStep } from './monthly-stability/DocumentationStep';
 import { FinalReviewStep } from './monthly-stability/FinalReviewStep';
 import { StabilityCompletionCard } from './monthly-stability/StabilityCompletionCard';
+import type { CareTaskViewModel } from './types';
 
 interface MonthlyStabilityReviewProps {
-  task: any;
+  task: CareTaskViewModel;
   onComplete: () => void;
   timer: number;
   formatTime: (seconds: number) => string;

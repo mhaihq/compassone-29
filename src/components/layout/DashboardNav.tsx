@@ -1,5 +1,7 @@
-import { ListChecks, UserPlus, FileText, Users, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { ListChecks, UserPlus, FileText, Users, MoreHorizontal } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { DashboardTab } from '@/hooks/useDashboardNav';
 
@@ -27,6 +29,13 @@ interface DashboardNavProps {
 }
 
 export function DashboardNav({ activeTab, onTabChange }: DashboardNavProps) {
+  const [moreOpen, setMoreOpen] = useState(false);
+
+  const handleMobileSecondary = (id: DashboardTab) => {
+    onTabChange(id);
+    setMoreOpen(false);
+  };
+
   return (
     <>
       {/* Desktop left nav */}
@@ -56,15 +65,9 @@ export function DashboardNav({ activeTab, onTabChange }: DashboardNavProps) {
             />
           ))}
         </div>
-        <div className="mt-auto p-3 border-t border-border">
-          <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-            <Settings size={18} />
-            <span>Settings</span>
-          </button>
-        </div>
       </nav>
 
-      {/* Mobile bottom nav (primary only) */}
+      {/* Mobile bottom nav: primary items + More sheet for secondary */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border flex justify-around px-2 py-1">
         {PRIMARY_ITEMS.map(item => (
           <MobileNavItem
@@ -74,6 +77,40 @@ export function DashboardNav({ activeTab, onTabChange }: DashboardNavProps) {
             onClick={() => onTabChange(item.id)}
           />
         ))}
+        <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
+          <SheetTrigger asChild>
+            <button
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                SECONDARY_ITEMS.some(i => i.id === activeTab) ? 'text-primary' : 'text-muted-foreground'
+              }`}
+              aria-label="More"
+            >
+              <MoreHorizontal size={18} />
+              <span className="text-[10px]">More</span>
+            </button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="rounded-t-xl">
+            <SheetHeader className="mb-3">
+              <SheetTitle className="text-sm">More</SheetTitle>
+            </SheetHeader>
+            <div className="flex flex-col gap-1">
+              {SECONDARY_ITEMS.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => handleMobileSecondary(item.id)}
+                  className={`flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    activeTab === item.id
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-accent'
+                  }`}
+                >
+                  <span className="flex-shrink-0">{item.icon}</span>
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </SheetContent>
+        </Sheet>
       </nav>
     </>
   );

@@ -215,6 +215,11 @@ export const BillingContent: React.FC = () => {
                 ))}
               </TableBody>
             </Table>
+            {currentPatients.length === 0 && (
+              <div className="py-8 text-center text-sm text-muted-foreground">
+                No patients in this filter.
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

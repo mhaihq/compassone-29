@@ -89,29 +89,25 @@ export const useFollowUpHandlers = ({
         followUpNotes: '',
         assignedTo: ''
       });
-    } catch (error) {
+    } catch {
       setError('Failed to schedule follow-up. Please try again.');
-      console.error('Error scheduling manual follow-up:', error);
     } finally {
       setLoading(false);
     }
   }, [state.followUpDate, state.followUpNotes, state.assignedTo, setLoading, setError, toast, updateState]);
 
   const onStartPreCallIntel = useCallback(() => {
-    console.log('Starting pre-call intelligence...');
     updateState({ showPreCallIntel: true });
   }, [updateState]);
 
   const onStartCall = useCallback(() => {
-    console.log('Starting direct call...');
-    updateState({ 
+    updateState({
       showPreCallIntel: false,
-      showCallInterface: true 
+      showCallInterface: true
     });
   }, [updateState]);
 
   const onCallComplete = useCallback(async () => {
-    console.log('Call completed, generating summary...');
     setLoading(true);
     updateState({ 
       showCallInterface: false,
@@ -126,8 +122,7 @@ export const useFollowUpHandlers = ({
         title: "Call Completed Successfully",
         description: "AI analysis complete. Comprehensive documentation ready for review."
       });
-    } catch (error) {
-      console.error('Error generating call summary:', error);
+    } catch {
       setError('Failed to generate call summary. Please try again.');
       toast({
         title: "Error",
@@ -140,12 +135,10 @@ export const useFollowUpHandlers = ({
   }, [updateState, setLoading, setError, taskContext.patientId, toast]);
 
   const onViewAnalytics = useCallback(() => {
-    console.log('Viewing analytics...');
     updateState({ showAnalytics: true });
   }, [updateState]);
 
-  const onEHRSubmit = useCallback((ehrData: any) => {
-    console.log('EHR data submitted:', ehrData);
+  const onEHRSubmit = useCallback((_ehrData: unknown) => {
     toast({
       title: "Documentation Submitted",
       description: "Call documentation has been successfully submitted to the EHR system."

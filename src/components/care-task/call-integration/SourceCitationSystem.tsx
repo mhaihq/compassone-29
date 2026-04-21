@@ -35,8 +35,7 @@ export const SourceCitationSystem: React.FC<SourceCitationSystemProps> = ({
   };
 
   const exportCitations = () => {
-    // Mock export functionality
-    console.log('Exporting citations for EHR integration');
+    // TODO: wire to real EHR export
   };
 
   return (

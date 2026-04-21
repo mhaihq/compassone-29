@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, FileText, Brain, User, Clock } from 'lucide-react';
 import { patientsData } from '@/data/patientsData';
-import OverviewTab from '@/components/overview/OverviewTab';
+import { OverviewTab } from '@/components/overview/OverviewTab';
 import { PatientCareLog } from './PatientCareLog';
 import { BillingContent } from '../BillingContent';
 

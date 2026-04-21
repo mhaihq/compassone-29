@@ -30,7 +30,7 @@ export function DashboardContent({ nav }: DashboardContentProps) {
     ? 'Care Task Details'
     : isViewingPatient
     ? 'Patient Details'
-    : NAV_ITEMS.find(n => n.id === activeTab)?.label;
+    : NAV_ITEMS.find(n => n.id === activeTab)?.label ?? 'Dashboard';
 
   return (
     <main className="flex-1 flex flex-col overflow-hidden bg-background">

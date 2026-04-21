@@ -10,7 +10,7 @@ interface ProviderNotesProps {
   patient: PatientData;
 }
 
-const ProviderNotes: React.FC<ProviderNotesProps> = ({ patient }) => {
+export const ProviderNotes: React.FC<ProviderNotesProps> = ({ patient }) => {
   // Format date helper
   const formatDate = (dateString: string): string => {
     const options: Intl.DateTimeFormatOptions = { 
@@ -108,4 +108,3 @@ const ProviderNotes: React.FC<ProviderNotesProps> = ({ patient }) => {
   );
 };
 
-export default ProviderNotes;
