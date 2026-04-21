@@ -64,6 +64,38 @@ const emptyCarePlan: CarePlanFields = {
   nextReviewNote: '',
 };
 
+// TODO: Replace with real API call
+const previousCarePlanByPatient: Record<string, CarePlanFields> = {
+  P100592: {
+    statusSinceLastReview: 'Depression symptoms stable since last review. PHQ-9 dropped from 15 to 11. Sleep improved with sertraline adjustment. BP still running high (average 138/88).',
+    medicationUpdate: 'Sertraline 100mg daily — tolerating well. Lisinopril 10mg daily — occasional missed doses reported.',
+    symptomUpdate: 'Mood improving. Reports occasional hopelessness but no SI. Energy still low mid-afternoon.',
+    interventions: 'Weekly check-in calls with Hana. Coordinated with Dr. Wilson for lisinopril adherence. Sleep hygiene education reinforced.',
+    nextReviewNote: 'Check PHQ-9 at next review. If BP remains >135/85, escalate to provider for medication adjustment.',
+  },
+  P100593: {
+    statusSinceLastReview: 'Anxiety elevated over past 2 weeks. GAD-7 increased from 9 to 13. New work stressors reported.',
+    medicationUpdate: 'Escitalopram 10mg daily — patient adherent. Discussed PRN lorazepam use for acute episodes.',
+    symptomUpdate: 'Panic episodes 2-3x per week. Sleep disrupted. No avoidance behaviors yet.',
+    interventions: 'Referred back to therapist for CBT booster sessions. Breathing exercises reviewed.',
+    nextReviewNote: 'Reassess GAD-7 in 2 weeks. Consider medication adjustment if no improvement.',
+  },
+  P100594: {
+    statusSinceLastReview: 'Mood stabilizer dose increased 3 weeks ago. Patient reporting dizziness and fatigue since then.',
+    medicationUpdate: 'Lamotrigine increased to 200mg. Side effects reported — needs provider review.',
+    symptomUpdate: 'Mood stable but physical side effects limiting daily function.',
+    interventions: 'Flagged for provider review of medication tolerability.',
+    nextReviewNote: 'Awaiting provider decision on dose adjustment.',
+  },
+  P100595: {
+    statusSinceLastReview: 'PTSD symptoms well-managed until recent workplace trigger identified.',
+    medicationUpdate: 'Prazosin 3mg qhs for nightmares — effective. Sertraline 150mg stable.',
+    symptomUpdate: 'Sleep disrupted by new workplace trigger. Concentration affected at work.',
+    interventions: 'Coordinating with Dr. Brown on trigger management. Grounding techniques reviewed.',
+    nextReviewNote: 'Follow up on workplace accommodations discussion.',
+  },
+};
+
 interface FollowUp {
   needed: boolean;
   date: string;
@@ -91,7 +123,12 @@ export function CareTaskContent({ taskId, onComplete }: CareTaskContentProps) {
   const [followUp, setFollowUp] = useState<FollowUp>({ needed: false, date: '', assignee: '' });
 
   useEffect(() => {
-    setTask(taskLookup[taskId] ?? null);
+    const t = taskLookup[taskId] ?? null;
+    setTask(t);
+    if (t) {
+      const preload = previousCarePlanByPatient[t.patientId];
+      if (preload) setCarePlan(preload);
+    }
   }, [taskId]);
 
   useEffect(() => {
@@ -204,9 +241,16 @@ export function CareTaskContent({ taskId, onComplete }: CareTaskContentProps) {
       {/* Block 2: Care Plan Update */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-            Care Plan Update
-          </CardTitle>
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+              Care Plan Update
+            </CardTitle>
+            {previousCarePlanByPatient[task.patientId] && (
+              <Badge variant="outline" className="text-xs text-muted-foreground">
+                Previous plan loaded — revise as needed
+              </Badge>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">

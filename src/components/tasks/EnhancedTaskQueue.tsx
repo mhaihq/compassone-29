@@ -123,26 +123,17 @@ export const EnhancedTaskQueue: React.FC<EnhancedTaskQueueProps> = ({ tasks, onO
           
           {/* Task Content */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1 mb-1 flex-wrap">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="font-medium text-sm text-foreground truncate">{task.title}</span>
-              <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-              <span className="text-xs text-muted-foreground truncate">{task.patientName}</span>
-              <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+              <span className="text-xs text-muted-foreground truncate">· {task.patientName}</span>
               <Badge className={`${getPriorityColor(task.priority)} text-white border-0 text-xs px-1.5 py-0`}>
                 {task.priority}
               </Badge>
-              <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-              <Badge className={`${getModuleColor(task.module)} text-xs px-1.5 py-0`}>
-                {task.module}
-              </Badge>
               {task.assignedToAI && (
-                <>
-                  <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                  <Badge className="bg-violet-50 text-violet-700 border-violet-200 gap-1 text-xs px-1.5 py-0">
-                    <Bot className="w-2.5 h-2.5" />
-                    AI
-                  </Badge>
-                </>
+                <Badge className="bg-violet-50 text-violet-700 border-violet-200 gap-1 text-xs px-1.5 py-0">
+                  <Bot className="w-2.5 h-2.5" />
+                  AI
+                </Badge>
               )}
             </div>
             <p className="text-xs text-muted-foreground line-clamp-1">{task.description}</p>

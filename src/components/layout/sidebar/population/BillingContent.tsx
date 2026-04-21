@@ -4,15 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useToast } from '@/hooks/use-toast';
 import {
   DollarSign,
   Users,
   Clock,
   AlertTriangle,
-  Phone,
-  FileText,
-  ChevronDown,
   Calendar,
   ClipboardX,
   MessageCircleX,
@@ -33,8 +30,24 @@ interface Patient {
 }
 
 export const BillingContent: React.FC = () => {
+  const { toast } = useToast();
   const [activeFilter, setActiveFilter] = useState<'ready' | 'at-risk'>('ready');
-  const [isOtherFiltersOpen, setIsOtherFiltersOpen] = useState(false);
+  const [billedIds, setBilledIds] = useState<Set<string>>(new Set());
+
+  const markBilled = (patient: Patient) => {
+    setBilledIds(prev => new Set(prev).add(patient.id));
+    toast({
+      title: 'Submitted for billing',
+      description: `${patient.name} · ${patient.cptCode} · ${patient.amount}`,
+    });
+  };
+
+  const markReviewed = (patient: Patient) => {
+    toast({
+      title: 'Flagged for review',
+      description: `${patient.name} routed to care team for follow-up.`,
+    });
+  };
 
   const metrics = [
     { title: 'Enrolled Patients', value: '247', icon: Users, color: 'text-[#1a1a1a]', bgColor: 'bg-[#f5f5f5]' },
@@ -131,24 +144,6 @@ export const BillingContent: React.FC = () => {
             </Button>
           </div>
 
-          <Collapsible open={isOtherFiltersOpen} onOpenChange={setIsOtherFiltersOpen} className="mt-4">
-            <CollapsibleTrigger asChild>
-              <Button variant="outline" size="sm">
-                Additional Filters
-                <ChevronDown className={`h-4 w-4 ml-2 transition-transform ${isOtherFiltersOpen ? 'rotate-180' : ''}`} />
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-3">
-              <div className="flex flex-wrap gap-2 p-3 bg-muted rounded-lg">
-                {[['Under Minutes', '8'], ['Blocked', '3'], ['Expired', '2'], ['Pending Review', '5']].map(([label, count]) => (
-                  <Button key={label} variant="outline" size="sm">
-                    {label}
-                    <Badge variant="secondary" className="ml-2 text-xs">{count}</Badge>
-                  </Button>
-                ))}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
         </CardHeader>
 
         <CardContent className="p-0">
@@ -202,16 +197,21 @@ export const BillingContent: React.FC = () => {
                       </TableCell>
                     )}
                     <TableCell className="py-3">
-                      <div className="flex gap-1">
-                        <Button size="sm" variant="outline" className="h-8 w-8 p-0"><Phone className="h-3 w-3" /></Button>
-                        <Button size="sm" variant="outline" className="h-8 w-8 p-0 hidden sm:flex"><FileText className="h-3 w-3" /></Button>
-                        {activeFilter === 'ready' && (
-                          <Button size="sm" className="h-8 px-3 text-xs">Bill Now</Button>
-                        )}
-                        {activeFilter === 'at-risk' && (
-                          <Button size="sm" variant="outline" className="h-8 px-3 text-xs border-orange-200 text-orange-700 hover:bg-orange-50">Review</Button>
-                        )}
-                      </div>
+                      {activeFilter === 'ready' && (
+                        billedIds.has(patient.id)
+                          ? <Badge variant="outline" className="text-xs text-green-700 border-green-300"><CheckCircle2 className="h-3 w-3 mr-1" />Submitted</Badge>
+                          : <Button size="sm" className="h-8 px-3 text-xs" onClick={() => markBilled(patient)}>Bill Now</Button>
+                      )}
+                      {activeFilter === 'at-risk' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 px-3 text-xs border-orange-200 text-orange-700 hover:bg-orange-50"
+                          onClick={() => markReviewed(patient)}
+                        >
+                          Review
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

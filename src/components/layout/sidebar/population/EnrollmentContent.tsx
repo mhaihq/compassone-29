@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useRef, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, ChevronRight, Phone, FileText, UserCheck, AlertTriangle, Users, Clock, CheckCircle2, XCircle, Activity } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft, ChevronRight, Phone, FileText, UserCheck, AlertTriangle, Users, Clock, CheckCircle2, XCircle, Activity, Upload } from 'lucide-react';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -82,14 +83,51 @@ const RISK_BADGE: Record<string, string> = {
 type View = 'funnel' | 'queue';
 
 export function EnrollmentContent() {
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [view, setView] = useState<View>('funnel');
   const [activeStage, setActiveStage] = useState<Stage | null>(null);
   const [activeCohort, setActiveCohort] = useState<CohortKey | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [drawerPatient, setDrawerPatient] = useState<EnrollmentPatient | null>(null);
+  const [patients, setPatients] = useState<EnrollmentPatient[]>(mockPatients);
+
+  const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // TODO: Replace with real CSV parsing + API ingest
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = String(reader.result ?? '');
+      const lines = text.split(/\r?\n/).filter(l => l.trim()).slice(1);
+      const imported = Math.max(lines.length, 1);
+      const newRows: EnrollmentPatient[] = Array.from({ length: imported }).map((_, i) => ({
+        id: `P-IMP-${Date.now()}-${i}`,
+        name: `Imported Patient ${i + 1}`,
+        pcp: 'Dr. Patel',
+        age: 60 + Math.floor(Math.random() * 20),
+        conditions: ['Type 2 Diabetes', 'Hypertension'],
+        riskLevel: 'Medium',
+        stage: 'eligible',
+        cohorts: ['uncontrolled-chronic'],
+        lastContact: null,
+        outreachAttempts: 0,
+        consentDate: null,
+        assignedTo: null,
+        trigger: 'CSV import',
+      }));
+      setPatients(prev => [...newRows, ...prev]);
+      toast({
+        title: 'CSV imported',
+        description: `${imported} eligible patient${imported === 1 ? '' : 's'} added to the Eligible queue.`,
+      });
+    };
+    reader.readAsText(file);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   // Derived queue
-  const queuePatients = mockPatients.filter(p => {
+  const queuePatients = patients.filter(p => {
     if (activeStage && p.stage !== activeStage) return false;
     if (activeCohort && !p.cohorts.includes(activeCohort)) return false;
     return true;
@@ -123,11 +161,26 @@ export function EnrollmentContent() {
   if (view === 'funnel') {
     return (
       <div className="space-y-6">
-        <div>
-          <h2 className="text-xl font-semibold text-foreground">Enrollment</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            CCM enrollment pipeline — work the queue, not the roster.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">Enrollment</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              CCM enrollment pipeline — work the queue, not the roster.
+            </p>
+          </div>
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv,text/csv"
+              className="hidden"
+              onChange={handleCsvUpload}
+            />
+            <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
+              <Upload className="h-3.5 w-3.5 mr-1.5" />
+              Import CSV
+            </Button>
+          </div>
         </div>
 
         {/* Pipeline stages */}
@@ -135,7 +188,7 @@ export function EnrollmentContent() {
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Pipeline</h3>
           <div className="space-y-2">
             {STAGES.map(stage => {
-              const count = mockPatients.filter(p => p.stage === stage.key).length;
+              const count = patients.filter(p => p.stage === stage.key).length;
               return (
                 <button
                   key={stage.key}
@@ -161,7 +214,7 @@ export function EnrollmentContent() {
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Cohorts</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {COHORTS.map(cohort => {
-              const count = mockPatients.filter(p => p.cohorts.includes(cohort.key)).length;
+              const count = patients.filter(p => p.cohorts.includes(cohort.key)).length;
               return (
                 <button
                   key={cohort.key}
