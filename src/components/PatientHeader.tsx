@@ -5,9 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, User } from "lucide-react";
 import { PatientData } from '@/data/patientData';
 import { Button } from "@/components/ui/button";
-import { PatientInteractionInsights } from '@/components/PatientInteractionInsights';
 import { calculateAge, formatDate, getSeverityColor } from '@/utils/patientUtils';
-import { getPatientDataSummary } from '@/services/patientService';
 
 interface PatientHeaderProps {
   patient: PatientData;
@@ -15,7 +13,6 @@ interface PatientHeaderProps {
 
 const PatientHeader: React.FC<PatientHeaderProps> = ({ patient }) => {
   const patientAge = calculateAge(patient.dateOfBirth);
-  const patientSummary = getPatientDataSummary(patient);
 
   return (
     <div className="space-y-6">
@@ -81,8 +78,6 @@ const PatientHeader: React.FC<PatientHeaderProps> = ({ patient }) => {
           </div>
         </CardContent>
       </Card>
-
-      <PatientInteractionInsights insights={patientSummary.insights} />
     </div>
   );
 };
