@@ -1,52 +1,38 @@
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import { useDashboardNav } from '@/hooks/useDashboardNav';
+import { DashboardNav } from '@/components/layout/DashboardNav';
+import { DashboardContent } from '@/components/layout/DashboardContent';
 
-import React from 'react';
-import PopulationSidebar from '@/components/layout/PopulationSidebar';
+export function Index() {
+  const nav = useDashboardNav();
 
-const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card backdrop-blur-md bg-white/80">
-        <div className="container py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-primary">CareHealth EHR</h1>
-            </div>
-          </div>
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
+      <header className="flex-shrink-0 bg-card border-b border-border h-14 flex items-center px-4 md:px-6 gap-3">
+        <img
+          src="/lovable-uploads/8bd12f77-f027-47b9-a41c-a780b6ec54d0.png"
+          alt="Hana"
+          className="h-7 w-auto"
+        />
+        <div className="flex items-baseline gap-2">
+          <span className="font-semibold text-foreground text-sm">Hana Compass</span>
+          <span className="hidden md:inline text-xs text-muted-foreground">Population Health</span>
+        </div>
+        <div className="ml-auto flex items-center gap-3">
+          <Separator orientation="vertical" className="h-5" />
+          <Avatar className="h-7 w-7">
+            <AvatarFallback className="text-xs bg-primary text-primary-foreground">MG</AvatarFallback>
+          </Avatar>
         </div>
       </header>
-      
-      <main className="container py-6">
-        <div className="text-center py-12">
-          <h2 className="text-3xl font-bold mb-4">Welcome to CareHealth EHR</h2>
-          <p className="text-muted-foreground text-lg">
-            Use the Hana Compass sidebar to access patient information and care tasks.
-          </p>
-        </div>
-      </main>
 
-      <PopulationSidebar />
-      
-      <style>
-        {`
-        @keyframes pulse {
-          0% {
-            box-shadow: 0 0 0 0 rgba(30, 77, 54, 0.7);
-          }
-          70% {
-            box-shadow: 0 0 0 10px rgba(30, 77, 54, 0);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(30, 77, 54, 0);
-          }
-        }
-        
-        .pulse-animation {
-          animation: pulse 2s infinite;
-        }
-        `}
-      </style>
+      <div className="flex flex-1 overflow-hidden">
+        <DashboardNav activeTab={nav.activeTab} onTabChange={nav.changeTab} />
+        <DashboardContent nav={nav} />
+      </div>
     </div>
   );
-};
+}
 
 export default Index;
