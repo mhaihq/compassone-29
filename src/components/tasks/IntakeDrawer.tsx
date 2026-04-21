@@ -7,6 +7,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { TaskOutcomeActions } from '@/components/care-task/TaskOutcomeActions';
+import { emptyTaskOutcome, type TaskOutcome } from '@/types/taskOutcome';
 
 interface IntakeDrawerProps {
   task: EnhancedPopulationTask;
@@ -15,10 +17,10 @@ interface IntakeDrawerProps {
 
 export const IntakeDrawer: React.FC<IntakeDrawerProps> = ({ task, onClose }) => {
   const [selectedDecision, setSelectedDecision] = useState<string>('');
+  const [outcome, setOutcome] = useState<TaskOutcome>(emptyTaskOutcome);
 
   const handleFinalize = () => {
-    // Handle the finalization based on decision
-    console.log('Finalizing intake with decision:', selectedDecision);
+    console.log('Finalizing intake:', { decision: selectedDecision, outcome });
     onClose();
   };
 
@@ -429,6 +431,8 @@ export const IntakeDrawer: React.FC<IntakeDrawerProps> = ({ task, onClose }) => 
               </RadioGroup>
             </CardContent>
           </Card>
+
+          <TaskOutcomeActions outcome={outcome} onChange={setOutcome} />
         </div>
       </ScrollArea>
 
@@ -437,12 +441,12 @@ export const IntakeDrawer: React.FC<IntakeDrawerProps> = ({ task, onClose }) => 
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        
-        <Button 
+
+        <Button
           onClick={handleFinalize}
           disabled={!selectedDecision}
         >
-          Submit Decision
+          {outcome.countsForBilling ? 'Submit and Add to Billing' : 'Submit Decision'}
         </Button>
       </div>
     </div>

@@ -1,17 +1,21 @@
-
-import React from 'react';
+import { useState } from 'react';
 import { Check, Play, Pause } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { TaskOutcomeActions } from '@/components/care-task/TaskOutcomeActions';
+import { emptyTaskOutcome, type TaskOutcome } from '@/types/taskOutcome';
 
 interface FinalizeStepProps {
-  task: any;
+  task: {
+    cptCode?: string;
+    cptDescription?: string;
+  };
   timer: number;
   isTimerRunning: boolean;
   onToggleTimer: () => void;
-  onFinalize: () => void;
+  onFinalize: (outcome: TaskOutcome) => void;
   formatTime: (seconds: number) => string;
 }
 
@@ -21,14 +25,19 @@ export const FinalizeStep: React.FC<FinalizeStepProps> = ({
   isTimerRunning,
   onToggleTimer,
   onFinalize,
-  formatTime
+  formatTime,
 }) => {
+  const [outcome, setOutcome] = useState<TaskOutcome>(emptyTaskOutcome);
+  const completeLabel = outcome.countsForBilling
+    ? 'Complete and Add to Billing'
+    : 'Complete';
+
   return (
     <Card className="bg-white border border-gray-200 shadow-sm">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
           <Check className="mr-2 text-green-500" size={18} />
-          Finalize and Bill
+          Finalize
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -39,9 +48,9 @@ export const FinalizeStep: React.FC<FinalizeStepProps> = ({
               <Badge className="bg-blue-50 text-blue-800 border-blue-200 font-mono text-sm px-2 py-1">
                 {formatTime(timer)}
               </Badge>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="h-7 px-2 border-gray-200 text-gray-700 hover:bg-gray-50"
                 onClick={onToggleTimer}
               >
@@ -53,28 +62,34 @@ export const FinalizeStep: React.FC<FinalizeStepProps> = ({
               </Button>
             </div>
           </div>
-          
-          <div className="space-y-2 mb-3">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Badge className="bg-purple-50 text-purple-800 border-purple-200 font-mono text-xs px-2 py-0.5">
-                  {task.cptCode}
-                </Badge>
-                <span className="text-xs text-gray-600">{task.cptDescription}</span>
+
+          {task.cptCode && (
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-purple-50 text-purple-800 border-purple-200 font-mono text-xs px-2 py-0.5">
+                    {task.cptCode}
+                  </Badge>
+                  <span className="text-xs text-gray-600">{task.cptDescription}</span>
+                </div>
+                <span className="text-sm font-medium text-gray-900">
+                  {formatTime(timer)}/20 min
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-900">{formatTime(timer)}/20 min</span>
+              <Progress value={(timer / (20 * 60)) * 100} className="h-1.5" />
             </div>
-            <Progress value={(timer / (20 * 60)) * 100} className="h-1.5" />
-          </div>
-          
-          <Button 
-            className="w-full bg-green-600 hover:bg-green-700 h-9" 
-            onClick={onFinalize}
-          >
-            <Check className="mr-2" size={14} />
-            Complete and Add to Billing
-          </Button>
+          )}
         </div>
+
+        <TaskOutcomeActions outcome={outcome} onChange={setOutcome} />
+
+        <Button
+          className="w-full bg-green-600 hover:bg-green-700 h-9"
+          onClick={() => onFinalize(outcome)}
+        >
+          <Check className="mr-2" size={14} />
+          {completeLabel}
+        </Button>
       </CardContent>
     </Card>
   );
