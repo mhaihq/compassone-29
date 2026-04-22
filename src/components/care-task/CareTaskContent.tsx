@@ -60,50 +60,79 @@ const buildTaskLookup = (): Record<string, CareTask> => {
 const taskLookup = buildTaskLookup();
 
 interface CarePlanFields {
-  statusSinceLastReview: string;
-  medicationUpdate: string;
-  symptomUpdate: string;
-  interventions: string;
-  nextReviewNote: string;
+  // S — Subjective
+  subjective: string;
+  // O — Objective
+  objective: string;
+  // A — Assessment
+  assessment: string;
+  // P — Plan
+  interventionsPerformed: string;
+  coordinationActionTaken: string;
+  planNextPeriod: string;
+  // Attribution (CMS audit requirement)
+  conductedBy: string;
+  conductedByRole: string;
+  cptCode: string;
 }
 
 const emptyCarePlan: CarePlanFields = {
-  statusSinceLastReview: '',
-  medicationUpdate: '',
-  symptomUpdate: '',
-  interventions: '',
-  nextReviewNote: '',
+  subjective: '',
+  objective: '',
+  assessment: '',
+  interventionsPerformed: '',
+  coordinationActionTaken: '',
+  planNextPeriod: '',
+  conductedBy: '',
+  conductedByRole: '',
+  cptCode: '99490',
 };
 
 // TODO: Replace with real API call
 const previousCarePlanByPatient: Record<string, CarePlanFields> = {
   P100592: {
-    statusSinceLastReview: 'Depression symptoms stable since last review. PHQ-9 dropped from 15 to 11. Sleep improved with sertraline adjustment. BP still running high (average 138/88).',
-    medicationUpdate: 'Sertraline 100mg daily — tolerating well. Lisinopril 10mg daily — occasional missed doses reported.',
-    symptomUpdate: 'Mood improving. Reports occasional hopelessness but no SI. Energy still low mid-afternoon.',
-    interventions: 'Weekly check-in calls with Hana. Coordinated with Dr. Wilson for lisinopril adherence. Sleep hygiene education reinforced.',
-    nextReviewNote: 'Check PHQ-9 at next review. If BP remains >135/85, escalate to provider for medication adjustment.',
+    subjective: 'Patient reports depression worsening over past week. Struggling to get out of bed most mornings. Reports dark thoughts but denies active SI. Inconsistently taking antidepressant, cancelled last therapy appointment. PHQ-9 estimated 14–16 this call.',
+    objective: 'BP home readings 135–142/85–90 (above target <130/80). Lisinopril missed 2–3x/week. PHQ-9 estimated 14–16 (up from 11 at last review). Tone markedly flat, increased pausing.',
+    assessment: 'Depression acutely worsened — PHQ-9 trending upward, safety concern present. Hypertension suboptimally controlled secondary to adherence gap. Two active clinical concerns requiring same-day escalation.',
+    interventionsPerformed: 'Safety screening conducted (no active SI confirmed). Medication adherence education provided for Lisinopril. Emotion-focused supportive listening during call.',
+    coordinationActionTaken: 'Escalated to Dr. Kim for same-day clinical review. Message sent via EHR noting PHQ-9 estimate, safety screening result, and BP trend.',
+    planNextPeriod: 'Dr. Kim to determine medication and safety plan adjustments. Follow-up call within 48 hrs to confirm safety plan in place. Confirm Lisinopril reminder setup at next Hana check-in.',
+    conductedBy: 'Linda Torres, RN',
+    conductedByRole: 'Care Coordinator',
+    cptCode: '99490',
   },
   P100593: {
-    statusSinceLastReview: 'Anxiety elevated over past 2 weeks. GAD-7 increased from 9 to 13. New work stressors reported.',
-    medicationUpdate: 'Escitalopram 10mg daily — patient adherent. Discussed PRN lorazepam use for acute episodes.',
-    symptomUpdate: 'Panic episodes 2-3x per week. Sleep disrupted. No avoidance behaviors yet.',
-    interventions: 'Referred back to therapist for CBT booster sessions. Breathing exercises reviewed.',
-    nextReviewNote: 'Reassess GAD-7 in 2 weeks. Consider medication adjustment if no improvement.',
+    subjective: 'Patient reports anxiety elevated over past 2 weeks, new work stressors identified. Panic episodes 2–3x/week. Sleep disrupted. No avoidance behaviors yet.',
+    objective: 'GAD-7 increased from 9 to 13. Escitalopram 10mg — adherent. Tone anxious but engaged. No red-flag safety concerns.',
+    assessment: 'Moderate anxiety escalation tied to identifiable psychosocial stressor. Medication adherent — escalation likely situational. CBT booster may be sufficient before any medication change.',
+    interventionsPerformed: 'GAD-7 administered. Breathing exercise technique reviewed. Discussed PRN lorazepam use for acute episodes.',
+    coordinationActionTaken: 'Referral placed back to therapist for CBT booster sessions. EHR note sent to Dr. Wilson with GAD-7 score and stressor context.',
+    planNextPeriod: 'Reassess GAD-7 in 2 weeks. Consider escalation to Dr. Wilson for medication review if score does not improve.',
+    conductedBy: 'Linda Torres, RN',
+    conductedByRole: 'Care Coordinator',
+    cptCode: '99490',
   },
   P100594: {
-    statusSinceLastReview: 'Mood stabilizer dose increased 3 weeks ago. Patient reporting dizziness and fatigue since then.',
-    medicationUpdate: 'Lamotrigine increased to 200mg. Side effects reported — needs provider review.',
-    symptomUpdate: 'Mood stable but physical side effects limiting daily function.',
-    interventions: 'Flagged for provider review of medication tolerability.',
-    nextReviewNote: 'Awaiting provider decision on dose adjustment.',
+    subjective: 'Patient reports dizziness and fatigue since Lamotrigine dose increase 3 weeks ago. Mood stable. Physical side effects limiting daily function.',
+    objective: 'Lamotrigine increased to 200mg 3 weeks prior. No objective vitals captured this call. Mood described as stable per patient report.',
+    assessment: 'Probable Lamotrigine tolerability issue at 200mg. Dose-dependent side effects (dizziness, fatigue) consistent with titration. Provider review needed before any further changes.',
+    interventionsPerformed: 'Symptom inquiry completed. Advised patient not to adjust dose independently. Documented side effect timeline.',
+    coordinationActionTaken: 'Urgent EHR flag sent to prescribing provider requesting tolerability review. Patient advised provider will follow up within 24–48 hrs.',
+    planNextPeriod: 'Awaiting provider decision on dose adjustment. Follow up with patient after provider response received.',
+    conductedBy: 'Linda Torres, RN',
+    conductedByRole: 'Care Coordinator',
+    cptCode: '99490',
   },
   P100595: {
-    statusSinceLastReview: 'PTSD symptoms well-managed until recent workplace trigger identified.',
-    medicationUpdate: 'Prazosin 3mg qhs for nightmares — effective. Sertraline 150mg stable.',
-    symptomUpdate: 'Sleep disrupted by new workplace trigger. Concentration affected at work.',
-    interventions: 'Coordinating with Dr. Brown on trigger management. Grounding techniques reviewed.',
-    nextReviewNote: 'Follow up on workplace accommodations discussion.',
+    subjective: 'Patient reports new workplace trigger causing sleep disruption and concentration issues at work. PTSD otherwise well-managed. Nightmares increased this week.',
+    objective: 'Prazosin 3mg qhs — previously effective for nightmares. Sertraline 150mg — stable. Sleep quality self-rated 4/10 this week vs 7/10 last month.',
+    assessment: 'PTSD symptom flare secondary to identified workplace stressor. Medication regimen appropriate — acute worsening is psychosocial, not pharmacological. Grounding tools may be sufficient short-term.',
+    interventionsPerformed: 'Grounding technique reviewed and practiced during call. Sleep hygiene reinforced. Trigger identification and coping plan discussed.',
+    coordinationActionTaken: 'Coordinated with Dr. Brown — EHR note sent with trigger context and current symptom severity. Discussed possible workplace accommodation referral.',
+    planNextPeriod: 'Follow up on workplace accommodations discussion. Re-assess sleep quality at next call. Escalate to Dr. Brown if nightmares worsen or PCL-5 score increases.',
+    conductedBy: 'Linda Torres, RN',
+    conductedByRole: 'Care Coordinator',
+    cptCode: '99490',
   },
 };
 
@@ -335,68 +364,146 @@ export function CareTaskContent({ taskId, onComplete, onOpenTaskQueue }: CareTas
         </CardContent>
       </Card>
 
-      {/* Block 2: Care Plan Update */}
+      {/* Block 2: Encounter Note — SOAP format (CMS CCM documentation standard) */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              Care Plan Update
+              Encounter Note
             </CardTitle>
             {previousCarePlanByPatient[task.patientId] && (
               <Badge variant="outline" className="text-xs text-muted-foreground">
-                Previous plan loaded — revise as needed
+                Previous note loaded — revise as needed
               </Badge>
             )}
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
+
+          {/* Attribution row (CMS audit requirement) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-lg border border-border bg-muted/40 px-3 py-3">
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-muted-foreground">Conducted by</Label>
+              <Input
+                className="text-sm h-8"
+                placeholder="Full name"
+                value={carePlan.conductedBy}
+                onChange={e => setCarePlan(p => ({ ...p, conductedBy: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-muted-foreground">Role</Label>
+              <Select value={carePlan.conductedByRole} onValueChange={v => setCarePlan(p => ({ ...p, conductedByRole: v }))}>
+                <SelectTrigger className="text-sm h-8">
+                  <SelectValue placeholder="Select role..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Care Coordinator">Care Coordinator (RN/MA)</SelectItem>
+                  <SelectItem value="NP">Nurse Practitioner</SelectItem>
+                  <SelectItem value="PA">Physician Assistant</SelectItem>
+                  <SelectItem value="MD/DO">Physician (MD/DO)</SelectItem>
+                  <SelectItem value="LCSW">Social Worker (LCSW)</SelectItem>
+                  <SelectItem value="Hana AI">Hana AI (supervised)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-muted-foreground">CPT code</Label>
+              <Select value={carePlan.cptCode} onValueChange={v => setCarePlan(p => ({ ...p, cptCode: v }))}>
+                <SelectTrigger className="text-sm h-8">
+                  <SelectValue placeholder="Select code..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="99490">99490 — CCM, non-physician, 20 min</SelectItem>
+                  <SelectItem value="99439">99439 — CCM add-on, each 20 min</SelectItem>
+                  <SelectItem value="99491">99491 — CCM, physician direct, 30 min</SelectItem>
+                  <SelectItem value="99487">99487 — Complex CCM, 60 min</SelectItem>
+                  <SelectItem value="99489">99489 — Complex CCM add-on</SelectItem>
+                  <SelectItem value="G0556">G0556 — APCM Level I</SelectItem>
+                  <SelectItem value="G0557">G0557 — APCM Level II</SelectItem>
+                  <SelectItem value="G0558">G0558 — APCM Level III</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* S — Subjective */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">Status since last review</Label>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs px-1.5 py-0 font-mono">S</Badge>
+              <Label className="text-xs font-medium text-foreground">Subjective — Patient-reported symptoms & status</Label>
+            </div>
             <Textarea
-              placeholder="Describe patient's current status compared to last review..."
+              placeholder="What the patient reports: symptoms, concerns, mood, adherence, functional status, goals progress…"
               className="text-sm min-h-[72px] resize-none"
-              value={carePlan.statusSinceLastReview}
-              onChange={e => setCarePlan(p => ({ ...p, statusSinceLastReview: e.target.value }))}
+              value={carePlan.subjective}
+              onChange={e => setCarePlan(p => ({ ...p, subjective: e.target.value }))}
             />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Medication update</Label>
+
+          {/* O — Objective */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs px-1.5 py-0 font-mono">O</Badge>
+              <Label className="text-xs font-medium text-foreground">Objective — Measurable clinical data</Label>
+            </div>
+            <Textarea
+              placeholder="Vitals, validated scores (PHQ-9, GAD-7, PCL-5), lab values, medication list, call tone/observations…"
+              className="text-sm min-h-[60px] resize-none"
+              value={carePlan.objective}
+              onChange={e => setCarePlan(p => ({ ...p, objective: e.target.value }))}
+            />
+          </div>
+
+          {/* A — Assessment */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs px-1.5 py-0 font-mono">A</Badge>
+              <Label className="text-xs font-medium text-foreground">Assessment — Clinical interpretation</Label>
+            </div>
+            <Textarea
+              placeholder="Clinician interpretation: condition status (stable/worsening/improving), risk level, drivers of change, escalation rationale if applicable…"
+              className="text-sm min-h-[60px] resize-none"
+              value={carePlan.assessment}
+              onChange={e => setCarePlan(p => ({ ...p, assessment: e.target.value }))}
+            />
+          </div>
+
+          {/* P — Plan */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs px-1.5 py-0 font-mono">P</Badge>
+              <Label className="text-xs font-medium text-foreground">Plan</Label>
+            </div>
+            <div className="space-y-1.5 ml-6">
+              <Label className="text-xs text-muted-foreground">Interventions performed this session</Label>
               <Textarea
-                placeholder="Any medication changes or adherence notes..."
+                placeholder="Education provided, safety screening, techniques practiced, medication reconciliation, referrals placed this session…"
                 className="text-sm min-h-[60px] resize-none"
-                value={carePlan.medicationUpdate}
-                onChange={e => setCarePlan(p => ({ ...p, medicationUpdate: e.target.value }))}
+                value={carePlan.interventionsPerformed}
+                onChange={e => setCarePlan(p => ({ ...p, interventionsPerformed: e.target.value }))}
               />
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground">Symptom update</Label>
+            <div className="space-y-1.5 ml-6">
+              <Label className="text-xs text-muted-foreground">Coordination action taken <span className="text-muted-foreground/70">(CMS required — who was contacted & what was communicated)</span></Label>
               <Textarea
-                placeholder="Current symptoms reported by patient..."
+                placeholder="e.g. EHR message sent to Dr. Kim re: PHQ-9 score and safety screen. Referral placed to nephrology. Specialist contacted by phone re: lab result…"
                 className="text-sm min-h-[60px] resize-none"
-                value={carePlan.symptomUpdate}
-                onChange={e => setCarePlan(p => ({ ...p, symptomUpdate: e.target.value }))}
+                value={carePlan.coordinationActionTaken}
+                onChange={e => setCarePlan(p => ({ ...p, coordinationActionTaken: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1.5 ml-6">
+              <Label className="text-xs text-muted-foreground">Plan for next period</Label>
+              <Textarea
+                placeholder="What the care team will do next: follow-up schedule, targets to reassess, escalation triggers, patient action items…"
+                className="text-sm min-h-[60px] resize-none"
+                value={carePlan.planNextPeriod}
+                onChange={e => setCarePlan(p => ({ ...p, planNextPeriod: e.target.value }))}
               />
             </div>
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">Interventions</Label>
-            <Textarea
-              placeholder="Actions taken or recommended during this review..."
-              className="text-sm min-h-[60px] resize-none"
-              value={carePlan.interventions}
-              onChange={e => setCarePlan(p => ({ ...p, interventions: e.target.value }))}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">Next review note</Label>
-            <Textarea
-              placeholder="What to focus on at the next review..."
-              className="text-sm min-h-[60px] resize-none"
-              value={carePlan.nextReviewNote}
-              onChange={e => setCarePlan(p => ({ ...p, nextReviewNote: e.target.value }))}
-            />
-          </div>
+
         </CardContent>
       </Card>
 
