@@ -32,6 +32,14 @@ export const populationTasksData: PopulationTask[] = [
         outcome: 'success'
       }
     ],
+    callSummary: {
+      duration: '18 min',
+      overallTone: 'distressed',
+      summary: 'Matteo called in for his scheduled check-in but quickly became emotional. He reported that his depression has worsened over the past week and that he has been struggling to get out of bed most mornings. He mentioned dark thoughts but denied active suicidal ideation. He has been inconsistently taking his antidepressant and cancelled his last therapy appointment. His reported PHQ-9 this call is estimated at 14–16.',
+      topicsCovered: ['Depression symptoms', 'Medication adherence', 'Sleep quality', 'Therapy cancellation', 'Safety screening'],
+      aiObservations: 'Tone markedly more flat than previous calls. Increased pausing and shorter responses. Patient minimized severity when asked follow-up questions. Flagged for immediate clinical review.',
+      nextStepSuggested: 'Escalate to Dr. Kim for same-day review. Confirm safety plan in place.',
+    },
     evidenceFromCall: [
       {
         text: 'Patient expressed feeling hopeless about future',
@@ -66,14 +74,34 @@ export const populationTasksData: PopulationTask[] = [
         action: 'Elevated BP reading captured',
         outcome: 'success'
       }
+    ],
+    callSummary: {
+      duration: '11 min',
+      overallTone: 'neutral',
+      summary: 'Routine monitoring call. Matteo reported his home BP readings have been running between 135–142 systolic over the past week, above his target of 130. He attributed this partly to work stress and admitted to forgetting his Lisinopril 2–3 times this week. He did not report any headaches, chest pain, or shortness of breath. He was cooperative and engaged.',
+      topicsCovered: ['BP home readings', 'Medication adherence — Lisinopril', 'Stress and lifestyle factors', 'Symptoms screen (negative)'],
+      aiObservations: 'Patient tone calm and cooperative. No red-flag symptoms reported. Adherence gap is the likely driver. Education on dose consistency provided.',
+      nextStepSuggested: 'Clinician review of medication adherence. Consider pill reminder setup.',
+    },
+    evidenceFromCall: [
+      {
+        text: "I've been forgetting to take my Lisinopril some mornings when I'm rushing to work.",
+        timestamp: '4:15',
+        importance: 'high'
+      },
+      {
+        text: 'My home readings have been around 135–142 over 85–90 lately.',
+        timestamp: '6:30',
+        importance: 'high'
+      }
     ]
   },
   {
     id: 'T-1003',
-    title: 'Medication Adherence Check',
+    title: 'Medication Adherence — Lisinopril',
     patientName: 'Matteo Grassi',
     patientId: 'P100592',
-    description: 'Patient reports occasional missed doses of Lisinopril',
+    description: 'Patient reports missing Lisinopril 2–3 times per week, contributing to elevated BP',
     priority: 'Medium',
     estimatedTime: '4 min',
     status: 'needs-review',
@@ -93,6 +121,21 @@ export const populationTasksData: PopulationTask[] = [
         actorType: 'AI',
         action: 'Adherence concern identified',
         outcome: 'success'
+      }
+    ],
+    callSummary: {
+      duration: '9 min',
+      overallTone: 'neutral',
+      summary: 'Hana AI follow-up call focused on medication routine. Matteo confirmed he misses his Lisinopril roughly 2–3 mornings per week, typically on days he leaves for work early. He has not set up a phone reminder. He acknowledged the link between missed doses and his elevated BP readings. He seemed receptive to behavior change suggestions.',
+      topicsCovered: ['Lisinopril adherence pattern', 'Morning routine barriers', 'Reminder strategies', 'Connection to BP control'],
+      aiObservations: 'Patient openly acknowledged adherence gap — low defensiveness. Good candidate for reminder intervention. No other medication concerns raised.',
+      nextStepSuggested: 'Set up medication reminder in patient portal. Re-check adherence at next call.',
+    },
+    evidenceFromCall: [
+      {
+        text: "I miss it maybe 2–3 times a week, usually when I'm rushing out the door early.",
+        timestamp: '3:20',
+        importance: 'high'
       }
     ]
   },
@@ -121,6 +164,26 @@ export const populationTasksData: PopulationTask[] = [
         actorType: 'AI',
         action: 'Exercise goal tracking updated',
         outcome: 'success'
+      }
+    ],
+    callSummary: {
+      duration: '7 min',
+      overallTone: 'neutral',
+      summary: 'SMS check-in with follow-up call. Matteo reported getting about 90 minutes of exercise per week, below his 150-minute target. He cited low motivation after work and busy weekends as main barriers. He expressed mild frustration but was not disengaged. He mentioned a friend who walks with him on Saturdays, which was his only consistent exercise.',
+      topicsCovered: ['Weekly exercise volume', 'Barriers to activity', 'Motivational factors', 'Social support'],
+      aiObservations: 'Patient is aware of the gap and not in denial. Social accountability (walking friend) is a positive lever. Evening fatigue post-work is the primary barrier to explore.',
+      nextStepSuggested: 'Discuss breaking activity into shorter 10–15 min sessions. Explore adding a second walking day with friend.',
+    },
+    evidenceFromCall: [
+      {
+        text: "I only get about 90 minutes a week. I just don't have the energy after work.",
+        timestamp: '2:45',
+        importance: 'medium'
+      },
+      {
+        text: 'My friend and I walk on Saturdays — that\'s pretty much the only time I go.',
+        timestamp: '4:10',
+        importance: 'medium'
       }
     ]
   },

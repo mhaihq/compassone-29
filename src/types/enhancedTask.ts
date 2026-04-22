@@ -66,6 +66,14 @@ export interface EnhancedPopulationTask {
     timestamp: string;
     importance: string;
   }>;
+  callSummary?: {
+    duration: string;
+    overallTone: 'positive' | 'neutral' | 'concerned' | 'distressed';
+    summary: string;
+    topicsCovered: string[];
+    aiObservations: string;
+    nextStepSuggested?: string;
+  };
   
   // Billing opportunities
   billingOpportunities?: BillingOpportunity[];

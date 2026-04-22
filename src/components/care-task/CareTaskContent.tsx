@@ -12,6 +12,15 @@ import { useToast } from '@/hooks/use-toast';
 import { populationTasksData } from '@/data/populationTasksData';
 import type { TaskOutcome } from '@/types/taskOutcome';
 
+interface CallSummary {
+  duration: string;
+  overallTone: 'positive' | 'neutral' | 'concerned' | 'distressed';
+  summary: string;
+  topicsCovered: string[];
+  aiObservations: string;
+  nextStepSuggested?: string;
+}
+
 interface CareTask {
   id: string;
   title: string;
@@ -24,6 +33,7 @@ interface CareTask {
     timestamp: string;
     importance: string;
   }>;
+  callSummary?: CallSummary;
   triggeredBy?: string;
   callDate?: string;
 }
@@ -39,6 +49,7 @@ const buildTaskLookup = (): Record<string, CareTask> => {
       patientName: t.patientName,
       taskType: t.taskType,
       evidenceFromCall: t.evidenceFromCall || [],
+      callSummary: t.callSummary,
       triggeredBy: t.triggeredBy,
       callDate: t.callDate,
     };
@@ -168,7 +179,14 @@ export function CareTaskContent({ taskId, onComplete, onOpenTaskQueue }: CareTas
 
   const highEvidence = task.evidenceFromCall?.filter(e => e.importance === 'high') ?? [];
   const otherEvidence = task.evidenceFromCall?.filter(e => e.importance !== 'high') ?? [];
-  const evidenceToShow = [...highEvidence, ...otherEvidence].slice(0, 2);
+  const evidenceToShow = [...highEvidence, ...otherEvidence].slice(0, 3);
+
+  const toneStyle: Record<string, string> = {
+    positive: 'bg-green-50 border-green-200 text-green-800',
+    neutral: 'bg-muted border-border text-muted-foreground',
+    concerned: 'bg-amber-50 border-amber-200 text-amber-800',
+    distressed: 'bg-red-50 border-red-200 text-red-800',
+  };
 
   return (
     <div className="space-y-6">
@@ -193,6 +211,77 @@ export function CareTaskContent({ taskId, onComplete, onOpenTaskQueue }: CareTas
           </Button>
         </div>
       </div>
+
+      {/* Call Summary */}
+      {task.callSummary && (
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                Call Summary
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                {task.callDate && task.callDate !== 'N/A' && (
+                  <span className="text-xs text-muted-foreground">{task.callDate}</span>
+                )}
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Clock size={11} />{task.callSummary.duration}
+                </span>
+                <span className={`text-xs px-2 py-0.5 rounded-full border font-medium capitalize ${toneStyle[task.callSummary.overallTone]}`}>
+                  {task.callSummary.overallTone}
+                </span>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-foreground leading-relaxed">{task.callSummary.summary}</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">Topics Covered</p>
+                <ul className="space-y-1">
+                  {task.callSummary.topicsCovered.map((t, i) => (
+                    <li key={i} className="text-xs text-foreground flex items-start gap-1.5">
+                      <span className="mt-1.5 h-1 w-1 rounded-full bg-muted-foreground flex-shrink-0" />
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">AI Observations</p>
+                  <p className="text-xs text-foreground leading-relaxed">{task.callSummary.aiObservations}</p>
+                </div>
+                {task.callSummary.nextStepSuggested && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Suggested Next Step</p>
+                    <p className="text-xs text-foreground leading-relaxed">{task.callSummary.nextStepSuggested}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {evidenceToShow.length > 0 && (
+              <div className="space-y-2 pt-1 border-t border-border">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Key Quotes</p>
+                {evidenceToShow.map((ev, i) => (
+                  <div
+                    key={i}
+                    className={`rounded-md px-3 py-2 text-sm border-l-2 ${
+                      ev.importance === 'high'
+                        ? 'bg-amber-50 border-amber-400 text-amber-900'
+                        : 'bg-muted border-border text-muted-foreground'
+                    }`}
+                  >
+                    <span className="font-medium">{ev.timestamp}</span> — {ev.text}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Block 1: Why this task exists */}
       <Card>
@@ -220,7 +309,7 @@ export function CareTaskContent({ taskId, onComplete, onOpenTaskQueue }: CareTas
             </div>
           )}
 
-          {evidenceToShow.length > 0 && (
+          {!task.callSummary && evidenceToShow.length > 0 && (
             <div className="space-y-2 mt-2">
               {evidenceToShow.map((ev, i) => (
                 <div
