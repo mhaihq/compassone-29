@@ -16,8 +16,13 @@ interface CallEntry {
   date: string;
   time: string;
   durationMin: number | null;
+  // Who conducted the call (CMS requires name + role of service provider)
+  conductedBy: string;
+  conductedByRole: string;
   participant: string;
   summary: string;
+  // Specific CMS-qualifying coordination activity (required for audit)
+  coordinationActivity: string;
   transcript?: string;
   minutesLogged: number;
   countedForBilling: boolean;
@@ -76,72 +81,87 @@ const mockCallLog: CallEntry[] = [
     date: '2026-04-22',
     time: '14:32',
     durationMin: 14,
-    participant: 'Hana AI Coach',
-    summary: 'Depression symptoms discussed. PHQ-9 administered (score 11, down from 15). BP reading elevated at 138/88. Medication adherence discussed — patient reports occasional missed lisinopril doses.',
-    transcript: 'Hana: How have you been feeling since our last call?\nPatient: The medication seems to be helping with the low mood, but I still have bad days.\nHana: Can we talk about those days? When do they usually happen?\nPatient: Usually mid-afternoon. I feel exhausted and hopeless for a few hours.\nHana: That sounds difficult. Let\'s note that and talk to Dr. Wilson at your next appointment.',
+    conductedBy: 'Linda Torres',
+    conductedByRole: 'RN — Care Coordinator',
+    participant: 'Matteo Grassi',
+    coordinationActivity: 'Monthly chronic condition monitoring: PHQ-9 administered (score 11↓ from 15), BP reading reviewed (138/88 — above target), medication adherence assessed — patient reports 2–3 missed lisinopril doses/week. Escalation note sent to Dr. Kim re: BP and depression worsening.',
+    summary: 'Depression symptoms discussed. PHQ-9 score 11, down from 15. BP elevated at 138/88. Lisinopril adherence gap identified. Escalation note sent to Dr. Kim.',
+    transcript: 'Linda: How have you been feeling since our last call?\nMatteo: The medication seems to be helping with the low mood, but I still have bad days.\nLinda: Can we talk about those days? When do they usually happen?\nMatteo: Usually mid-afternoon. I feel exhausted and hopeless for a few hours.\nLinda: That sounds difficult. I\'m going to flag this for Dr. Kim to review before your next appointment.',
     minutesLogged: 14,
     countedForBilling: true,
     cptCode: '99490',
-    reviewedBy: 'Sarah M. (RN)',
+    reviewedBy: 'Dr. Sandra Kim, MD',
     reviewedAt: '2026-04-22',
   },
   {
     id: 'call-002',
-    title: 'Medication Adherence Check',
+    title: 'Medication Adherence Follow-up',
     channel: 'sms',
     status: 'completed',
     date: '2026-04-20',
     time: '11:30',
     durationMin: 4,
-    participant: 'Hana AI Coach',
-    summary: 'SMS follow-up on lisinopril adherence. Patient confirmed 2 missed doses this week. Education provided on importance of consistent dosing.',
+    conductedBy: 'Hana AI',
+    conductedByRole: 'AI Care Coach (supervised by Linda Torres, RN)',
+    participant: 'Matteo Grassi',
+    coordinationActivity: 'Medication management follow-up: confirmed 2 missed lisinopril doses this week. Patient education provided on consistent dosing and its direct effect on BP control. Reminder setup discussed.',
+    summary: 'SMS follow-up on lisinopril adherence. Patient confirmed 2 missed doses this week. Education on consistent dosing provided. Reminder setup recommended.',
     minutesLogged: 4,
     countedForBilling: true,
     cptCode: '99490',
-    reviewedBy: 'Sarah M. (RN)',
+    reviewedBy: 'Linda Torres, RN',
     reviewedAt: '2026-04-20',
   },
   {
     id: 'call-003',
-    title: 'Care Plan Review',
+    title: 'Physician CCM Review',
     channel: 'video',
     status: 'completed',
     date: '2026-04-18',
     time: '10:00',
     durationMin: 18,
-    participant: 'Dr. Wilson',
-    summary: 'Comprehensive care plan review. Updated medication plan. Scheduled follow-up for BP recheck in 1 week.',
+    conductedBy: 'Dr. Sandra Kim',
+    conductedByRole: 'MD — Principal CCM Billing Provider',
+    participant: 'Matteo Grassi',
+    coordinationActivity: 'Physician-direct CCM review (99491): care plan updated — lisinopril increased to 20mg, sertraline maintained at 100mg. Referral to nephrology placed for CKD risk monitoring. Coordination note sent to Dr. Rodriguez (psychiatry) re: depression stability. Follow-up BP recheck scheduled in 1 week.',
+    summary: 'Physician-led care plan review. Lisinopril dose increased. Nephrology referral placed. Coordination note to psychiatry. BP recheck scheduled.',
     minutesLogged: 18,
     countedForBilling: true,
-    cptCode: '99490',
-    reviewedBy: 'Dr. Wilson',
+    cptCode: '99491',
+    reviewedBy: 'Dr. Sandra Kim, MD',
     reviewedAt: '2026-04-18',
   },
   {
     id: 'call-004',
-    title: 'Weekly Check-in',
+    title: 'Weekly Monitoring Check-in',
     channel: 'phone',
     status: 'completed',
     date: '2026-04-15',
     time: '15:00',
     durationMin: 8,
-    participant: 'Hana AI Coach',
-    summary: 'Patient reports feeling more stable. Sleep improved. No SI. Exercise minutes below target (90/150 min this week).',
+    conductedBy: 'Linda Torres',
+    conductedByRole: 'RN — Care Coordinator',
+    participant: 'Matteo Grassi',
+    coordinationActivity: 'Chronic condition monitoring: patient reports improved mood stability, sleep better. No SI. BP home readings averaging 136/86 — still above target. Exercise below goal (90/150 min). Lifestyle coaching provided. No care changes needed this call.',
+    summary: 'Patient reports improved mood and sleep. No SI. BP still above target. Exercise below goal at 90/150 min. Lifestyle coaching provided.',
     minutesLogged: 8,
     countedForBilling: true,
     cptCode: '99490',
-    reviewedBy: 'Sarah M. (RN)',
+    reviewedBy: 'Linda Torres, RN',
     reviewedAt: '2026-04-15',
   },
   {
     id: 'call-005',
-    title: 'Weekly Check-in',
+    title: 'Weekly Monitoring Check-in',
     channel: 'phone',
     status: 'missed',
     date: '2026-04-08',
     time: '15:00',
     durationMin: null,
-    participant: 'Hana AI Coach',
+    conductedBy: 'Linda Torres',
+    conductedByRole: 'RN — Care Coordinator',
+    participant: 'Matteo Grassi',
+    coordinationActivity: 'Attempted patient contact for weekly monitoring. No answer. Voicemail left. Call rescheduled for following week. 2 min documented for outreach attempt.',
     summary: 'Patient did not answer. Voicemail left. Rescheduled for following week.',
     minutesLogged: 2,
     countedForBilling: false,
@@ -330,26 +350,42 @@ function CallDetailDrawer({ call, onClose }: { call: CallEntry | null; onClose: 
 
           {/* Call metadata */}
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Date & time</span>
-              <span className="font-medium">{new Date(call.date).toLocaleDateString()} · {call.time}</span>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground shrink-0">Date & time</span>
+              <span className="font-medium text-right">{new Date(call.date).toLocaleDateString()} · {call.time}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Channel</span>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground shrink-0">Channel</span>
               <span className="font-medium capitalize">{call.channel}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Duration</span>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground shrink-0">Duration</span>
               <span className="font-medium">{call.durationMin ? `${call.durationMin} min` : '—'}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Participant</span>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground shrink-0">Conducted by</span>
+              <span className="font-medium text-right">{call.conductedBy}</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground shrink-0">Role</span>
+              <span className="font-medium text-right text-xs">{call.conductedByRole}</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground shrink-0">Patient</span>
               <span className="font-medium">{call.participant}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Minutes logged</span>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground shrink-0">Minutes logged</span>
               <span className="font-medium">{call.minutesLogged} min</span>
             </div>
+          </div>
+
+          {/* CMS coordination activity — required for billing audit */}
+          <div className="rounded-lg bg-muted/50 border border-border p-3">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+              Coordination Activity <span className="normal-case text-muted-foreground/70">(CMS billing documentation)</span>
+            </p>
+            <p className="text-sm text-foreground leading-relaxed">{call.coordinationActivity}</p>
           </div>
 
           {/* Summary */}

@@ -15,6 +15,8 @@ export interface CarePlanData {
   allergiesAndInteractions: string;
   plannedInterventions: string;
   expectedOutcomes: string;
+  // Structured CCM billing provider field (CMS audit requirement)
+  billingProvider: string;
   coordinationOfCare: string;
   preventiveServices: string;
   communityResources: string;
@@ -38,10 +40,11 @@ const TEXT_FIELDS: { key: keyof CarePlanData; label: string; placeholder: string
   { key: 'allergiesAndInteractions', label: '4. Allergies & Drug Interactions', placeholder: 'Known allergies, adverse reactions, flagged interactions…' },
   { key: 'plannedInterventions', label: '5. Planned Interventions', placeholder: 'What the care team will do: medication adjustments, education sessions, referrals, monitoring schedule…' },
   { key: 'expectedOutcomes', label: '6. Expected Outcomes & Prognosis', placeholder: 'Clinical goals and expected trajectory: BP controlled within 3 months, HbA1c <7% by Q3…' },
-  { key: 'coordinationOfCare', label: '7. Coordination of Care', placeholder: 'Billing provider, treating providers, specialist roles, how the team communicates (care conference, EHR notes)…' },
-  { key: 'preventiveServices', label: '8. Preventive Services Due', placeholder: 'Annual flu shot, mammogram, colonoscopy, A1c lab — due dates…' },
-  { key: 'communityResources', label: '9. Community & Social Resources', placeholder: 'Meals on Wheels, transportation assistance, local diabetes support group…' },
-  { key: 'crisisAndEmergency', label: '10. Crisis & Emergency Plan', placeholder: '911 for chest pain or BP >180/120. Emergency contact: [name/number]. After-hours line…' },
+  { key: 'billingProvider', label: '7. Principal CCM Billing Provider', placeholder: 'Name, credential, and NPI of the practitioner assuming the CCM care management role this month (e.g. Dr. Sandra Kim, MD — NPI 1234567890)…' },
+  { key: 'coordinationOfCare', label: '8. Coordination of Care', placeholder: 'All treating providers and their roles, specialist contacts, how the team communicates (EHR notes, care conference, secure message)…' },
+  { key: 'preventiveServices', label: '9. Preventive Services Due', placeholder: 'Annual flu shot, mammogram, colonoscopy, A1c lab — due dates…' },
+  { key: 'communityResources', label: '10. Community & Social Resources', placeholder: 'Meals on Wheels, transportation assistance, local diabetes support group…' },
+  { key: 'crisisAndEmergency', label: '11. Crisis & Emergency Plan', placeholder: '911 for chest pain or BP >180/120. Emergency contact: [name/number]. After-hours line…' },
 ];
 
 export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
