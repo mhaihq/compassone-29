@@ -24,7 +24,7 @@ export function DashboardContent({ nav }: DashboardContentProps) {
     activeTab, selectedTaskId, selectedPatientId,
     selectedTask, isViewingTask, isViewingPatient,
     isViewingContent, patientSummary,
-    openTask, openPatient, closeTask, closePatient,
+    openTask, openPatient, closeTask, closePatient, changeTab,
   } = nav;
 
   const contentTitle = isViewingTask
@@ -60,7 +60,11 @@ export function DashboardContent({ nav }: DashboardContentProps) {
         {isViewingTask && selectedTask ? (
           selectedTask.module === 'Monitoring' ? (
             <div className="p-6">
-              <CareTaskContent taskId={selectedTaskId!} onComplete={closeTask} />
+              <CareTaskContent
+                taskId={selectedTaskId!}
+                onComplete={closeTask}
+                onOpenTaskQueue={() => changeTab('taskQueue')}
+              />
             </div>
           ) : selectedTask.module === 'Intake' ? (
             <IntakeDrawer task={selectedTask} onClose={closeTask} />

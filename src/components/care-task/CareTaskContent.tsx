@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertTriangle, Clock, Play, Pause, ExternalLink, CheckSquare, Square, Calendar, User } from 'lucide-react';
+import { AlertTriangle, Clock, Play, Pause, ExternalLink, Calendar, User, ListChecks } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -105,9 +105,10 @@ interface FollowUp {
 interface CareTaskContentProps {
   taskId: string;
   onComplete?: () => void;
+  onOpenTaskQueue?: () => void;
 }
 
-export function CareTaskContent({ taskId, onComplete }: CareTaskContentProps) {
+export function CareTaskContent({ taskId, onComplete, onOpenTaskQueue }: CareTaskContentProps) {
   const { toast } = useToast();
 
   const [task, setTask] = useState<CareTask | null>(null);
@@ -181,9 +182,16 @@ export function CareTaskContent({ taskId, onComplete }: CareTaskContentProps) {
             ({Math.round((timer / (20 * 60)) * 100)}% of 20 min)
           </span>
         </div>
-        <Button variant="outline" size="sm" className="h-8 px-3 text-xs flex-shrink-0" onClick={() => setIsTimerRunning(r => !r)}>
-          {isTimerRunning ? <><Pause size={11} className="mr-1" />Pause</> : <><Play size={11} className="mr-1" />Resume</>}
-        </Button>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {onOpenTaskQueue && (
+            <Button variant="outline" size="sm" className="h-8 px-3 text-xs" onClick={onOpenTaskQueue}>
+              <ListChecks size={11} className="mr-1" />Task Queue
+            </Button>
+          )}
+          <Button variant="outline" size="sm" className="h-8 px-3 text-xs" onClick={() => setIsTimerRunning(r => !r)}>
+            {isTimerRunning ? <><Pause size={11} className="mr-1" />Pause</> : <><Play size={11} className="mr-1" />Resume</>}
+          </Button>
+        </div>
       </div>
 
       {/* Block 1: Why this task exists */}
