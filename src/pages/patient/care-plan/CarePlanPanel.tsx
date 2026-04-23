@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { FileText, Pencil, CheckCircle2, Save, Send, ThumbsUp, MessageSquareWarning } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 export interface FieldChange {
   field: string;
@@ -397,11 +398,25 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
         </div>
       </div>
 
-      {/* Revision history — per-field audit log (CMS audit requirement) */}
-      {(plan.revisionHistory ?? []).length > 0 && (
+      {/* Audit trail — revision + sign-off history tucked away; auditor needs it, reviewer doesn't */}
+      {((plan.revisionHistory ?? []).length > 0 || (plan.signOffHistory ?? []).length > 0) && (
         <>
           <Separator />
-          <div>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="audit" className="border-0">
+              <AccordionTrigger className="text-xs font-semibold text-muted-foreground hover:no-underline py-2">
+                <span className="flex items-center gap-2">
+                  Audit trail
+                  <span className="font-normal">
+                    · {(plan.revisionHistory ?? []).length} revision{(plan.revisionHistory ?? []).length === 1 ? '' : 's'}
+                    {(plan.signOffHistory ?? []).length > 0 && ` · ${(plan.signOffHistory ?? []).length} sign-off event${(plan.signOffHistory ?? []).length === 1 ? '' : 's'}`}
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="space-y-4 pt-2">
+
+          {(plan.revisionHistory ?? []).length > 0 && (
+            <div>
             <p className="text-xs font-semibold text-muted-foreground mb-2">Revision History</p>
             <div className="space-y-2">
               {[...(plan.revisionHistory ?? [])].reverse().map((r, i) => {
@@ -453,33 +468,34 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
                 );
               })}
             </div>
-          </div>
-        </>
-      )}
-
-      {/* Sign-off history */}
-      {(plan.signOffHistory ?? []).length > 0 && (
-        <>
-          <Separator />
-          <div>
-            <p className="text-xs font-semibold text-muted-foreground mb-2">Sign-off History</p>
-            <div className="space-y-1">
-              {[...(plan.signOffHistory ?? [])].reverse().map((h, i) => {
-                const ts = new Date(h.timestamp);
-                return (
-                  <div key={i} className="flex items-center gap-2 flex-wrap text-xs">
-                    <span className="font-mono text-muted-foreground">
-                      {ts.toLocaleDateString()} {ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                    <span className="text-foreground font-medium">{h.by}</span>
-                    <Badge variant="outline" className="text-xs px-1.5 py-0">{h.role}</Badge>
-                    <Badge variant="secondary" className="text-xs px-1.5 py-0">{h.action.replace('-', ' ')}</Badge>
-                    {h.note && <span className="text-muted-foreground italic">— {h.note}</span>}
-                  </div>
-                );
-              })}
             </div>
-          </div>
+          )}
+
+          {(plan.signOffHistory ?? []).length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground mb-2">Sign-off History</p>
+              <div className="space-y-1">
+                {[...(plan.signOffHistory ?? [])].reverse().map((h, i) => {
+                  const ts = new Date(h.timestamp);
+                  return (
+                    <div key={i} className="flex items-center gap-2 flex-wrap text-xs">
+                      <span className="font-mono text-muted-foreground">
+                        {ts.toLocaleDateString()} {ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                      <span className="text-foreground font-medium">{h.by}</span>
+                      <Badge variant="outline" className="text-xs px-1.5 py-0">{h.role}</Badge>
+                      <Badge variant="secondary" className="text-xs px-1.5 py-0">{h.action.replace('-', ' ')}</Badge>
+                      {h.note && <span className="text-muted-foreground italic">— {h.note}</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </>
       )}
 

@@ -5,6 +5,8 @@ import { StatusPill } from '@/components/ui/status-dot';
 import { patientsCcmData } from '@/data/patientsCcmData';
 import type { Patient } from '@/types/patient';
 import { toast } from 'sonner';
+import { CallButton } from '@/pages/patient/call/CallButton';
+import { ListChecks } from 'lucide-react';
 
 function minuteStatus(p: Patient): { label: string; tone: 'green' | 'orange' | 'red' } {
   if (p.minutesTarget === 0) return { label: 'N/A', tone: 'orange' };
@@ -70,6 +72,22 @@ function PatientRow({ p, extra }: { p: Patient; extra?: React.ReactNode }) {
         <div className="flex-1 min-w-0 text-xs">
           <p className="text-muted-foreground">Next task</p>
           <p className="text-foreground truncate">{p.nextTask ?? '—'}</p>
+        </div>
+
+        {/* Inline actions — coordinator can act from the row without drilling in */}
+        <div className="flex-shrink-0 flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+          <CallButton patientName={p.name} />
+          {p.nextTask && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 text-xs"
+              onClick={() => toast.info(`Opening ${p.name}'s task`, { description: p.nextTask! })}
+            >
+              <ListChecks className="h-3.5 w-3.5 mr-1" />
+              Task
+            </Button>
+          )}
         </div>
 
         {extra && <div className="flex-shrink-0">{extra}</div>}
