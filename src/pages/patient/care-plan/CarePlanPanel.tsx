@@ -18,7 +18,6 @@ export interface CarePlanData {
   // Structured CCM billing provider field (CMS audit requirement)
   billingProvider: string;
   coordinationOfCare: string;
-  preventiveServices: string;
   communityResources: string;
   crisisAndEmergency: string;
   sharedWithPatient: boolean;
@@ -42,9 +41,8 @@ const TEXT_FIELDS: { key: keyof CarePlanData; label: string; placeholder: string
   { key: 'expectedOutcomes', label: '6. Expected Outcomes & Prognosis', placeholder: 'Clinical goals and expected trajectory: BP controlled within 3 months, HbA1c <7% by Q3…' },
   { key: 'billingProvider', label: '7. Principal CCM Billing Provider', placeholder: 'Name, credential, and NPI of the practitioner assuming the CCM care management role this month (e.g. Dr. Sandra Kim, MD — NPI 1234567890)…' },
   { key: 'coordinationOfCare', label: '8. Coordination of Care', placeholder: 'All treating providers and their roles, specialist contacts, how the team communicates (EHR notes, care conference, secure message)…' },
-  { key: 'preventiveServices', label: '9. Preventive Services Due', placeholder: 'Annual flu shot, mammogram, colonoscopy, A1c lab — due dates…' },
-  { key: 'communityResources', label: '10. Community & Social Resources', placeholder: 'Meals on Wheels, transportation assistance, local diabetes support group…' },
-  { key: 'crisisAndEmergency', label: '11. Crisis & Emergency Plan', placeholder: '911 for chest pain or BP >180/120. Emergency contact: [name/number]. After-hours line…' },
+  { key: 'communityResources', label: '9. Community & Social Resources', placeholder: 'Resources tied to an active care plan condition — Meals on Wheels (diabetes weight mgmt), transportation for appts, medication affordability assistance…' },
+  { key: 'crisisAndEmergency', label: '10. Crisis & Emergency Plan', placeholder: '911 for chest pain or BP >180/120. Emergency contact: [name/number]. After-hours line…' },
 ];
 
 export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
