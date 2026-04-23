@@ -57,6 +57,22 @@ const seedCarePlan = (p: Patient): CarePlanData => ({
         changes: [],
       }]
     : [],
+  workingNotes: p.id === 'P100592' ? [
+    {
+      id: 'wn-1',
+      timestamp: '2026-04-15T10:30:00Z',
+      by: 'Hana AI',
+      role: 'Hana AI',
+      text: 'Weekly check-in call (14 min). BP log reviewed — home readings 135–142/85–90 over past week. Patient acknowledged missing Lisinopril 2–3x/week. Mood appears stable. No SI concerns.',
+    },
+    {
+      id: 'wn-2',
+      timestamp: '2026-04-20T14:00:00Z',
+      by: 'Linda Torres, RN',
+      role: 'Care Coordinator',
+      text: 'Follow-up call (9 min) re: Lisinopril adherence. Patient agreed to set up morning phone reminder. Reviewed lipid lab results — LDL 112, continuing Atorvastatin 20mg. Next check-in with Hana on 4/27.',
+    },
+  ] : [],
 });
 
 function calculateAge(dob: string) {

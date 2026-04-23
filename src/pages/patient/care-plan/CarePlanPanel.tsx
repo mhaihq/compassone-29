@@ -25,6 +25,19 @@ export interface CarePlanRevision {
   changes: FieldChange[];
 }
 
+// A working note = per-session scratch entry. Lives alongside the master plan.
+// Clinically this is the "moving" note (call on X date, discussed Y) — the
+// master plan is the "chart"; these are the "notes".
+export interface WorkingNote {
+  id: string;
+  timestamp: string;
+  by: string;
+  role: string;
+  text: string;
+  // If this note has been folded into the master plan, track which field
+  promotedToField?: string;
+}
+
 export interface CarePlanData {
   patientGoals: string;
   chronicConditions: string;
@@ -41,6 +54,7 @@ export interface CarePlanData {
   lastUpdated?: string;
   updatedBy?: string;
   revisionHistory?: CarePlanRevision[];
+  workingNotes?: WorkingNote[];
 }
 
 interface CarePlanPanelProps {
@@ -90,6 +104,23 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
   const [draft, setDraft] = useState<CarePlanData>(plan);
   const [saved, setSaved] = useState(false);
   const [expandedRevision, setExpandedRevision] = useState<string | null>(null);
+  const [newNote, setNewNote] = useState('');
+
+  function handleAddNote() {
+    if (!newNote.trim()) return;
+    const note: WorkingNote = {
+      id: `note-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      by: CURRENT_USER.name,
+      role: CURRENT_USER.role,
+      text: newNote.trim(),
+    };
+    onSave({
+      ...plan,
+      workingNotes: [...(plan.workingNotes ?? []), note],
+    });
+    setNewNote('');
+  }
 
   function handleSave() {
     const now = new Date();
@@ -130,7 +161,8 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-semibold text-foreground">Electronic Care Plan</span>
+          <span className="text-sm font-semibold text-foreground">Master Care Plan</span>
+          <span className="text-xs text-muted-foreground">· the living document</span>
           {plan.lastUpdated && (
             <span className="text-xs text-muted-foreground">
               Updated {new Date(plan.lastUpdated).toLocaleDateString()}{plan.updatedBy ? ` by ${plan.updatedBy}` : ''}
@@ -203,6 +235,61 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Working notes — per-session scratch notes that feed the master plan */}
+      <Separator />
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Working Notes</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Per-session scratch notes. Closed items fold back into the master plan above.
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {[...(plan.workingNotes ?? [])].reverse().map(n => {
+            const ts = new Date(n.timestamp);
+            return (
+              <div key={n.id} className="rounded-md border border-border bg-muted/30 px-3 py-2">
+                <div className="flex items-center gap-2 flex-wrap text-xs mb-1">
+                  <span className="font-mono text-muted-foreground">
+                    {ts.toLocaleDateString()} {ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                  <span className="text-foreground font-medium">{n.by}</span>
+                  <Badge variant="outline" className="text-xs px-1.5 py-0">{n.role}</Badge>
+                  {n.promotedToField && (
+                    <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                      Folded into master: {n.promotedToField}
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-sm text-foreground whitespace-pre-wrap">{n.text}</p>
+              </div>
+            );
+          })}
+          {(plan.workingNotes ?? []).length === 0 && (
+            <p className="text-xs text-muted-foreground italic">No working notes yet.</p>
+          )}
+        </div>
+
+        {/* Add note */}
+        <div className="mt-3 space-y-2">
+          <Textarea
+            value={newNote}
+            onChange={e => setNewNote(e.target.value)}
+            placeholder="Call patient on [date], discussed [topic]…"
+            rows={2}
+            className="text-sm resize-none"
+          />
+          <div className="flex justify-end">
+            <Button size="sm" onClick={handleAddNote} disabled={!newNote.trim()}>
+              Add note
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Revision history — per-field audit log (CMS audit requirement) */}
