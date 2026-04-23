@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,9 +6,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { StatusPill } from '@/components/ui/status-dot';
+import { PatientChartAnalyzer } from '@/pages/patient/enrollment/PatientChartAnalyzer';
 
 type Tone = 'blue' | 'orange' | 'yellow' | 'green' | 'red' | 'violet' | 'muted';
-import { ArrowLeft, ChevronRight, Phone, FileText, UserCheck, AlertTriangle, Users, Clock, CheckCircle2, XCircle, Activity, Upload } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Phone, FileText, UserCheck, AlertTriangle, Users, Clock, CheckCircle2, XCircle, Activity } from 'lucide-react';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -87,7 +88,6 @@ type View = 'funnel' | 'queue';
 
 export function EnrollmentContent() {
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [view, setView] = useState<View>('funnel');
   const [activeStage, setActiveStage] = useState<Stage | null>(null);
   const [activeCohort, setActiveCohort] = useState<CohortKey | null>(null);
@@ -95,38 +95,27 @@ export function EnrollmentContent() {
   const [drawerPatient, setDrawerPatient] = useState<EnrollmentPatient | null>(null);
   const [patients, setPatients] = useState<EnrollmentPatient[]>(mockPatients);
 
-  const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    // TODO: Replace with real CSV parsing + API ingest
-    const reader = new FileReader();
-    reader.onload = () => {
-      const text = String(reader.result ?? '');
-      const lines = text.split(/\r?\n/).filter(l => l.trim()).slice(1);
-      const imported = Math.max(lines.length, 1);
-      const newRows: EnrollmentPatient[] = Array.from({ length: imported }).map((_, i) => ({
-        id: `P-IMP-${Date.now()}-${i}`,
-        name: `Imported Patient ${i + 1}`,
-        pcp: 'Dr. Patel',
-        age: 60 + Math.floor(Math.random() * 20),
-        conditions: ['Type 2 Diabetes', 'Hypertension'],
-        riskLevel: 'Medium',
-        stage: 'eligible',
-        cohorts: ['uncontrolled-chronic'],
-        lastContact: null,
-        outreachAttempts: 0,
-        consentDate: null,
-        assignedTo: null,
-        trigger: 'CSV import',
-      }));
-      setPatients(prev => [...newRows, ...prev]);
-      toast({
-        title: 'CSV imported',
-        description: `${imported} eligible patient${imported === 1 ? '' : 's'} added to the Eligible queue.`,
-      });
+  const handleAnalysisAccept = (analysis: { patientName: string; planType: string }) => {
+    const newRow: EnrollmentPatient = {
+      id: `P-AI-${Date.now()}`,
+      name: analysis.patientName,
+      pcp: 'Dr. Sandra Kim',
+      age: 0,
+      conditions: [],
+      riskLevel: 'Medium',
+      stage: 'eligible',
+      cohorts: ['provider-referred'],
+      lastContact: null,
+      outreachAttempts: 0,
+      consentDate: null,
+      assignedTo: null,
+      trigger: `AI chart analysis → ${analysis.planType}`,
     };
-    reader.readAsText(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    setPatients(prev => [newRow, ...prev]);
+    toast({
+      title: 'Sent for provider sign-off',
+      description: `${analysis.patientName} added to the Eligible queue as a ${analysis.planType} candidate.`,
+    });
   };
 
   // Derived queue
@@ -172,17 +161,7 @@ export function EnrollmentContent() {
             </p>
           </div>
           <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".csv,text/csv"
-              className="hidden"
-              onChange={handleCsvUpload}
-            />
-            <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="h-3.5 w-3.5 mr-1.5" />
-              Import CSV
-            </Button>
+            <PatientChartAnalyzer onAccept={handleAnalysisAccept} />
           </div>
         </div>
 
