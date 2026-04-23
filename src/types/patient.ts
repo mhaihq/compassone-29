@@ -59,6 +59,21 @@ export interface Patient {
   // Care plan
   carePlanLastUpdated?: string;
 
+  // Care team
+  pcp?: string;
+  careCoordinator?: string;
+
+  // Priority scoring — guideline-driven, not AI probability (auditable)
+  priority?: 'High' | 'Medium' | 'Low';
+  priorityReason?: string;
+
+  // Last contact with patient (call, SMS, visit)
+  lastContact?: string;
+  nextTask?: string;
+
+  // Active programs this patient is enrolled in this month (can be multiple)
+  activePrograms?: Array<'CCM' | 'APCM' | 'RPM' | 'RTM' | 'PCM' | 'TCM'>;
+
   // Minutes logged this billing month
   minutesThisMonth: number;
   minutesTarget: number;
