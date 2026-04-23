@@ -8,6 +8,23 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { FileText, Pencil, CheckCircle2, Save } from 'lucide-react';
 
+export interface FieldChange {
+  field: string;
+  label: string;
+  before: string;
+  after: string;
+}
+
+export interface CarePlanRevision {
+  // ISO timestamp — precise to the second for audit
+  timestamp: string;
+  by: string;
+  role: string;
+  summary: string;
+  // Per-field changes so auditors can see exactly what moved
+  changes: FieldChange[];
+}
+
 export interface CarePlanData {
   patientGoals: string;
   chronicConditions: string;
@@ -23,7 +40,7 @@ export interface CarePlanData {
   sharedWithPatient: boolean;
   lastUpdated?: string;
   updatedBy?: string;
-  revisionHistory?: { date: string; by: string; summary: string }[];
+  revisionHistory?: CarePlanRevision[];
 }
 
 interface CarePlanPanelProps {
@@ -45,18 +62,56 @@ const TEXT_FIELDS: { key: keyof CarePlanData; label: string; placeholder: string
   { key: 'crisisAndEmergency', label: '10. Crisis & Emergency Plan', placeholder: '911 for chest pain or BP >180/120. Emergency contact: [name/number]. After-hours line…' },
 ];
 
+// TODO: Replace with real auth context — current user info comes from the session
+const CURRENT_USER = { name: 'Linda Torres, RN', role: 'Care Coordinator' };
+
+function diffPlan(before: CarePlanData, after: CarePlanData): FieldChange[] {
+  const changes: FieldChange[] = [];
+  for (const f of TEXT_FIELDS) {
+    const b = (before[f.key] as string) ?? '';
+    const a = (after[f.key] as string) ?? '';
+    if (b !== a) {
+      changes.push({ field: f.key as string, label: f.label, before: b, after: a });
+    }
+  }
+  if (before.sharedWithPatient !== after.sharedWithPatient) {
+    changes.push({
+      field: 'sharedWithPatient',
+      label: 'Shared with patient',
+      before: before.sharedWithPatient ? 'Yes' : 'No',
+      after: after.sharedWithPatient ? 'Yes' : 'No',
+    });
+  }
+  return changes;
+}
+
 export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<CarePlanData>(plan);
   const [saved, setSaved] = useState(false);
+  const [expandedRevision, setExpandedRevision] = useState<string | null>(null);
 
   function handleSave() {
-    const today = new Date().toISOString().slice(0, 10);
-    const newRevision = { date: today, by: 'Care Team', summary: 'Plan updated' };
+    const now = new Date();
+    const changes = diffPlan(plan, draft);
+    if (changes.length === 0) {
+      setEditing(false);
+      return;
+    }
+    const summary = changes.length === 1
+      ? `Updated ${changes[0].label}`
+      : `Updated ${changes.length} fields`;
+    const newRevision: CarePlanRevision = {
+      timestamp: now.toISOString(),
+      by: CURRENT_USER.name,
+      role: CURRENT_USER.role,
+      summary,
+      changes,
+    };
     onSave({
       ...draft,
-      lastUpdated: today,
-      updatedBy: 'Care Team',
+      lastUpdated: now.toISOString().slice(0, 10),
+      updatedBy: CURRENT_USER.name,
       revisionHistory: [...(plan.revisionHistory ?? []), newRevision],
     });
     setEditing(false);
@@ -150,18 +205,61 @@ export function CarePlanPanel({ plan, onSave }: CarePlanPanelProps) {
         ))}
       </div>
 
-      {/* Revision history */}
+      {/* Revision history — per-field audit log (CMS audit requirement) */}
       {(plan.revisionHistory ?? []).length > 0 && (
         <>
           <Separator />
           <div>
             <p className="text-xs font-semibold text-muted-foreground mb-2">Revision History</p>
-            <div className="space-y-1">
-              {[...(plan.revisionHistory ?? [])].reverse().map((r, i) => (
-                <p key={i} className="text-xs text-muted-foreground">
-                  {new Date(r.date).toLocaleDateString()} — {r.by}: {r.summary}
-                </p>
-              ))}
+            <div className="space-y-2">
+              {[...(plan.revisionHistory ?? [])].reverse().map((r, i) => {
+                const key = `${r.timestamp}-${i}`;
+                const isOpen = expandedRevision === key;
+                const ts = new Date(r.timestamp);
+                return (
+                  <div key={key} className="rounded-md border border-border bg-muted/30 overflow-hidden">
+                    <button
+                      className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-muted/50"
+                      onClick={() => setExpandedRevision(isOpen ? null : key)}
+                    >
+                      <div className="flex items-center gap-2 flex-wrap text-xs">
+                        <span className="font-mono text-muted-foreground">
+                          {ts.toLocaleDateString()} {ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                        <span className="text-foreground font-medium">{r.by}</span>
+                        <Badge variant="outline" className="text-xs px-1.5 py-0">{r.role}</Badge>
+                        <span className="text-muted-foreground">— {r.summary}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
+                        {isOpen ? 'Hide' : `${r.changes.length} change${r.changes.length === 1 ? '' : 's'}`}
+                      </span>
+                    </button>
+                    {isOpen && (
+                      <div className="px-3 pb-3 space-y-3 border-t border-border">
+                        {r.changes.map((c, ci) => (
+                          <div key={ci} className="pt-3">
+                            <p className="text-xs font-semibold text-foreground mb-1.5">{c.label}</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              <div className="rounded border border-border bg-background p-2">
+                                <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Before</p>
+                                <p className="text-xs text-foreground whitespace-pre-wrap">
+                                  {c.before || <span className="italic text-muted-foreground">empty</span>}
+                                </p>
+                              </div>
+                              <div className="rounded border border-green-200 bg-green-50 p-2">
+                                <p className="text-xs uppercase tracking-wide text-green-700 mb-1">After</p>
+                                <p className="text-xs text-foreground whitespace-pre-wrap">
+                                  {c.after || <span className="italic text-muted-foreground">empty</span>}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </>

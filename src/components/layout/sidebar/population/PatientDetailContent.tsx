@@ -47,8 +47,16 @@ const seedCarePlan = (p: Patient): CarePlanData => ({
   crisisAndEmergency: 'Call 911 for BP >180/120, chest pain, or stroke symptoms. After-hours nurse line: 1-800-555-0100. Emergency contact: Maria Grassi (spouse) — 555-234-5678. Nearest ER: General Hospital (2.1 mi).',
   sharedWithPatient: true,
   lastUpdated: p.carePlanLastUpdated,
-  updatedBy: 'Care Team',
-  revisionHistory: p.carePlanLastUpdated ? [{ date: p.carePlanLastUpdated, by: 'Care Team', summary: 'Initial plan created' }] : [],
+  updatedBy: 'Linda Torres, RN',
+  revisionHistory: p.carePlanLastUpdated
+    ? [{
+        timestamp: `${p.carePlanLastUpdated}T09:00:00Z`,
+        by: 'Linda Torres, RN',
+        role: 'Care Coordinator',
+        summary: 'Initial plan created',
+        changes: [],
+      }]
+    : [],
 });
 
 function calculateAge(dob: string) {
