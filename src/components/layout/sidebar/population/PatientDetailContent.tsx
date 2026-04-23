@@ -12,6 +12,7 @@ import { BillingContent } from '../BillingContent';
 import { ConsentCapture } from '@/pages/patient/consent/ConsentCapture';
 import { ApcmTierPanel } from '@/pages/patient/apcm-tier/ApcmTierPanel';
 import { CarePlanPanel } from '@/pages/patient/care-plan/CarePlanPanel';
+import { CallButton } from '@/pages/patient/call/CallButton';
 import type { CarePlanData } from '@/pages/patient/care-plan/CarePlanPanel';
 import type { Patient } from '@/types/patient';
 
@@ -132,19 +133,22 @@ export function PatientDetailContent({ patientId }: PatientDetailContentProps) {
               <User className="h-5 w-5 text-muted-foreground" />
             </div>
             <div className="flex-1 min-w-0 space-y-2">
-              <div>
-                <h3 className="font-semibold text-foreground truncate">{patient.name}</h3>
-                <div className="flex flex-wrap items-center gap-3 mt-0.5 text-xs text-muted-foreground">
-                  <span>{patient.id}</span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {calculateAge(patient.dateOfBirth)} years old
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    Last visit: {new Date(patient.lastVisit).toLocaleDateString()}
-                  </span>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-foreground truncate">{patient.name}</h3>
+                  <div className="flex flex-wrap items-center gap-3 mt-0.5 text-xs text-muted-foreground">
+                    <span>{patient.id}</span>
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      DOB {patient.dateOfBirth}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      Last visit: {new Date(patient.lastVisit).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
+                <CallButton patientName={patient.name} />
               </div>
               <div className="flex flex-wrap gap-1">
                 <Badge variant="outline" className="text-xs">{patient.primaryDiagnosis}</Badge>
