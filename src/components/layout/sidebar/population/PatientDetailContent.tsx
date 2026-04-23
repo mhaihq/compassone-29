@@ -57,6 +57,21 @@ const seedCarePlan = (p: Patient): CarePlanData => ({
         changes: [],
       }]
     : [],
+  signOffStatus: p.id === 'P100592' ? 'approved' : 'draft',
+  signOffHistory: p.id === 'P100592' ? [
+    {
+      timestamp: '2026-04-01T10:15:00Z',
+      by: 'Linda Torres, RN',
+      role: 'Care Coordinator',
+      action: 'submitted',
+    },
+    {
+      timestamp: '2026-04-01T16:42:00Z',
+      by: 'Dr. Sandra Kim, MD',
+      role: 'Provider',
+      action: 'approved',
+    },
+  ] : [],
   workingNotes: p.id === 'P100592' ? [
     {
       id: 'wn-1',
