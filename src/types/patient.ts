@@ -71,6 +71,11 @@ export interface Patient {
   lastContact?: string;
   nextTask?: string;
 
+  // Set when a task auto-escalated straight to the provider, bypassing
+  // the care coordinator (guideline trigger like BP >160, PHQ-9 ≥20).
+  // Coordinator still needs visibility that it happened.
+  escalatedToProvider?: { reason: string; at: string };
+
   // Active programs this patient is enrolled in this month (can be multiple)
   activePrograms?: Array<'CCM' | 'APCM' | 'RPM' | 'RTM' | 'PCM' | 'TCM'>;
 

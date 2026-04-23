@@ -2,8 +2,33 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { patientsCcmData } from '@/data/patientsCcmData';
 import { patientsData } from '@/data/patientsData';
-import { CheckCircle, AlertTriangle, Users, Clock } from 'lucide-react';
+import { CheckCircle, AlertTriangle, Users, Clock, Shield } from 'lucide-react';
 import { CcmPanel, ApcmPanel, ConsentQueue } from './PopulationPanels';
+import { EscalationPrefs } from './EscalationPrefs';
+
+// 24/7 coverage — who's reachable right now. Clinician concern: for chronic care,
+// someone must be available 24/7 for emergencies. Coordinator/provider sees this
+// at a glance so they know who's on and can hand off if needed.
+function CoverageStrip() {
+  // TODO: pull from real on-call schedule API
+  const onCallCoordinator = 'Linda Torres, RN';
+  const onCallProvider = 'Dr. Sandra Kim, MD';
+  const afterHoursLine = '1-800-555-0100';
+  return (
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-2 text-xs">
+      <span className="flex items-center gap-1.5 text-green-700 font-medium">
+        <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+        24/7 coverage active
+      </span>
+      <span className="text-muted-foreground">·</span>
+      <span><span className="text-muted-foreground">On call (coordinator):</span> <span className="font-medium text-foreground">{onCallCoordinator}</span></span>
+      <span className="text-muted-foreground">·</span>
+      <span><span className="text-muted-foreground">On call (provider):</span> <span className="font-medium text-foreground">{onCallProvider}</span></span>
+      <span className="text-muted-foreground">·</span>
+      <span className="flex items-center gap-1"><Shield className="h-3 w-3 text-muted-foreground" /><span className="text-muted-foreground">After-hours:</span> <span className="font-mono text-foreground">{afterHoursLine}</span></span>
+    </div>
+  );
+}
 
 function usePopulationMetrics() {
   const totalActive = patientsData.filter(p => p.status === 'Active').length;
@@ -55,6 +80,8 @@ export function PopulationManagement() {
 
   return (
     <div className="flex flex-col gap-6">
+      <CoverageStrip />
+
       {/* Metric strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <MetricCard
@@ -91,10 +118,12 @@ export function PopulationManagement() {
           <TabsTrigger value="ccm">CCM Panel</TabsTrigger>
           <TabsTrigger value="apcm">APCM Panel</TabsTrigger>
           <TabsTrigger value="consent">Consent Queue</TabsTrigger>
+          <TabsTrigger value="prefs">Provider Prefs</TabsTrigger>
         </TabsList>
         <TabsContent value="ccm"><CcmPanel /></TabsContent>
         <TabsContent value="apcm"><ApcmPanel /></TabsContent>
         <TabsContent value="consent"><ConsentQueue /></TabsContent>
+        <TabsContent value="prefs"><EscalationPrefs /></TabsContent>
       </Tabs>
     </div>
   );

@@ -32,6 +32,7 @@ export const patientsCcmData: Patient[] = [
     lastContact: "2026-04-22",
     nextTask: "Review depression escalation",
     activePrograms: ["CCM"],
+    escalatedToProvider: { reason: "PHQ-9 estimated 14–16 (safety screening positive)", at: "2026-04-22T14:32:00Z" },
     minutesThisMonth: 14,
     minutesTarget: 20,
     isClickable: true

@@ -6,7 +6,7 @@ import { patientsCcmData } from '@/data/patientsCcmData';
 import type { Patient } from '@/types/patient';
 import { toast } from 'sonner';
 import { CallButton } from '@/pages/patient/call/CallButton';
-import { ListChecks } from 'lucide-react';
+import { ListChecks, AlertTriangle } from 'lucide-react';
 
 function minuteStatus(p: Patient): { label: string; tone: 'green' | 'orange' | 'red' } {
   if (p.minutesTarget === 0) return { label: 'N/A', tone: 'orange' };
@@ -32,6 +32,12 @@ function PatientRow({ p, extra }: { p: Patient; extra?: React.ReactNode }) {
             <span className="text-xs text-muted-foreground font-mono">{p.id}</span>
             {p.priority && (
               <StatusPill tone={priorityTone[p.priority]}>{p.priority}</StatusPill>
+            )}
+            {p.escalatedToProvider && (
+              <Badge variant="outline" className="text-xs text-red-700 border-red-300 bg-red-50" title={p.escalatedToProvider.reason}>
+                <AlertTriangle className="h-3 w-3 mr-1" />
+                Escalated to provider
+              </Badge>
             )}
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">
