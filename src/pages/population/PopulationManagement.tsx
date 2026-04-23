@@ -5,6 +5,7 @@ import { patientsData } from '@/data/patientsData';
 import { CheckCircle, AlertTriangle, Users, Clock, Shield } from 'lucide-react';
 import { CcmPanel, ApcmPanel, ConsentQueue } from './PopulationPanels';
 import { EscalationPrefs } from './EscalationPrefs';
+import { ProviderApprovalInbox } from './ProviderApprovalInbox';
 
 // 24/7 coverage — who's reachable right now. Clinician concern: for chronic care,
 // someone must be available 24/7 for emergencies. Coordinator/provider sees this
@@ -114,15 +115,17 @@ export function PopulationManagement() {
 
       {/* Panel tabs */}
       <Tabs defaultValue="ccm">
-        <TabsList className="mb-4">
+        <TabsList className="mb-4 flex-wrap">
           <TabsTrigger value="ccm">CCM Panel</TabsTrigger>
           <TabsTrigger value="apcm">APCM Panel</TabsTrigger>
           <TabsTrigger value="consent">Consent Queue</TabsTrigger>
+          <TabsTrigger value="approvals">Provider Inbox</TabsTrigger>
           <TabsTrigger value="prefs">Provider Prefs</TabsTrigger>
         </TabsList>
         <TabsContent value="ccm"><CcmPanel /></TabsContent>
         <TabsContent value="apcm"><ApcmPanel /></TabsContent>
         <TabsContent value="consent"><ConsentQueue /></TabsContent>
+        <TabsContent value="approvals"><ProviderApprovalInbox /></TabsContent>
         <TabsContent value="prefs"><EscalationPrefs /></TabsContent>
       </Tabs>
     </div>
