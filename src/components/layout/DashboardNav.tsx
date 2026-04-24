@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ListChecks, UserPlus, FileText, Users, MoreHorizontal, BarChart2 } from 'lucide-react';
+import { ListChecks, UserPlus, FileText, Users, MoreHorizontal } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -19,7 +19,6 @@ const PRIMARY_ITEMS: NavItem[] = [
 
 const SECONDARY_ITEMS: NavItem[] = [
   { id: 'enrollment', label: 'Enrollment', icon: <UserPlus size={18} /> },
-  { id: 'population', label: 'Population', icon: <BarChart2 size={18} /> },
 ];
 
 export const NAV_ITEMS: NavItem[] = [...PRIMARY_ITEMS, ...SECONDARY_ITEMS];

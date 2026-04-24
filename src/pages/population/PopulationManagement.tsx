@@ -76,7 +76,11 @@ function MetricCard({ icon, label, value, sub, accent = 'default' }: MetricCardP
   );
 }
 
-export function PopulationManagement() {
+interface PopulationManagementProps {
+  onOpenPatient?: (id: string) => void;
+}
+
+export function PopulationManagement({ onOpenPatient }: PopulationManagementProps = {}) {
   const { ccmCount, apcmCount, pendingConsent, billingReady, needOutreach } = usePopulationMetrics();
 
   return (
@@ -121,7 +125,7 @@ export function PopulationManagement() {
           <TabsTrigger value="approvals">Provider Inbox</TabsTrigger>
           <TabsTrigger value="prefs">Provider Prefs</TabsTrigger>
         </TabsList>
-        <TabsContent value="patients"><PatientTable /></TabsContent>
+        <TabsContent value="patients"><PatientTable onOpenPatient={onOpenPatient} /></TabsContent>
         <TabsContent value="consent"><ConsentQueue /></TabsContent>
         <TabsContent value="approvals"><ProviderApprovalInbox /></TabsContent>
         <TabsContent value="prefs"><EscalationPrefs /></TabsContent>

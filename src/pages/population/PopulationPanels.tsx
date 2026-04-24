@@ -7,7 +7,7 @@ import { patientsCcmData } from '@/data/patientsCcmData';
 import type { Patient } from '@/types/patient';
 import { toast } from 'sonner';
 import { CallButton } from '@/pages/patient/call/CallButton';
-import { ListChecks, AlertTriangle, Search } from 'lucide-react';
+import { ListChecks, AlertTriangle, Search, Eye } from 'lucide-react';
 
 const priorityDot: Record<string, string> = {
   High: 'bg-red-500',
@@ -56,7 +56,11 @@ function filterPatients(all: Patient[], f: FilterState): Patient[] {
 }
 
 // ─── Unified patient table ──────────────────────────────────────────────────
-export function PatientTable() {
+interface PatientTableProps {
+  onOpenPatient?: (id: string) => void;
+}
+
+export function PatientTable({ onOpenPatient }: PatientTableProps = {}) {
   const [filters, setFilters] = useState<FilterState>({
     program: 'all',
     priority: 'all',
@@ -138,7 +142,7 @@ export function PatientTable() {
               </tr>
             </thead>
             <tbody>
-              {rows.map(p => <PatientTableRow key={p.id} p={p} />)}
+              {rows.map(p => <PatientTableRow key={p.id} p={p} onOpenPatient={onOpenPatient} />)}
             </tbody>
           </table>
         </div>
@@ -146,7 +150,7 @@ export function PatientTable() {
 
       {/* Card list — mobile/tablet */}
       <div className="lg:hidden space-y-2">
-        {rows.map(p => <PatientCard key={p.id} p={p} />)}
+        {rows.map(p => <PatientCard key={p.id} p={p} onOpenPatient={onOpenPatient} />)}
       </div>
 
       {rows.length === 0 && (
@@ -183,10 +187,13 @@ function Th({ children }: { children: React.ReactNode }) {
   return <th className="text-left text-xs font-medium text-muted-foreground px-3 py-2.5 whitespace-nowrap">{children}</th>;
 }
 
-function PatientTableRow({ p }: { p: Patient }) {
+function PatientTableRow({ p, onOpenPatient }: { p: Patient; onOpenPatient?: (id: string) => void }) {
   const traj = p.trajectory ? trajectoryLabel[p.trajectory] : null;
   return (
-    <tr className="border-b border-border hover:bg-muted/30 transition-colors">
+    <tr
+      className={`border-b border-border hover:bg-muted/30 transition-colors ${onOpenPatient ? 'cursor-pointer' : ''}`}
+      onClick={() => onOpenPatient?.(p.id)}
+    >
       <td className="px-3 py-2.5">
         <p className="text-sm font-medium text-foreground">{p.name}</p>
         <p className="text-xs text-muted-foreground font-mono">{p.id}</p>
@@ -233,8 +240,18 @@ function PatientTableRow({ p }: { p: Patient }) {
           <Badge variant="outline" className={`text-xs ${traj.className}`}>{traj.label}</Badge>
         ) : '—'}
       </td>
-      <td className="px-3 py-2.5 whitespace-nowrap">
+      <td className="px-3 py-2.5 whitespace-nowrap" onClick={e => e.stopPropagation()}>
         <div className="flex items-center gap-1">
+          {onOpenPatient && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 px-2 text-xs"
+              onClick={() => onOpenPatient(p.id)}
+            >
+              <Eye className="h-3.5 w-3.5 mr-1" />View
+            </Button>
+          )}
           <CallButton patientName={p.name} />
           {p.nextTask && (
             <Button
@@ -252,10 +269,13 @@ function PatientTableRow({ p }: { p: Patient }) {
   );
 }
 
-function PatientCard({ p }: { p: Patient }) {
+function PatientCard({ p, onOpenPatient }: { p: Patient; onOpenPatient?: (id: string) => void }) {
   const traj = p.trajectory ? trajectoryLabel[p.trajectory] : null;
   return (
-    <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
+    <div
+      className={`rounded-lg border border-border bg-card px-4 py-3 space-y-2 ${onOpenPatient ? 'cursor-pointer' : ''}`}
+      onClick={() => onOpenPatient?.(p.id)}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-foreground">{p.name}</p>
@@ -311,7 +331,7 @@ function PatientCard({ p }: { p: Patient }) {
       {p.nextTask && (
         <div className="flex items-center justify-between gap-2 pt-1 border-t border-border">
           <span className="text-xs text-foreground truncate">{p.nextTask}</span>
-          <div className="flex items-center gap-1 flex-shrink-0">
+          <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
             <CallButton patientName={p.name} />
           </div>
         </div>

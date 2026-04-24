@@ -1,7 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TaskQueueContent } from '@/components/layout/sidebar/population/TaskQueueContent';
-import { PatientsListContent } from '@/components/layout/sidebar/population/PatientsListContent';
 import { EnrollmentContent } from '@/components/layout/sidebar/population/EnrollmentContent';
 import { BillingContent } from '@/components/layout/sidebar/population/BillingContent';
 import { CareTaskContent } from '@/components/care-task/CareTaskContent';
@@ -78,10 +77,9 @@ export function DashboardContent({ nav }: DashboardContentProps) {
         ) : (
           <div className="p-6">
             {activeTab === 'taskQueue' && <TaskQueueContent onOpenTask={openTask} />}
-            {activeTab === 'patients' && <PatientsListContent onOpenPatient={openPatient} />}
+            {activeTab === 'patients' && <PopulationManagement onOpenPatient={openPatient} />}
             {activeTab === 'enrollment' && <EnrollmentContent />}
             {activeTab === 'billing' && <BillingContent />}
-            {activeTab === 'population' && <PopulationManagement />}
           </div>
         )}
       </div>
