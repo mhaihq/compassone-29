@@ -1,4 +1,3 @@
-import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { patientsCcmData } from '@/data/patientsCcmData';
 import { patientsData } from '@/data/patientsData';
@@ -59,20 +58,22 @@ function MetricCard({ icon, label, value, sub, accent = 'default' }: MetricCardP
     accent === 'green' ? 'text-green-600' :
     accent === 'amber' ? 'text-amber-600' :
     'text-foreground';
+  const iconBg =
+    accent === 'green' ? 'bg-green-50 text-green-600' :
+    accent === 'amber' ? 'bg-amber-50 text-amber-600' :
+    'bg-muted text-muted-foreground';
 
   return (
-    <Card className="border border-border shadow-none">
-      <CardContent className="pt-4 pb-4 px-4">
-        <div className="flex items-start gap-3">
-          <span className="text-muted-foreground mt-0.5">{icon}</span>
-          <div className="min-w-0">
-            <p className="text-xs text-muted-foreground leading-none mb-1">{label}</p>
-            <p className={`text-2xl font-semibold leading-none ${valueColor}`}>{value}</p>
-            {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}
-          </div>
+    <div className="rounded-xl border border-border bg-card px-4 py-3.5">
+      <div className="flex items-start gap-3">
+        <span className={`p-1.5 rounded-lg flex-shrink-0 ${iconBg}`}>{icon}</span>
+        <div className="min-w-0">
+          <p className="text-xs text-muted-foreground leading-none mb-1.5">{label}</p>
+          <p className={`text-2xl font-bold leading-none tabular-nums ${valueColor}`}>{value}</p>
+          {sub && <p className="text-xs text-muted-foreground mt-1.5">{sub}</p>}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
@@ -120,10 +121,22 @@ export function PopulationManagement({ onOpenPatient }: PopulationManagementProp
       {/* Panel tabs */}
       <Tabs defaultValue="patients">
         <TabsList className="mb-4 flex-wrap">
-          <TabsTrigger value="patients">All Patients</TabsTrigger>
-          <TabsTrigger value="consent">Consent Queue</TabsTrigger>
+          <TabsTrigger value="patients">
+            All Patients
+            <span className="ml-1.5 text-[10px] bg-muted-foreground/15 text-muted-foreground rounded px-1 font-normal">
+              {ccmCount + apcmCount}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="consent">
+            Consent Queue
+            {pendingConsent > 0 && (
+              <span className="ml-1.5 text-[10px] bg-amber-100 text-amber-700 rounded px-1 font-normal">
+                {pendingConsent}
+              </span>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="approvals">Provider Inbox</TabsTrigger>
-          <TabsTrigger value="prefs">Provider Prefs</TabsTrigger>
+          <TabsTrigger value="prefs">Preferences</TabsTrigger>
         </TabsList>
         <TabsContent value="patients"><PatientTable onOpenPatient={onOpenPatient} /></TabsContent>
         <TabsContent value="consent"><ConsentQueue /></TabsContent>

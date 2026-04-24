@@ -138,34 +138,29 @@ export function EnhancedTaskQueue({
   const groupedTasks = groupTasks(filteredTasks);
 
   const renderTaskRow = (task: EnhancedPopulationTask) => (
-    <Card
+    <div
       key={task.id}
-      className="hover:shadow-sm transition-all cursor-pointer"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
       onClick={() => handleTaskClick(task)}
     >
-      <CardContent className="p-3">
-        <div className="flex items-center gap-2">
-          <div className={`w-0.5 h-10 rounded-full flex-shrink-0 ${getPriorityBar(task.priority)}`} />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="font-medium text-sm text-foreground truncate">{task.title}</span>
-              <span className="text-xs text-muted-foreground truncate">· {task.patientName}</span>
-              <StatusPill tone={getPriorityTone(task.priority)}>{task.priority}</StatusPill>
-              {task.assignedToAI && (
-                <StatusPill tone="violet">
-                  <Bot className="w-2.5 h-2.5" />
-                  AI
-                </StatusPill>
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground line-clamp-1">{task.description}</p>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <span className="text-xs text-muted-foreground">{task.estimatedTime}</span>
-          </div>
+      <div className={`w-1 h-8 rounded-full flex-shrink-0 ${getPriorityBar(task.priority)}`} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-medium text-sm text-foreground truncate">{task.title}</span>
+          <span className="text-xs text-muted-foreground">· {task.patientName}</span>
+          {task.assignedToAI && (
+            <StatusPill tone="violet">
+              <Bot className="w-2.5 h-2.5" />AI
+            </StatusPill>
+          )}
         </div>
-      </CardContent>
-    </Card>
+        <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{task.description}</p>
+      </div>
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <StatusPill tone={getPriorityTone(task.priority)}>{task.priority}</StatusPill>
+        <span className="text-xs text-muted-foreground hidden sm:inline">{task.estimatedTime}</span>
+      </div>
+    </div>
   );
 
   return (
@@ -291,8 +286,12 @@ export function EnhancedTaskQueue({
 
       <div className="flex-1 overflow-y-auto p-4">
         {filteredTasks.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-sm text-muted-foreground">No tasks match the current filters.</p>
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center mb-3">
+              <Filter className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <p className="text-sm font-medium text-foreground">No tasks found</p>
+            <p className="text-xs text-muted-foreground mt-1">Try adjusting your filters or search term.</p>
           </div>
         ) : viewMode === 'board' ? (
           <TaskBoardView tasks={filteredTasks} onTaskClick={handleTaskClick} />

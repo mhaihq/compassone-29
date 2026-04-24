@@ -34,19 +34,27 @@ export function DashboardContent({ nav }: DashboardContentProps) {
 
   return (
     <main className="flex-1 flex flex-col overflow-hidden bg-background">
-      {/* Breadcrumb / content header */}
-      <div className="flex-shrink-0 bg-card border-b border-border px-6 h-12 flex items-center gap-2">
+      {/* Header / breadcrumb */}
+      <div className="flex-shrink-0 bg-card border-b border-border px-4 h-12 flex items-center gap-2">
         {isViewingContent && (
           <Button
             variant="ghost"
             size="sm"
             onClick={isViewingTask ? closeTask : closePatient}
-            className="p-1.5 h-auto -ml-1.5"
+            className="h-8 w-8 p-0 -ml-1 flex-shrink-0"
           >
             <ArrowLeft size={15} />
           </Button>
         )}
-        <h1 className="font-semibold text-foreground text-sm">{contentTitle}</h1>
+        {isViewingContent && (
+          <span className="text-xs text-muted-foreground hidden sm:inline truncate max-w-[120px]">
+            {NAV_ITEMS.find(n => n.id === activeTab)?.label}
+          </span>
+        )}
+        {isViewingContent && (
+          <span className="text-muted-foreground/50 text-xs hidden sm:inline">/</span>
+        )}
+        <h1 className="font-semibold text-foreground text-sm truncate">{contentTitle}</h1>
       </div>
 
       {isViewingTask && (

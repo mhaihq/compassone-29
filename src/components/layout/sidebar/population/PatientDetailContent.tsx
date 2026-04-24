@@ -122,69 +122,78 @@ export function PatientDetailContent({ patientId }: PatientDetailContentProps) {
     ? `${ccmPatient.minutesThisMonth} / ${ccmPatient.minutesTarget} min`
     : null;
 
+  const age = calculateAge(patient.dateOfBirth);
+  const minutesPct = ccmPatient && ccmPatient.minutesTarget > 0
+    ? Math.min(Math.round((ccmPatient.minutesThisMonth / ccmPatient.minutesTarget) * 100), 100)
+    : null;
+
   return (
     <div className="space-y-4">
-      {/* Patient header card */}
-      <Card className="shadow-sm">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="bg-muted p-2 rounded-full flex-shrink-0">
+      {/* Patient header */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3 min-w-0">
+            <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
               <User className="h-5 w-5 text-muted-foreground" />
             </div>
-            <div className="flex-1 min-w-0 space-y-2">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-foreground truncate">{patient.name}</h3>
-                  <div className="flex flex-wrap items-center gap-3 mt-0.5 text-xs text-muted-foreground">
-                    <span>{patient.id}</span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      DOB {patient.dateOfBirth}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      Last visit: {new Date(patient.lastVisit).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-                <CallButton patientName={patient.name} />
-              </div>
-              <div className="flex flex-wrap gap-1">
-                <Badge variant="outline" className="text-xs">{patient.primaryDiagnosis}</Badge>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-base font-semibold text-foreground">{patient.name}</h2>
                 {enrolledLabel && (
-                  <Badge variant="outline" className="text-xs text-green-700 border-green-300">
-                    {enrolledLabel}
-                  </Badge>
-                )}
-                {carePlan.lastUpdated && (
-                  <Badge variant="outline" className="text-xs">Care plan active</Badge>
-                )}
-                {minutesBadge && (
-                  <Badge variant="outline" className="text-xs">{minutesBadge} logged</Badge>
+                  <Badge variant="outline" className="text-xs text-green-700 border-green-300 bg-green-50">{enrolledLabel}</Badge>
                 )}
                 {ccmPatient && !ccmPatient.consent.obtained && (
-                  <Badge variant="outline" className="text-xs text-amber-700 border-amber-300">
-                    Consent needed
-                  </Badge>
+                  <Badge variant="outline" className="text-xs text-amber-700 border-amber-300 bg-amber-50">Consent needed</Badge>
                 )}
-                {ccmPatient?.initiatingVisit.completed && (
-                  <Badge variant="outline" className="text-xs text-blue-700 border-blue-300">
-                    Initiating visit ✓
-                  </Badge>
-                )}
+              </div>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-xs text-muted-foreground">
+                <span className="font-mono">{patient.id}</span>
+                <span>·</span>
+                <span>{age} y/o</span>
+                <span>·</span>
+                <span className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  DOB {patient.dateOfBirth}
+                </span>
+                <span>·</span>
+                <span className="flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  Last visit {new Date(patient.lastVisit).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1 mt-2">
+                <Badge variant="secondary" className="text-xs">{patient.primaryDiagnosis}</Badge>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <CallButton patientName={patient.name} />
+        </div>
+
+        {/* Minutes progress bar */}
+        {minutesPct !== null && ccmPatient && (
+          <div className="mt-3 pt-3 border-t border-border">
+            <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
+              <span>Care time this month</span>
+              <span className={`font-medium ${minutesPct >= 100 ? 'text-green-700' : 'text-foreground'}`}>
+                {ccmPatient.minutesThisMonth} / {ccmPatient.minutesTarget} min
+                {minutesPct >= 100 && ' · Ready to bill'}
+              </span>
+            </div>
+            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${minutesPct >= 100 ? 'bg-green-500' : 'bg-primary'}`}
+                style={{ width: `${minutesPct}%` }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="flex-wrap mb-4">
+        <TabsList className="w-full grid grid-cols-4 mb-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="careplan">Care Plan & Call Log</TabsTrigger>
-          <TabsTrigger value="enrollment">Enrollment & Consent</TabsTrigger>
+          <TabsTrigger value="careplan">Care Plan & Log</TabsTrigger>
+          <TabsTrigger value="enrollment">Enrollment</TabsTrigger>
           <TabsTrigger value="billing">Billing</TabsTrigger>
         </TabsList>
 
