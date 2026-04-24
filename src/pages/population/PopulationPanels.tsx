@@ -219,17 +219,19 @@ function PatientTableRow({ p, onOpenPatient }: { p: Patient; onOpenPatient?: (id
         ) : '—'}
       </td>
       <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono whitespace-nowrap">{formatDate(p.lastContact)}</td>
-      <td className="px-3 py-2.5 text-xs max-w-[180px]">
-        {p.escalatedToProvider ? (
-          <span className="inline-flex items-center gap-1 text-red-700">
-            <AlertTriangle className="h-3 w-3" />
-            <span className="truncate" title={p.escalatedToProvider.reason}>Escalated — {p.escalatedToProvider.reason}</span>
-          </span>
-        ) : p.priorityReason ? (
-          <span className="text-foreground truncate block" title={p.priorityReason}>{p.priorityReason}</span>
-        ) : (
-          <span className="text-muted-foreground">—</span>
-        )}
+      <td className="px-3 py-2.5 text-xs w-[160px] max-w-[160px]">
+        <div className="truncate">
+          {p.escalatedToProvider ? (
+            <span className="flex items-center gap-1 text-red-700" title={p.escalatedToProvider.reason}>
+              <AlertTriangle className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">Escalated — {p.escalatedToProvider.reason}</span>
+            </span>
+          ) : p.priorityReason ? (
+            <span className="truncate block text-foreground" title={p.priorityReason}>{p.priorityReason}</span>
+          ) : (
+            <span className="text-muted-foreground">—</span>
+          )}
+        </div>
       </td>
       <td className="px-3 py-2.5 text-xs text-foreground whitespace-nowrap">
         {p.minutesTarget > 0 ? `${p.minutesThisMonth} / ${p.minutesTarget} min` : '—'}
