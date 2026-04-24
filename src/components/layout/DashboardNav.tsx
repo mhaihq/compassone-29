@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ListChecks, UserPlus, FileText, Users, MoreHorizontal } from 'lucide-react';
+import { ListChecks, UserPlus, FileText, Users, MoreHorizontal, ChevronRight } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -30,6 +30,7 @@ interface DashboardNavProps {
 
 export function DashboardNav({ activeTab, onTabChange }: DashboardNavProps) {
   const [moreOpen, setMoreOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const handleMobileSecondary = (id: DashboardTab) => {
     onTabChange(id);
@@ -38,23 +39,30 @@ export function DashboardNav({ activeTab, onTabChange }: DashboardNavProps) {
 
   return (
     <>
-      {/* Desktop left nav */}
-      <nav className="hidden md:flex flex-col flex-shrink-0 w-52 bg-card border-r border-border">
-        <div className="flex flex-col gap-1 p-3">
+      {/* Desktop left nav — icon-only when collapsed, full labels on hover */}
+      <nav
+        className={`hidden md:flex flex-col flex-shrink-0 bg-card border-r border-border transition-all duration-200 ${expanded ? 'w-52' : 'w-14'}`}
+        onMouseEnter={() => setExpanded(true)}
+        onMouseLeave={() => setExpanded(false)}
+      >
+        <div className="flex flex-col gap-1 p-2">
           {PRIMARY_ITEMS.map(item => (
             <DesktopNavItem
               key={item.id}
               item={item}
               active={activeTab === item.id}
               onClick={() => onTabChange(item.id)}
+              collapsed={!expanded}
             />
           ))}
         </div>
         <Separator />
-        <div className="flex flex-col gap-1 p-3">
-          <p className="px-3 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-            More
-          </p>
+        <div className="flex flex-col gap-1 p-2">
+          {expanded && (
+            <p className="px-3 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              More
+            </p>
+          )}
           {SECONDARY_ITEMS.map(item => (
             <DesktopNavItem
               key={item.id}
@@ -62,9 +70,16 @@ export function DashboardNav({ activeTab, onTabChange }: DashboardNavProps) {
               active={activeTab === item.id}
               onClick={() => onTabChange(item.id)}
               muted
+              collapsed={!expanded}
             />
           ))}
         </div>
+        {/* Expand indicator */}
+        {!expanded && (
+          <div className="mt-auto p-2 flex justify-center">
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40" />
+          </div>
+        )}
       </nav>
 
       {/* Mobile bottom nav: primary items + More sheet for secondary */}
@@ -121,15 +136,18 @@ interface ItemProps {
   active: boolean;
   onClick: () => void;
   muted?: boolean;
+  collapsed?: boolean;
 }
 
-function DesktopNavItem({ item, active, onClick, muted }: ItemProps) {
+function DesktopNavItem({ item, active, onClick, muted, collapsed }: ItemProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <button
           onClick={onClick}
-          className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex items-center w-full rounded-lg text-sm font-medium transition-colors ${
+            collapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5'
+          } ${
             active
               ? 'bg-primary text-primary-foreground'
               : muted
@@ -138,10 +156,10 @@ function DesktopNavItem({ item, active, onClick, muted }: ItemProps) {
           }`}
         >
           <span className="flex-shrink-0">{item.icon}</span>
-          <span className="truncate">{item.label}</span>
+          {!collapsed && <span className="truncate">{item.label}</span>}
         </button>
       </TooltipTrigger>
-      <TooltipContent side="right">{item.label}</TooltipContent>
+      {collapsed && <TooltipContent side="right">{item.label}</TooltipContent>}
     </Tooltip>
   );
 }

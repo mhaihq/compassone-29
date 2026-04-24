@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, User, Clock, Stethoscope, Shield, DollarSign } from 'lucide-react';
+import { Calendar, User, Clock } from 'lucide-react';
 import { patientsData } from '@/data/patientsData';
 import { patientsCcmData } from '@/data/patientsCcmData';
 import { OverviewTab } from '@/components/overview/OverviewTab';
@@ -180,105 +180,72 @@ export function PatientDetailContent({ patientId }: PatientDetailContentProps) {
         </CardContent>
       </Card>
 
-      {/* Three collapsible sections (per clinician UX feedback: fewer, larger groupings) */}
-      <Accordion type="multiple" defaultValue={['clinical']} className="w-full space-y-2">
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="flex-wrap mb-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="careplan">Care Plan & Call Log</TabsTrigger>
+          <TabsTrigger value="enrollment">Enrollment & Consent</TabsTrigger>
+          <TabsTrigger value="billing">Billing</TabsTrigger>
+        </TabsList>
 
-        {/* Clinical — everything the coordinator touches on a monitoring call */}
-        <AccordionItem value="clinical" className="border border-border rounded-lg px-3 bg-card">
-          <AccordionTrigger className="text-sm font-semibold">
-            <span className="flex items-center gap-2">
-              <Stethoscope className="h-4 w-4 text-muted-foreground" />Clinical
-              <span className="text-xs font-normal text-muted-foreground">· Overview · Care Plan · Call Log</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="space-y-6 pt-2">
-            <section>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Overview</p>
-              <OverviewTab />
-            </section>
+        <TabsContent value="overview">
+          <OverviewTab />
+        </TabsContent>
 
-            <Separator />
+        <TabsContent value="careplan" className="space-y-6">
+          <CarePlanPanel
+            patientId={patientId}
+            plan={carePlan}
+            onSave={setCarePlan}
+          />
+          <Separator />
+          <section>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Call Log</p>
+            <PatientCareLog />
+          </section>
+        </TabsContent>
 
-            <section>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Care Plan</p>
-              <CarePlanPanel
+        <TabsContent value="enrollment" className="space-y-6">
+          <section>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Program Enrollment</p>
+            {ccmPatient ? (
+              <ApcmTierPanel
                 patientId={patientId}
-                plan={carePlan}
-                onSave={setCarePlan}
+                patientName={patient.name}
+                enrolledInCCM={ccmPatient.enrolledInCCM}
+                enrolledInAPCM={ccmPatient.enrolledInAPCM}
+                apcmLevel={ccmPatient.apcmLevel}
+                monthBillingMode={ccmPatient.monthBillingMode}
+                onEnrollmentChange={(update) =>
+                  setCcmPatient(prev => prev ? { ...prev, ...update } : prev)
+                }
               />
-            </section>
+            ) : (
+              <p className="text-sm text-muted-foreground">No enrollment record found.</p>
+            )}
+          </section>
+          <Separator />
+          <section>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Consent</p>
+            {ccmPatient ? (
+              <ConsentCapture
+                patientId={patientId}
+                patientName={patient.name}
+                consent={ccmPatient.consent}
+                onConsentUpdate={(update) =>
+                  setCcmPatient(prev => prev ? { ...prev, consent: { ...prev.consent, ...update } } : prev)
+                }
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground">Patient is not enrolled in CCM/APCM.</p>
+            )}
+          </section>
+        </TabsContent>
 
-            <Separator />
-
-            <section>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Call Log</p>
-              <PatientCareLog />
-            </section>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Enrollment & Consent — one-time onboarding work */}
-        <AccordionItem value="enrollment" className="border border-border rounded-lg px-3 bg-card">
-          <AccordionTrigger className="text-sm font-semibold">
-            <span className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-muted-foreground" />Enrollment & Consent
-              <span className="text-xs font-normal text-muted-foreground">· CCM/APCM tier · Consent capture</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="space-y-6 pt-2">
-            <section>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Program Enrollment</p>
-              {ccmPatient ? (
-                <ApcmTierPanel
-                  patientId={patientId}
-                  patientName={patient.name}
-                  enrolledInCCM={ccmPatient.enrolledInCCM}
-                  enrolledInAPCM={ccmPatient.enrolledInAPCM}
-                  apcmLevel={ccmPatient.apcmLevel}
-                  monthBillingMode={ccmPatient.monthBillingMode}
-                  onEnrollmentChange={(update) =>
-                    setCcmPatient(prev => prev ? { ...prev, ...update } : prev)
-                  }
-                />
-              ) : (
-                <p className="text-sm text-muted-foreground">No enrollment record found.</p>
-              )}
-            </section>
-
-            <Separator />
-
-            <section>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Consent</p>
-              {ccmPatient ? (
-                <ConsentCapture
-                  patientId={patientId}
-                  patientName={patient.name}
-                  consent={ccmPatient.consent}
-                  onConsentUpdate={(update) =>
-                    setCcmPatient(prev => prev ? { ...prev, consent: { ...prev.consent, ...update } } : prev)
-                  }
-                />
-              ) : (
-                <p className="text-sm text-muted-foreground">Patient is not enrolled in CCM/APCM.</p>
-              )}
-            </section>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Billing — end of month */}
-        <AccordionItem value="billing" className="border border-border rounded-lg px-3 bg-card">
-          <AccordionTrigger className="text-sm font-semibold">
-            <span className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-muted-foreground" />Billing
-              <span className="text-xs font-normal text-muted-foreground">· CPT codes · Minutes · Ready to submit</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="pt-2">
-            <BillingContent />
-          </AccordionContent>
-        </AccordionItem>
-
-      </Accordion>
+        <TabsContent value="billing">
+          <BillingContent />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
