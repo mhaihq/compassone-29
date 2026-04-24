@@ -121,20 +121,8 @@ export function PopulationManagement({ onOpenPatient }: PopulationManagementProp
       {/* Panel tabs */}
       <Tabs defaultValue="patients">
         <TabsList className="mb-4 flex-wrap">
-          <TabsTrigger value="patients">
-            All Patients
-            <span className="ml-1.5 text-[10px] bg-muted-foreground/15 text-muted-foreground rounded px-1 font-normal">
-              {ccmCount + apcmCount}
-            </span>
-          </TabsTrigger>
-          <TabsTrigger value="consent">
-            Consent Queue
-            {pendingConsent > 0 && (
-              <span className="ml-1.5 text-[10px] bg-amber-100 text-amber-700 rounded px-1 font-normal">
-                {pendingConsent}
-              </span>
-            )}
-          </TabsTrigger>
+          <TabsTrigger value="patients">All Patients</TabsTrigger>
+          <TabsTrigger value="consent">Consent Queue</TabsTrigger>
           <TabsTrigger value="approvals">Provider Inbox</TabsTrigger>
           <TabsTrigger value="prefs">Preferences</TabsTrigger>
         </TabsList>
