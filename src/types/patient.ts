@@ -67,6 +67,9 @@ export interface Patient {
   priority?: 'High' | 'Medium' | 'Low';
   priorityReason?: string;
 
+  // Clinical trajectory — separate from enrollment status
+  trajectory?: 'improving' | 'stable' | 'not-improving';
+
   // Last contact with patient (call, SMS, visit)
   lastContact?: string;
   nextTask?: string;
